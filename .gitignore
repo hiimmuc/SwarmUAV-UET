@@ -171,4 +171,4 @@ src/logs/*
 *.zip
 *.db
 *.AppImage
-dependencies/*
+dependencies/*.AppImage
