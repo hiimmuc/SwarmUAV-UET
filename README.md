@@ -30,6 +30,7 @@
    ```Pipy
    sudo apt-get install python3-grpcio
    pip3 install mavsdk
+   pip3 install asyncio
    ```
 
    or follows the instruction in the repository
@@ -96,10 +97,9 @@
 4. ### mavlink-router
    ```
     git clone https://github.com/intel/mavlink-router.git
-    cd mavlink-router
+    cd mavlink-router/
     git submodule update --init --recursive
     sudo apt install git meson ninja-build pkg-config gcc g++ systemd
-    cd
     sudo pip3 install meson
     meson setup build
     ninja -C build
@@ -115,34 +115,54 @@
 
 ## Run program
 
-</br>
-Install miniconda: https://docs.anaconda.com/free/miniconda/miniconda-install/
-</br>
-Set up the conda environment:
+1. Install miniconda: https://docs.anaconda.com/free/miniconda/miniconda-install/
 
-```
-conda env create -f environment.yml
-```
+2. Set up the conda environment:
 
-Activate environment
+   ```
+   conda env create -f environment.yml
+   ```
 
-```
-conda activate uav
-conda env update --name uav --file environment.yml --prune
-pip install mavsdk
-```
+3. Activate environment
 
-Run all:
+   ```
+   conda activate uav
+   conda env update --name uav --file environment.yml --prune
+   pip install mavsdk
+   ```
 
-```
-python runs/simulation.py
-```
+4. Setup Gazebo for first run ([Instruction](https://docs.px4.io/main/en/sim_gazebo_classic/multi_vehicle_simulation.html))):
 
-or
+   ```
+   cd dependencies/PX4-Autopilot/
+   ```
 
-```
-python runs/real.py
-```
+   ```[setup]
+   make clean
+   sudo apt-get install libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly -y
+   ```
+
+   ```
+   make px4_sitl_default gazebo-classic
+   ```
+
+   and check the results by:
+
+   ```
+   ./Tools/simulation/gazebo-classic/sitl_multiple_run.sh -n 6 -m iris
+   ```
+
+5. Run all:
+
+   ```
+   python runs/simulation.py
+   ```
+
+   or
+
+   ```
+   python runs/real.py
+   ```
 
 ## Debug
 
