@@ -114,8 +114,7 @@ class DetectionModel:
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 for i in range(len(expand_bboxes)):
                     x, y, w, h = expand_bboxes[i]
-                    tag = f"{self.class_names[class_ids[i]]}: {
-                        round(confidences[i] * 100, 2)}%"
+                    tag = f"{self.class_names[class_ids[i]]}: {round(confidences[i] * 100, 2)}%"
                     color = (0, 0, 255)
                     cv2.rectangle(image, (x, y), (x + w, y + h),
                                   color=color, thickness=2)
