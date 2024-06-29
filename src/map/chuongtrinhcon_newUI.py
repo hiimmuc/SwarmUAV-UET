@@ -135,7 +135,7 @@ def main():
 
     def open_file():
         nonlocal number
-        filename = filedialog.askopenfilename(initialdir="./", title="Chọn file",
+        filename = filedialog.askopenfilename(initialdir="src/logs/area/", title="Chọn file",
                                               filetypes=(("Text files", "*.txt"), ("All files", "*.*")))
         if filename:
             x_coords_file, y_coords_file = read_points_from_file(filename)
