@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
+
+
 def read_points_from_file(filename):
     try:
         with open(filename, 'r') as file:
@@ -14,8 +16,9 @@ def read_points_from_file(filename):
     except FileNotFoundError:
         return None, None
 
+
 def read_number_from_file():
-    filename = 'ID_drone.txt'  # Set the filename
+    filename = 'src/data/ID_drone.txt'  # Set the filename
     try:
         with open(filename, 'r') as file:
             # Read each line, strip, and convert to integer if the line is not blank
@@ -27,6 +30,7 @@ def read_number_from_file():
     except ValueError:
         print("Found a line that's not a number.")
         return None
+
 
 def write_points_to_file(filename, grid_points):
     """

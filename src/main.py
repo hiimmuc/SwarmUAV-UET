@@ -539,7 +539,7 @@ class MainWindow(QMainWindow):
     # Hàm mở code Map
 
     async def open_map(self):
-        command = f"python3 {parent_dir}/map/DG5.py"
+        command = f"python3 {parent_dir}/mapTK/DG5.py"
         os.system(
             f"gnome-terminal -- /bin/bash -c '{command}; exec /bin/bash' &")
 
