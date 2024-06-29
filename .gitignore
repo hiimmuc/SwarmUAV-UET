@@ -167,7 +167,7 @@ venv/
 .venv/
 .idea/
 src/model/checkpoints/*
-src/logs/*
+# src/logs/*
 *.zip
 *.db
 *.AppImage
