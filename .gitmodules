@@ -5,3 +5,7 @@
 [submodule "PX4-Autopilot"]
 	path = dependencies/PX4-Autopilot
 	url = https://github.com/PX4/PX4-Autopilot.git
+
+[submodule "MAVLINK"]
+	path = dependencies/mavlink-router
+	url = https://github.com/mavlink/mavlink.git
