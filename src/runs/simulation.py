@@ -8,11 +8,11 @@ def run_commands():
 
     commands = ["dependencies/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_multiple_run.sh -n 6 -m iris",
                 "python3 src/mavsdk_server_shell.py udp://:14541 -p 50060",
-                # "python3 src/mavsdk_server_shell.py udp://:14542 -p 50061",
-                # "python3 src/mavsdk_server_shell.py udp://:14543 -p 50062",
-                # "python3 src/mavsdk_server_shell.py udp://:14544 -p 50063",
-                # "python3 src/mavsdk_server_shell.py udp://:14545 -p 50064",
-                # "python3 src/mavsdk_server_shell.py udp://:14546 -p 50065",
+                "python3 src/mavsdk_server_shell.py udp://:14542 -p 50061",
+                "python3 src/mavsdk_server_shell.py udp://:14543 -p 50062",
+                "python3 src/mavsdk_server_shell.py udp://:14544 -p 50063",
+                "python3 src/mavsdk_server_shell.py udp://:14545 -p 50064",
+                "python3 src/mavsdk_server_shell.py udp://:14546 -p 50065",
                 "dependencies/QGroundControl.AppImage",
                 "python3 src/main.py"]
 
