@@ -1,0 +1,6 @@
+Bước 1: chọn thư mục có file .git
+Bước 2: Chuột phải chọn teminal
+Bước 3: gõ lệnh git add . # nghĩa là add tất cả file vào
+Bước 4: git commit -m "thêm cập nhật"
+Bước 5: git pull
+Bước 6: git push origin master
