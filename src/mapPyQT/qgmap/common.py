@@ -43,10 +43,10 @@ class GeoCoder(QNetworkAccessManager):
 
     @trace
     def geocode(self, location):
-        url = QUrl("http://maps.googleapis.com/maps/api/geocode/xml")
+        url = QUrl("https://maps.google.com/")
 
         query = QUrlQuery()
-        query.addQueryItem("address", location)
+        query.addQueryItem("place", location)
         query.addQueryItem("sensor", "false")
 
         url.setQuery(query)

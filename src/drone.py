@@ -14,6 +14,7 @@ class Drone:
         pass
 
     async def connect(self, *args) -> None:
+
         pass
 
     async def arming(self, *args) -> None:

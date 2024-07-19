@@ -15,14 +15,27 @@
    ```
 2. ### Gazebo ROS 2:
 
-   Follow this instruction to install ROS: [Install ROS](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html). </br>
-   Then, to install Gazebo 9
+   Follow this instruction to install ROS: [Install ROS](https://wiki.ros.org/noetic/Installation/Ubuntu). </br>
+   Then, to install [Gazebo 9](https://classic.gazebosim.org/tutorials?cat=install&tut=install_ubuntu&ver=9.0)
 
    ```
-    sudo apt update
-    sudo apt upgrade
-    sudo apt install gazebo9
-    sudo apt install ros-<YOUR-ROS-DISTRO>-gazebo-ros-pkgs
+   curl -sSL http://get.gazebosim.org | sh
+   ```
+
+   or
+
+   ```
+    sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+    cat /etc/apt/sources.list.d/gazebo-stable.list
+    wget https://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+    sudo apt-get update
+    sudo apt-get install gazebo9
+   ```
+
+   Check if gazebo is installed:
+
+   ```
+   gazebo
    ```
 
 3. ### MAVSDK-Python [Install MAVSDK-Python](https://github.com/mavlink/MAVSDK-Python.git)

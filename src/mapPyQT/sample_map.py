@@ -1,5 +1,5 @@
-# #!/usr/bin/env python
-# # -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # from PyQt5.QtCore import *
 # from qgmap.common import QGoogleMap
 # import qgmap
@@ -93,9 +93,9 @@
 
 #     gmap.waitUntilReady()
 
-#     # gmap.centerAt(41.35,2.05)
+#     gmap.centerAt(21.028511, 105.804817)
 #     gmap.setZoom(15)
-#     lat, lng = gmap.centerAtAddress("Lima Peru")
+#     lat, lng = gmap.centerAtAddress("Hanoi")
 #     if lat is not None and lng is not None:
 
 #         # Many icons at: https://sites.google.com/site/gmapsdevelopment/
@@ -112,6 +112,7 @@
 #     # gmap.setZoom(15)
 
 #     sys.exit(app.exec_())
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from PyQt5.QtWidgets import *
@@ -184,8 +185,8 @@ if __name__ == '__main__':
 
     h.addWidget(map)
     map.setSizePolicy(
-        QSizePolicy.MinimumExpanding,
-        QSizePolicy.MinimumExpanding)
+        QSizePolicy.Policy.Expanding,
+        QSizePolicy.Policy.Expanding)
     w.show()
 
     map.waitUntilReady()
