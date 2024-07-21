@@ -16,28 +16,9 @@ from UI.interface_uav import *
 
 
 class App(Ui_MainWindow,  QtWidgets.QWidget):
-    def __init__(self, MainWindow, model) -> None:
+    def __init__(self, MainWindow, model=None) -> None:
         super().__init__()
-        self.setupUI(MainWindow)
-        if self.RescueMap.mouseDoubleClickEvent == Qt.LeftButton:
-            print('Right mouse double click')
-
-    # def keyPressEvent(self, key) -> None:
-    #     print(key)
-
-    # @QtCore.pyqtSlot(float, float)
-    # def onMapMoved(self, latitude, longitude):
-    #     print("Moved to ", latitude, longitude)
-
-    # def onMapRClick(self, latitude, longitude):
-    #     print("RClick on ", latitude, longitude)
-
-    # def onMapLClick(self, latitude, longitude):
-    #     print("LClick on ", latitude, longitude)
-
-    # def onMapDClick(self, latitude, longitude):
-    #     print("DClick on ", latitude, longitude)
-    # def
+        self.setupUi(MainWindow)
 
 
 def run():

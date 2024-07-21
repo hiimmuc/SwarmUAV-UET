@@ -17,3 +17,5 @@ INCLUDEPATH += .
 FORMS += interface.ui interface_uav.ui
 RESOURCES += icons.qrc
 QT += webenginewidgets
+QT += webview
+QT += webengine
