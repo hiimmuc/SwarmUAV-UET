@@ -15,7 +15,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QHeaderView
 
 
-def convert_cv2qt(cv_img, size=(640, 360)) -> QPixmap:
+def convert_cv2qt(cv_img, size=(360, 640)) -> QPixmap:
     """Convert cv image to qt image to display on gui
 
     Args:
@@ -25,7 +25,10 @@ def convert_cv2qt(cv_img, size=(640, 360)) -> QPixmap:
         image: RGB image with qt format
     """
 
-    rgb_image = cv2.cvtColor(cv2.resize(cv_img, size), cv2.COLOR_BGR2RGB)
+    rgb_image = cv2.cvtColor(
+        cv2.resize(cv_img, size, interpolation=cv2.INTER_AREA),
+        cv2.COLOR_BGR2RGB,
+    )
 
     qt_image = QtGui.QImage(
         rgb_image,
@@ -34,7 +37,7 @@ def convert_cv2qt(cv_img, size=(640, 360)) -> QPixmap:
         rgb_image.strides[0],
         QtGui.QImage.Format_RGB888,
     )
-    # p = convert_to_Qt_format.scaled(*size, Qt.KeepAspectRatio)
+    # p = qt_image.scaled(*size, Qt.KeepAspectRatio)
     return QPixmap.fromImage(qt_image)
 
 

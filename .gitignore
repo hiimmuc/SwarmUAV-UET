@@ -177,3 +177,4 @@ dependencies/*.AppImage
 *.docx
 build/*.
 cache/*.
+assets/videos/*

@@ -37,9 +37,9 @@ DEFAULT_BIND_PORT = 14541
 FPS = 33
 
 screen_sizes = {
-    "general_screen": (592, 333),
-    "stream_screen": (1280, 720),
-    "ovv_screen": (320, 180),
+    "general_screen": (333, 592),
+    "stream_screen": (720, 1280),
+    "ovv_screen": (180, 320),
 }
 
 stackedWidget_indexes = {"main page": 0, "map page": 1}
@@ -2360,10 +2360,6 @@ class App(QMainWindow):
                     convert_cv2qt(frame, size=screen_sizes[screen])
                 )
                 UAVs[uav_index][screen].setScaledContents(True)
-            # screen = "general_screen"
-            # UAVs[uav_index][screen].setPixmap(convert_cv2qt(frame,
-            # size=screen_sizes))
-            # UAVs[uav_index][screen].setScaledContents(True)
         except Exception as e:
             self.popup_msg(
                 f"Update UAV screen view error: {repr(e)}",
