@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {        
+        "target": "es6",
+        "module": "esnext",
+        "strict": true,
+        "moduleResolution":"bundler",
+        "declaration": true,
+        "declarationDir": "dist/types",
+      },
+      "include": ["./src/**/*","./test/**/*"]
+  }
+  
