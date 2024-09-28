@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox, QWidget
 
 #
 from map_utils import *
+from mavsdk_server_utils import *
 from UI.interface_uav import *
 from utils import *
 
@@ -37,9 +38,9 @@ DEFAULT_BIND_PORT = 14541
 FPS = 33
 
 screen_sizes = {
-    "general_screen": (333, 592),
-    "stream_screen": (720, 1280),
-    "ovv_screen": (180, 320),
+    "general_screen": (592, 333),
+    "stream_screen": (1280, 720),
+    "ovv_screen": (320, 180),
 }
 
 stackedWidget_indexes = {"main page": 0, "map page": 1}
@@ -56,49 +57,27 @@ tabWidget_indexes = {
     "overview": 8,
 }
 
+connection_allows = [True, True, True, True, True, True]
+streaming_enables = [True, False, False, False, False, False]
+
 UAVs = {
-    1: {
-        "system": System(mavsdk_server_address="localhost", port=DEFAULT_PORT + 0),
-        "system_address": f"{PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 0}",
-        "streaming_address": f"{parent_dir.parent}/assets/videos/cam{1}.mp4",
-        "connection_allow": True,
-        "streaming_enable": True,
-    },
-    2: {
-        "system": System(mavsdk_server_address="localhost", port=DEFAULT_PORT + 1),
-        "system_address": f"{PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 1}",
-        "streaming_address": f"{parent_dir.parent}/assets/videos/cam{2}.mp4",
-        "connection_allow": True,
-        "streaming_enable": True,
-    },
-    3: {
-        "system": System(mavsdk_server_address="localhost", port=DEFAULT_PORT + 2),
-        "system_address": f"{PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 2}",
-        "streaming_address": f"{parent_dir.parent}/assets/videos/cam{3}.mp4",
-        "connection_allow": True,
-        "streaming_enable": True,
-    },
-    4: {
-        "system": System(mavsdk_server_address="localhost", port=DEFAULT_PORT + 3),
-        "system_address": f"{PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 3}",
-        "streaming_address": f"{parent_dir.parent}/assets/videos/cam{4}.mp4",
-        "connection_allow": True,
-        "streaming_enable": True,
-    },
-    5: {
-        "system": System(mavsdk_server_address="localhost", port=DEFAULT_PORT + 4),
-        "system_address": f"{PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 4}",
-        "streaming_address": f"{parent_dir.parent}/assets/videos/cam{5}.mp4",
-        "connection_allow": True,
-        "streaming_enable": True,
-    },
-    6: {
-        "system": System(mavsdk_server_address="localhost", port=DEFAULT_PORT + 5),
-        "system_address": f"{PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 5}",
-        "streaming_address": f"{parent_dir.parent}/assets/videos/cam{6}.mp4",
-        "connection_allow": True,
-        "streaming_enable": True,
-    },
+    uav_index: {
+        "server": Server(
+            id=uav_index,
+            proto=PROTO,
+            server_host=SERVER_HOST,
+            port=DEFAULT_PORT + uav_index - 1,
+            bind_port=DEFAULT_BIND_PORT + uav_index - 1,
+        ),
+        "system": System(
+            mavsdk_server_address="localhost", port=DEFAULT_PORT + uav_index - 1
+        ),
+        "system_address": f"{PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + uav_index- 1}",
+        "streaming_address": f"{parent_dir.parent}/assets/videos/cam{uav_index}.mp4",
+        "connection_allow": connection_allows[uav_index - 1],
+        "streaming_enable": streaming_enables[uav_index - 1],
+    }
+    for uav_index in range(1, MAX_UAV_COUNT + 1)
 }
 
 
@@ -280,6 +259,7 @@ class App(QMainWindow):
 
         #
         self.init_application()
+        print("Application initialized.")
         # ---------------------------------------------------------
 
     def init_application(self) -> None:
@@ -317,16 +297,26 @@ class App(QMainWindow):
 
         # screen view default image
         for screen in self.uav_general_screen_views:
-            screen.setPixmap(QtGui.QPixmap(f"{basePath}/assets/pictures/nosignal.jpg"))
-            screen.setScaledContents(True)
+            screen.setPixmap(
+                QtGui.QPixmap(
+                    f"{basePath}/assets/pictures/resized/nosignal_333x592.jpg"
+                )
+            )
+            screen.setScaledContents(False)
         for screen in self.uav_stream_screen_views:
             screen.setPixmap(
-                QtGui.QPixmap(f"{basePath}/assets/pictures/no_signal2.jpg")
+                QtGui.QPixmap(
+                    f"{basePath}/assets/pictures/resized/no_signal2_720x1280.jpg"
+                )
             )
-            screen.setScaledContents(True)
+            screen.setScaledContents(False)
         for screen in self.uav_ovv_screen_views:
-            screen.setPixmap(QtGui.QPixmap(f"{basePath}/assets/pictures/nosignal.jpg"))
-            screen.setScaledContents(True)
+            screen.setPixmap(
+                QtGui.QPixmap(
+                    f"{basePath}/assets/pictures/resized/nosignal_180x320.jpg"
+                )
+            )
+            screen.setScaledContents(False)
 
         # map URL
         self.ui.MapWebView.setUrl(QtCore.QUrl(f"file://{basePath}/assets/map.html"))
@@ -370,12 +360,16 @@ class App(QMainWindow):
         self.map.mapDoubleClickedCallback = self.onMapDClick
         self.map.mapRightClickedCallback = self.onMapRClick
 
-        self.map.markerMovedCallback = self.onMarkerMoved
-        self.map.markerClickedCallback = self.onMarkerLClick
-        self.map.markerDoubleClickedCallback = self.onMarkerDClick
-        self.map.markerRightClickedCallback = self.onMarkerRClick
+        # self.map.markerMovedCallback = self.onMarkerMoved
+        # self.map.markerClickedCallback = self.onMarkerLClick
+        # self.map.markerDoubleClickedCallback = self.onMarkerDClick
+        # self.map.markerRightClickedCallback = self.onMarkerRClick
 
-        # self.map.polygonDrawnCallback = self.onPolygonDrawn
+        self.ovv_map = MapEngine(self.ui.Overview_map_view)
+        self.ovv_map.mapMovedCallback = self.onMapMoved
+        self.ovv_map.mapClickedCallback = self.onMapLClick
+        self.ovv_map.mapDoubleClickedCallback = self.onMapDClick
+        self.ovv_map.mapRightClickedCallback = self.onMapRClick
 
     # //-/////////////////////////////////////////////////////////////
     # //-/////////////////////////////////////////////////////////////
@@ -579,7 +573,9 @@ class App(QMainWindow):
             lambda: asyncio.create_task(self.uav_fn_pushMission(self.active_tab_index))
         )
 
-        self.ui.btn_toggle_camera.clicked.connect(self.uav_fn_toggle_camera)
+        self.ui.btn_toggle_camera.clicked.connect(
+            lambda: self.uav_fn_toggle_camera(self.active_tab_index)
+        )
 
         for i, btn in enumerate(self.uav_set_param_buttons):
             btn.clicked.connect(
@@ -655,24 +651,30 @@ class App(QMainWindow):
             None
         """
         global UAVs
-        for index in range(MAX_UAV_COUNT):
-            uav_index = index + 1
-            if (
-                UAVs[uav_index]["streaming_enable"]
-                and UAVs[uav_index]["connection_allow"]
-            ):
-                self.uav_stream_threads[index] = Thread(
-                    target=self.stream_on_uav_screen,
-                    args=(uav_index,),
-                    name=f"UAV-{uav_index}",
-                )
-                self.uav_stream_captures[index] = cv2.VideoCapture(
-                    UAVs[uav_index]["streaming_address"]
-                )
-                print(f"UAV-{uav_index} streaming thread created.")
-        pass
+        try:
+            for index in range(MAX_UAV_COUNT):
+                uav_index = index + 1
+                if (
+                    UAVs[uav_index]["streaming_enable"]
+                    and UAVs[uav_index]["connection_allow"]
+                ):
+                    self.uav_stream_threads[index] = Thread(
+                        target=self.stream_on_uav_screen,
+                        args=(uav_index,),
+                        name=f"UAV-{uav_index}",
+                    )
+                    self.uav_stream_captures[index] = cv2.VideoCapture(
+                        UAVs[uav_index]["streaming_address"]
+                    )
+                    print(f"UAV-{uav_index} streaming thread created.")
+            pass
+        except Exception as e:
+            print(f"Error: {repr(e)}")
+            self.popup_msg(
+                type_msg="Error", msg=str(e), src_msg="_create_streaming_threads()"
+            )
 
-    def uav_fn_toggle_camera(self) -> None:
+    def uav_fn_toggle_camera(self, uav_index) -> None:
         """
         Toggles the camera view for all UAVs.
 
@@ -688,16 +690,31 @@ class App(QMainWindow):
             None
         """
         try:
-            for uav_index in range(1, MAX_UAV_COUNT + 1):
-                if UAVs[uav_index]["streaming_enable"]:
+            if uav_index == 0:
+                for uav_index in range(1, MAX_UAV_COUNT + 1):
+                    # change to the connection_status later UAVs[uav_index]['connection_status']
+                    if (
+                        UAVs[uav_index]["connection_allow"]
+                        and UAVs[uav_index]["streaming_enable"]
+                    ):
+                        self.uav_stream_threads[uav_index - 1].start()
+                        print(f"UAV-{uav_index} streaming thread started.")
+            elif uav_index in range(1, MAX_UAV_COUNT + 1):
+                if (
+                    UAVs[uav_index]["connection_allow"]
+                    and UAVs[uav_index]["streaming_enable"]
+                ):
                     self.uav_stream_threads[uav_index - 1].start()
-                    self.uav_stream_threads[
-                        uav_index - 1
-                    ].join()  # add this for join the thread queue
                     print(f"UAV-{uav_index} streaming thread started.")
+            else:
+                self.popup_msg(
+                    type_msg="Warning",
+                    msg="Button is disabled on this tab",
+                    src_msg="uav_fn_toggle_camera",
+                )
         except Exception as e:
             print(f"Error: {repr(e)}")
-            self.popup_msg("Error", str(e))
+            self.popup_msg(type_msg="Error", msg=str(e), src_msg="uav_fn_toggle_camera")
 
     # //-/////////////////////////////////////////////////////////////
 
@@ -854,7 +871,7 @@ class App(QMainWindow):
 
         except Exception as e:
             self.popup_msg(
-                f"Error: {repr(e)}", src_msg="_modify_tables", type_msg="error"
+                msg=f"Error: {repr(e)}", src_msg="_modify_tables", type_msg="Error"
             )
 
     # ////////////////////////////////////////////////////////////////
@@ -901,7 +918,7 @@ class App(QMainWindow):
 
         except Exception as e:
             self.popup_msg(
-                f"Invalid input: {repr(e)}", src_msg="process_command", type_msg="error"
+                f"Invalid input: {repr(e)}", src_msg="process_command", type_msg="Error"
             )
 
     # ////////////////////////////////////////////////////////////////
@@ -924,28 +941,18 @@ class App(QMainWindow):
         """
         global UAVs
         try:
-            if uav_index != 0:
+            if uav_index in range(1, MAX_UAV_COUNT + 1):
                 if UAVs[uav_index]["connection_allow"]:
                     self.update_terminal(
                         f"[INFO] Sent CONNECT command to UAV {uav_index}"
                     )
+                    # set default information
+                    self.set_default_uav_information_display(uav_index)
+                    # init server
+                    # self.uav_fn_init_server(uav_index)
+                    UAVs[uav_index]["server"].start()
 
-                    # default is not connected
-                    UAVs[uav_index]["uav_information"]["connection_status"] = False
-                    UAVs[uav_index]["label_param"].setStyleSheet(
-                        "background-color: red"
-                    )
-                    self.sett_checkBox_active_lists[uav_index - 1].setChecked(False)
-                    set_row_color(
-                        self.ui.table_uav_large,
-                        uav_index - 1,
-                        QtGui.QColor(255, 160, 122),
-                    )
-                    set_row_color(
-                        self.ui.table_uav_small,
-                        uav_index - 1,
-                        QtGui.QColor(255, 160, 122),
-                    )
+                    await asyncio.sleep(5)
 
                     await UAVs[uav_index]["system"].connect(
                         system_address=UAVs[uav_index]["system_address"]
@@ -966,15 +973,23 @@ class App(QMainWindow):
                         f"[INFO] Connection not allowed for UAV {uav_index}"
                     )
 
-            else:
+            elif uav_index == 0:
                 connect_all_UAVs = [
                     self.uav_fn_connect(i) for i in range(1, MAX_UAV_COUNT + 1)
                 ]
                 await asyncio.gather(*connect_all_UAVs)
+            else:
+                self.popup_msg(
+                    msg="Buttons are disabled on this tab",
+                    type_msg="warning",
+                    src_msg="uav_fn_connect",
+                )
 
         except Exception as e:
+            self.set_default_uav_information_display(uav_index)
+            # UAVs[uav_index]["server"].stop()
             self.popup_msg(
-                f"Connection error: {repr(e)}",
+                f"Connection error to uav {uav_index} :{repr(e)}",
                 src_msg="uav_fn_connect",
                 type_msg="error",
             )
@@ -999,7 +1014,7 @@ class App(QMainWindow):
             - The connection status and arming status of the UAV are updated accordingly.
         """
         global UAVs
-        if uav_index != 0:
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
             if (
                 UAVs[uav_index]["uav_information"]["connection_status"]
                 and UAVs[uav_index]["connection_allow"]
@@ -1025,7 +1040,11 @@ class App(QMainWindow):
             arm_all_UAVs = [self.uav_fn_arm(i) for i in range(1, MAX_UAV_COUNT + 1)]
             await asyncio.gather(*arm_all_UAVs)
         else:
-            self.popup_msg("Buttons are disabled on this tab")
+            self.popup_msg(
+                msg="Buttons are disabled on this tab",
+                type_msg="warning",
+                src_msg="uav_fn_arm",
+            )
 
     async def uav_fn_disarm(self, uav_index) -> None:
         """
@@ -1042,7 +1061,7 @@ class App(QMainWindow):
             None
         """
         global UAVs
-        if uav_index != 0:
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
             if (
                 UAVs[uav_index]["uav_information"]["connection_status"]
                 and UAVs[uav_index]["connection_allow"]
@@ -1067,7 +1086,7 @@ class App(QMainWindow):
             ]
             await asyncio.gather(*disarm_all_UAVs)
         else:
-            self.popup_msg("Buttons are disabled on this tab")
+            self.popup_msg(msg="Buttons are disabled on this tab", type_msg="warning")
 
     async def uav_fn_takeoff(self, uav_index) -> None:
         """
@@ -1089,7 +1108,7 @@ class App(QMainWindow):
             - If uav_index is 0, it initiates the takeoff sequence for all UAVs concurrently.
         """
         global UAVs
-        if uav_index != 0:
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
             if (
                 UAVs[uav_index]["uav_information"]["connection_status"]
                 and UAVs[uav_index]["connection_allow"]
@@ -1130,7 +1149,11 @@ class App(QMainWindow):
             ]
             await asyncio.gather(*takeoff_all_UAVs)
         else:
-            self.popup_msg("Buttons are disabled on this tab")
+            self.popup_msg(
+                msg="Buttons are disabled on this tab",
+                type_msg="warning",
+                src_msg="uav_fn_takeoff",
+            )
 
     async def uav_fn_landing(self, uav_index) -> None:
         """
@@ -1147,7 +1170,7 @@ class App(QMainWindow):
             None
         """
         global UAVs
-        if uav_index != 0:
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
             if (
                 UAVs[uav_index]["uav_information"]["connection_status"]
                 and UAVs[uav_index]["connection_allow"]
@@ -1172,7 +1195,11 @@ class App(QMainWindow):
             ]
             await asyncio.gather(*landing_all_UAVs)
         else:
-            self.popup_msg("Buttons are disabled on this tab")
+            self.popup_msg(
+                msg="Buttons are disabled on this tab",
+                type_msg="warning",
+                src_msg="uav_fn_landing",
+            )
 
     async def uav_fn_return(self, uav_index, rtl=False) -> None:
         """
@@ -1194,7 +1221,7 @@ class App(QMainWindow):
         """
         global UAVs
         try:
-            if uav_index != 0:
+            if uav_index in range(1, MAX_UAV_COUNT + 1):
                 if (
                     UAVs[uav_index]["uav_information"]["connection_status"]
                     and UAVs[uav_index]["connection_allow"]
@@ -1269,7 +1296,11 @@ class App(QMainWindow):
                 ]
                 await asyncio.gather(*return_all_UAVs)
             else:
-                self.popup_msg("Buttons are disabled on this tab")
+                self.popup_msg(
+                    msg="Buttons are disabled on this tab",
+                    type_msg="warning",
+                    src_msg="uav_fn_return",
+                )
         except Exception as e:
             self.popup_msg(
                 f"Return error: {repr(e)}", src_msg="uav_fn_return", type_msg="error"
@@ -1299,7 +1330,7 @@ class App(QMainWindow):
         """
         global UAVs
         try:
-            if uav_index != 0:
+            if uav_index in range(1, MAX_UAV_COUNT + 1):
                 if (
                     UAVs[uav_index]["uav_information"]["connection_status"]
                     and UAVs[uav_index]["connection_allow"]
@@ -1371,7 +1402,11 @@ class App(QMainWindow):
                 ]
                 await asyncio.gather(*mission_all_UAVs)
             else:
-                self.popup_msg("Buttons are disabled on this tab")
+                self.popup_msg(
+                    msg="Buttons are disabled on this tab",
+                    type_msg="warning",
+                    src_msg="uav_fn_mission",
+                )
         except Exception as e:
             self.popup_msg(
                 f"Mission error: {repr(e)}", src_msg="uav_fn_mission", type_msg="error"
@@ -1398,7 +1433,7 @@ class App(QMainWindow):
         """
         global UAVs
         try:
-            if uav_index != 0:
+            if uav_index in range(1, MAX_UAV_COUNT + 1):
                 if (
                     UAVs[uav_index]["uav_information"]["connection_status"]
                     and UAVs[uav_index]["connection_allow"]
@@ -1467,7 +1502,11 @@ class App(QMainWindow):
                 # pushMission_all_UAVs = [self.uav_fn_pushMission(
                 #     i) for i in range(1, MAX_UAV_COUNT + 1)]
                 # await asyncio.gather(*pushMission_all_UAVs)
-                self.popup_msg("Buttons are disabled on this tab")
+                self.popup_msg(
+                    msg="Buttons are disabled on this tab",
+                    type_msg="warning",
+                    src_msg="uav_fn_pushMission",
+                )
         except Exception as e:
             self.popup_msg(
                 f"Mission error: {repr(e)}",
@@ -1494,7 +1533,7 @@ class App(QMainWindow):
             - If uav_index is 0, pauses the mission for all UAVs concurrently.
         """
         global UAVs
-        if uav_index != 0:
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
             if (
                 UAVs[uav_index]["uav_information"]["connection_status"]
                 and UAVs[uav_index]["connection_allow"]
@@ -1518,7 +1557,11 @@ class App(QMainWindow):
             ]
             await asyncio.gather(*pauseMission_all_UAVs)
         else:
-            self.popup_msg("Buttons are disabled on this tab")
+            self.popup_msg(
+                msg="Buttons are disabled on this tab",
+                type_msg="warning",
+                src_msg="uav_fn_pauseMission",
+            )
 
     async def uav_fn_openClose(self, uav_index) -> None:
         """
@@ -1534,7 +1577,7 @@ class App(QMainWindow):
             None
         """
         global UAVs
-        if uav_index != 0:
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
             if (
                 UAVs[uav_index]["uav_information"]["connection_status"]
                 and UAVs[uav_index]["connection_allow"]
@@ -1564,7 +1607,11 @@ class App(QMainWindow):
             ]
             await asyncio.gather(*openClose_all_UAVs)
         else:
-            self.popup_msg("Buttons are disabled on this tab")
+            self.popup_msg(
+                msg="Buttons are disabled on this tab",
+                type_msg="warning",
+                src_msg="uav_fn_openClose",
+            )
 
     # //-/////////////////////////////////////////////////////////////
     # ? UAV functions utils
@@ -2292,7 +2339,7 @@ class App(QMainWindow):
     # ? display view functions
 
     # @pyqtSlot(int)
-    def stream_on_uav_screen(self, uav_index) -> None:
+    def stream_on_uav_screen(self, uav_index, **kwargs) -> None:
         """
         Updates the UAV screen view with the specified UAV's information.
 
@@ -2304,41 +2351,36 @@ class App(QMainWindow):
         """
         try:
             global UAVs
-            current_tab = self.ui.tabWidget.currentIndex()
+            # change to connection states later UAVs[uav_index]["uav_information"]["connection_status"]
+            if (
+                UAVs[uav_index]["connection_allow"]
+                and UAVs[uav_index]["streaming_enable"]
+            ):
+                if UAVs[uav_index]["uav_information"]["streaming_status"]:
+                    UAVs[uav_index]["uav_information"]["streaming_status"] = False
 
-            if UAVs[uav_index]["uav_information"]["connection_status"]:
-                if UAVs[uav_index]["streaming_enable"]:
+                else:
+                    UAVs[uav_index]["uav_information"]["streaming_status"] = True
 
-                    if UAVs[uav_index]["uav_information"]["streaming_status"]:
-                        UAVs[uav_index]["uav_information"]["streaming_status"] = False
-                        # self.ui.btn_toggle_camera.setText("Start Camera")
-                        # self.ui.btn_toggle_camera.setStyleSheet(
-                        #     "background-color: rgb(0, 255, 0);"
-                        # )
+                is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
+                print(f"UAV {uav_index} streaming status: {is_opened}")
+                while is_opened:
+                    ret, frame = self.uav_stream_captures[uav_index - 1].read()
+
+                    if ret:
+                        # print(frame.shape)
+                        self.update_uav_screen_view(
+                            uav_index, frame, screen_name="ovv_screen"
+                        )
                     else:
-                        UAVs[uav_index]["uav_information"]["streaming_status"] = True
-                        # self.ui.btn_toggle_camera.setText("Stop Camera")
-                        # self.ui.btn_toggle_camera.setStyleSheet(
-                        #     "background-color: rgb(255, 0, 0);"
-                        # )
+                        self.uav_stream_captures[uav_index - 1].set(
+                            cv2.CAP_PROP_POS_FRAMES, 0
+                        )
 
-                    is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
-
-                    while is_opened:
-                        ret, frame = self.uav_stream_captures[uav_index - 1].read()
-                        # print(f"UAV {uav_index} streaming status: {ret}")
-                        print(frame.shape)
-                        if ret:
-                            self.update_uav_screen_view(uav_index, frame)
-                        else:
-                            self.uav_stream_captures[uav_index - 1].set(
-                                cv2.CAP_PROP_POS_FRAMES, 0
-                            )
-
-                        key = cv2.waitKey(1) & 0xFF
-                        if not UAVs[uav_index]["uav_information"]["streaming_status"]:
-                            break
-                    self.uav_stream_captures[uav_index - 1].release()
+                    # key = cv2.waitKey(1) & 0xFF
+                    if not UAVs[uav_index]["uav_information"]["streaming_status"]:
+                        break
+                self.uav_stream_captures[uav_index - 1].release()
         except Exception as e:
             self.popup_msg(
                 f"Stream on UAV screen error: {repr(e)}",
@@ -2346,7 +2388,7 @@ class App(QMainWindow):
                 type_msg="error",
             )
 
-    def update_uav_screen_view(self, uav_index, frame) -> None:
+    def update_uav_screen_view(self, uav_index, frame, screen_name="all") -> None:
         """
         Starts streaming video from the specified UAV to the screen view.
 
@@ -2358,17 +2400,19 @@ class App(QMainWindow):
         """
         try:
             global UAVs
-            for screen in screen_sizes.keys():
-                UAVs[uav_index][screen].setPixmap(
-                    convert_cv2qt(frame, size=screen_sizes[screen])
+            if screen_name == "all":
+                for screen in screen_sizes.keys():
+                    UAVs[uav_index][screen].setPixmap(
+                        convert_cv2qt(frame, size=screen_sizes[screen])
+                    )
+
+            else:
+                UAVs[uav_index][screen_name].setPixmap(
+                    convert_cv2qt(frame, size=screen_sizes[screen_name])
                 )
-                UAVs[uav_index][screen].setScaledContents(True)
+
         except Exception as e:
-            self.popup_msg(
-                f"Update UAV screen view error: {repr(e)}",
-                src_msg="update_uav_screen_view",
-                type_msg="error",
-            )
+            pass
 
     # //-/////////////////////////////////////////////////////////////
     # ? display functions
@@ -2441,12 +2485,41 @@ class App(QMainWindow):
             self.ui.mainTerminal.setFocus()
             self.ui.mainTerminal.moveCursor(self.ui.mainTerminal.textCursor().End)
             self.ui.mainTerminal.appendPlainText(text)
-        else:
+        elif uav_index in range(1, MAX_UAV_COUNT + 1):
             self.uav_status_views[uav_index - 1].setFocus()
             self.uav_status_views[uav_index - 1].moveCursor(
                 self.uav_status_views[uav_index - 1].textCursor().End
             )
             self.uav_status_views[uav_index - 1].appendPlainText(text)
+
+    def set_default_uav_information_display(self, uav_index) -> None:
+        """
+        Sets the default UAV information display for a specified UAV.
+
+        Args:
+            uav_index (int): The index of the UAV to set the default information display for.
+
+        Returns:
+            None
+        """
+        global UAVs
+        # default is not connected
+        UAVs[uav_index]["uav_information"]["connection_status"] = False
+        UAVs[uav_index]["label_param"].setStyleSheet("background-color: red")
+        self.sett_checkBox_active_lists[uav_index - 1].setChecked(False)
+        set_row_color(
+            self.ui.table_uav_large,
+            uav_index - 1,
+            QtGui.QColor(255, 160, 122),
+        )
+        set_row_color(
+            self.ui.table_uav_small,
+            uav_index - 1,
+            QtGui.QColor(255, 160, 122),
+        )
+        UAVs[uav_index]["information_view"].setText(
+            self.template_information(uav_index, **UAVs[uav_index]["uav_information"])
+        )
 
     # //-/////////////////////////////////////////////////////////////
     # ? map handling functions
@@ -2532,5 +2605,4 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
     run()

@@ -24,12 +24,17 @@ def convert_cv2qt(cv_img, size=(360, 640)) -> QPixmap:
     Returns:
         image: RGB image with qt format
     """
+    screen_width, screen_height = size
 
-    rgb_image = cv2.cvtColor(
-        cv2.resize(cv_img, size, interpolation=cv2.INTER_AREA),
-        cv2.COLOR_BGR2RGB,
+    cv_img = imutils.resize(
+        imutils.resize(cv_img, width=screen_width), height=screen_height
     )
 
+    rgb_image = cv2.cvtColor(
+        cv_img,
+        cv2.COLOR_BGR2RGB,
+    )
+    # print(rgb_image.shape)
     qt_image = QtGui.QImage(
         rgb_image,
         rgb_image.shape[1],
@@ -37,7 +42,7 @@ def convert_cv2qt(cv_img, size=(360, 640)) -> QPixmap:
         rgb_image.strides[0],
         QtGui.QImage.Format_RGB888,
     )
-    # p = qt_image.scaled(*size, Qt.KeepAspectRatio)
+    qt_image = qt_image.scaled(*size, Qt.KeepAspectRatio)
     return QPixmap.fromImage(qt_image)
 
 

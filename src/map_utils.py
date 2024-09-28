@@ -1,13 +1,21 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QFormLayout, QLineEdit, QGroupBox, QPushButton
-from PyQt5.QtWebChannel import QWebChannel
-from PyQt5.QtWebEngineWidgets import QWebEngineProfile, QWebEngineScript, QWebEngineView
-from PyQt5.QtNetwork import QNetworkDiskCache
-from PyQt5.QtCore import QUrl, pyqtSlot, QFile
+import json
+import os
 
 import decorator
-import os
-import json
-from PyQt5 import QtCore, QtWidgets, QtWebEngineWidgets
+from PyQt5 import QtCore, QtWebEngineWidgets, QtWidgets
+from PyQt5.QtCore import QFile, QUrl, pyqtSlot
+from PyQt5.QtNetwork import QNetworkDiskCache
+from PyQt5.QtWebChannel import QWebChannel
+from PyQt5.QtWebEngineWidgets import QWebEngineProfile, QWebEngineScript, QWebEngineView
+from PyQt5.QtWidgets import (
+    QApplication,
+    QFormLayout,
+    QGroupBox,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QVBoxLayout,
+)
 
 QtCore.qInstallMessageHandler(lambda *args: None)
 
@@ -59,10 +67,9 @@ class MapEngine(QWebEngineView):
         self.initialized = False
 
         self.map_widget = widget
-
-        # self.map_widget.getSettings().setJavaScriptEnabled(true)
-        web_channel = QWebChannel(self.map_widget)
         self.map_page = self.map_widget.page()
+        # self.map_widget.getSettings().setJavaScriptEnabled(true)
+        web_channel = QWebChannel(self.map_page)
         self.map_page.setWebChannel(web_channel)
         web_channel.registerObject("qtWidget", self)
 
@@ -97,22 +104,24 @@ class MapEngine(QWebEngineView):
         return self.map_page.runJavaScript(script)
 
     def centerAt(self, latitude, longitude):
-        self.runScript(
-            "setCenterJs({}, {})".format(latitude, longitude))
+        self.runScript("setCenterJs({}, {})".format(latitude, longitude))
 
     def setZoom(self, zoom):
         self.runScript("setZoomJs({})".format(zoom))
 
     def center(self):
         center = self.runScript("getCenterJs()")
-        return center['lat'], center['lng']
+        return center["lat"], center["lng"]
 
     def addMarker(self, key, latitude, longitude):
-        return self.runScript(f"addMarkerJs(key={key}, latitude={latitude}, longitude={longitude})")
+        return self.runScript(
+            f"addMarkerJs(key={key}, latitude={latitude}, longitude={longitude})"
+        )
 
     def mapMoveMarker(self, key, latitude, longitude):
         self.runScript(
-            f"moveMarkerJs(key={key}, latitude={latitude}, longitude={longitude})")
+            f"moveMarkerJs(key={key}, latitude={latitude}, longitude={longitude})"
+        )
 
     def positionMarker(self, key):
         return tuple(self.runScript("posMarker(key={!r});".format(key)))

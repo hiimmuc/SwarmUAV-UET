@@ -38,6 +38,7 @@ class Ui_MainWindow(object):
                 "/media/phuongnam-d/920C22060C21E5C7/Personal/Workspace/UAV/workspace/assets/pictures/no_signal2.jpg"
             )
         )
+        # self.label.setScaledContents(True)
         self.label.setObjectName("label")
 
         # adding another label for second video
@@ -48,6 +49,7 @@ class Ui_MainWindow(object):
                 "/media/phuongnam-d/920C22060C21E5C7/Personal/Workspace/UAV/workspace/assets/pictures/no_signal2.jpg"
             )
         )
+        # self.label_4.setScaledContents(True)
         self.label_4.setObjectName("label")
 
         self.horizontalLayout.addWidget(self.label)
@@ -188,7 +190,9 @@ class Ui_MainWindow(object):
             frame.strides[0],
             QImage.Format_RGB888,
         )
+
         label.setPixmap(QtGui.QPixmap.fromImage(image))
+        # label.setScaledContents(True)
 
     def brightness_value(self, value):
         """This function will take value from the slider
