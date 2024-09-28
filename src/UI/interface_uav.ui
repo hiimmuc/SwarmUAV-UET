@@ -242,6 +242,12 @@ background-color: rgb(252, 175, 62);</string>
              <layout class="QGridLayout" name="gridLayout">
               <item row="1" column="2">
                <widget class="QLabel" name="general_screen_uav_6">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="maximumSize">
                  <size>
                   <width>592</width>
@@ -249,16 +255,19 @@ background-color: rgb(252, 175, 62);</string>
                  </size>
                 </property>
                 <property name="frameShape">
-                 <enum>QFrame::Box</enum>
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>0</number>
                 </property>
                 <property name="text">
                  <string/>
                 </property>
                 <property name="pixmap">
-                 <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                 <pixmap>../../assets/pictures/resized/nosignal_333x592.jpg</pixmap>
                 </property>
                 <property name="scaledContents">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -267,6 +276,12 @@ background-color: rgb(252, 175, 62);</string>
               </item>
               <item row="0" column="0">
                <widget class="QLabel" name="general_screen_uav_1">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="maximumSize">
                  <size>
                   <width>592</width>
@@ -274,16 +289,19 @@ background-color: rgb(252, 175, 62);</string>
                  </size>
                 </property>
                 <property name="frameShape">
-                 <enum>QFrame::Box</enum>
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>0</number>
                 </property>
                 <property name="text">
                  <string/>
                 </property>
                 <property name="pixmap">
-                 <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                 <pixmap>../../assets/pictures/resized/nosignal_333x592.jpg</pixmap>
                 </property>
                 <property name="scaledContents">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -292,6 +310,12 @@ background-color: rgb(252, 175, 62);</string>
               </item>
               <item row="0" column="2">
                <widget class="QLabel" name="general_screen_uav_3">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="maximumSize">
                  <size>
                   <width>592</width>
@@ -299,16 +323,19 @@ background-color: rgb(252, 175, 62);</string>
                  </size>
                 </property>
                 <property name="frameShape">
-                 <enum>QFrame::Box</enum>
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>0</number>
                 </property>
                 <property name="text">
                  <string/>
                 </property>
                 <property name="pixmap">
-                 <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                 <pixmap>../../assets/pictures/resized/nosignal_333x592.jpg</pixmap>
                 </property>
                 <property name="scaledContents">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -317,6 +344,12 @@ background-color: rgb(252, 175, 62);</string>
               </item>
               <item row="0" column="1">
                <widget class="QLabel" name="general_screen_uav_2">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="maximumSize">
                  <size>
                   <width>592</width>
@@ -324,16 +357,19 @@ background-color: rgb(252, 175, 62);</string>
                  </size>
                 </property>
                 <property name="frameShape">
-                 <enum>QFrame::Box</enum>
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>0</number>
                 </property>
                 <property name="text">
                  <string/>
                 </property>
                 <property name="pixmap">
-                 <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                 <pixmap>../../assets/pictures/resized/nosignal_333x592.jpg</pixmap>
                 </property>
                 <property name="scaledContents">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -342,6 +378,12 @@ background-color: rgb(252, 175, 62);</string>
               </item>
               <item row="1" column="0">
                <widget class="QLabel" name="general_screen_uav_4">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="maximumSize">
                  <size>
                   <width>592</width>
@@ -349,16 +391,19 @@ background-color: rgb(252, 175, 62);</string>
                  </size>
                 </property>
                 <property name="frameShape">
-                 <enum>QFrame::Box</enum>
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>0</number>
                 </property>
                 <property name="text">
                  <string/>
                 </property>
                 <property name="pixmap">
-                 <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                 <pixmap>../../assets/pictures/resized/nosignal_333x592.jpg</pixmap>
                 </property>
                 <property name="scaledContents">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -367,6 +412,12 @@ background-color: rgb(252, 175, 62);</string>
               </item>
               <item row="1" column="1">
                <widget class="QLabel" name="general_screen_uav_5">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="maximumSize">
                  <size>
                   <width>592</width>
@@ -374,16 +425,19 @@ background-color: rgb(252, 175, 62);</string>
                  </size>
                 </property>
                 <property name="frameShape">
-                 <enum>QFrame::Box</enum>
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>0</number>
                 </property>
                 <property name="text">
                  <string/>
                 </property>
                 <property name="pixmap">
-                 <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                 <pixmap>../../assets/pictures/resized/nosignal_333x592.jpg</pixmap>
                 </property>
                 <property name="scaledContents">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -417,7 +471,7 @@ background-color: rgb(252, 175, 62);</string>
                 <item>
                  <widget class="QLabel" name="stream_screen_1">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -429,13 +483,16 @@ background-color: rgb(252, 175, 62);</string>
                    </size>
                   </property>
                   <property name="frameShape">
-                   <enum>QFrame::Box</enum>
+                   <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="lineWidth">
+                   <number>0</number>
                   </property>
                   <property name="text">
                    <string/>
                   </property>
                   <property name="pixmap">
-                   <pixmap>../../assets/pictures/no_signal2.jpg</pixmap>
+                   <pixmap>../../assets/pictures/resized/no_signal2_720x1280.jpg</pixmap>
                   </property>
                  </widget>
                 </item>
@@ -1709,7 +1766,7 @@ background-color: rgb(252, 175, 62);</string>
                 <item>
                  <widget class="QLabel" name="stream_screen_2">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -1721,13 +1778,16 @@ background-color: rgb(252, 175, 62);</string>
                    </size>
                   </property>
                   <property name="frameShape">
-                   <enum>QFrame::Box</enum>
+                   <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="lineWidth">
+                   <number>0</number>
                   </property>
                   <property name="text">
                    <string/>
                   </property>
                   <property name="pixmap">
-                   <pixmap>../../assets/pictures/no_signal2.jpg</pixmap>
+                   <pixmap>../../assets/pictures/resized/no_signal2_720x1280.jpg</pixmap>
                   </property>
                  </widget>
                 </item>
@@ -6871,7 +6931,7 @@ background-color: rgb(252, 175, 62);</string>
                 <item>
                  <widget class="QLabel" name="stream_screen_6">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -6883,13 +6943,16 @@ background-color: rgb(252, 175, 62);</string>
                    </size>
                   </property>
                   <property name="frameShape">
-                   <enum>QFrame::Box</enum>
+                   <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="lineWidth">
+                   <number>0</number>
                   </property>
                   <property name="text">
                    <string/>
                   </property>
                   <property name="pixmap">
-                   <pixmap>../../assets/pictures/no_signal2.jpg</pixmap>
+                   <pixmap>../../assets/pictures/resized/no_signal2_720x1280.jpg</pixmap>
                   </property>
                  </widget>
                 </item>
@@ -8992,7 +9055,7 @@ background-color: rgb(252, 175, 62);</string>
                   </property>
                   <property name="url">
                    <url>
-                    <string>file:///media/phuongnam-d/920C22060C21E5C7/Freelancer/UAV/workspace/assets/map.html</string>
+                    <string>file:///media/phuongnam-d/920C22060C21E5C7/Personal/Workspace/UAV/workspace/assets/map.html</string>
                    </url>
                   </property>
                  </widget>
@@ -9028,6 +9091,12 @@ background-color: rgb(252, 175, 62);</string>
                     </property>
                     <item row="0" column="2">
                      <widget class="QLabel" name="ovv_screen_uav_3">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
                       <property name="maximumSize">
                        <size>
                         <width>320</width>
@@ -9035,21 +9104,30 @@ background-color: rgb(252, 175, 62);</string>
                        </size>
                       </property>
                       <property name="frameShape">
-                       <enum>QFrame::WinPanel</enum>
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="lineWidth">
+                       <number>0</number>
                       </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="pixmap">
-                       <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                       <pixmap>../../assets/pictures/resized/nosignal_180x320.jpg</pixmap>
                       </property>
                       <property name="scaledContents">
-                       <bool>true</bool>
+                       <bool>false</bool>
                       </property>
                      </widget>
                     </item>
                     <item row="1" column="1">
                      <widget class="QLabel" name="ovv_screen_uav_5">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
                       <property name="maximumSize">
                        <size>
                         <width>320</width>
@@ -9057,21 +9135,30 @@ background-color: rgb(252, 175, 62);</string>
                        </size>
                       </property>
                       <property name="frameShape">
-                       <enum>QFrame::WinPanel</enum>
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="lineWidth">
+                       <number>0</number>
                       </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="pixmap">
-                       <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                       <pixmap>../../assets/pictures/resized/nosignal_180x320.jpg</pixmap>
                       </property>
                       <property name="scaledContents">
-                       <bool>true</bool>
+                       <bool>false</bool>
                       </property>
                      </widget>
                     </item>
                     <item row="0" column="0">
                      <widget class="QLabel" name="ovv_screen_uav_1">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
                       <property name="maximumSize">
                        <size>
                         <width>320</width>
@@ -9079,21 +9166,30 @@ background-color: rgb(252, 175, 62);</string>
                        </size>
                       </property>
                       <property name="frameShape">
-                       <enum>QFrame::WinPanel</enum>
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="lineWidth">
+                       <number>0</number>
                       </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="pixmap">
-                       <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                       <pixmap>../../assets/pictures/resized/nosignal_180x320.jpg</pixmap>
                       </property>
                       <property name="scaledContents">
-                       <bool>true</bool>
+                       <bool>false</bool>
                       </property>
                      </widget>
                     </item>
                     <item row="0" column="1">
                      <widget class="QLabel" name="ovv_screen_uav_2">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
                       <property name="maximumSize">
                        <size>
                         <width>320</width>
@@ -9101,21 +9197,30 @@ background-color: rgb(252, 175, 62);</string>
                        </size>
                       </property>
                       <property name="frameShape">
-                       <enum>QFrame::WinPanel</enum>
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="lineWidth">
+                       <number>0</number>
                       </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="pixmap">
-                       <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                       <pixmap>../../assets/pictures/resized/nosignal_180x320.jpg</pixmap>
                       </property>
                       <property name="scaledContents">
-                       <bool>true</bool>
+                       <bool>false</bool>
                       </property>
                      </widget>
                     </item>
                     <item row="1" column="0">
                      <widget class="QLabel" name="ovv_screen_uav_4">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
                       <property name="maximumSize">
                        <size>
                         <width>320</width>
@@ -9123,21 +9228,30 @@ background-color: rgb(252, 175, 62);</string>
                        </size>
                       </property>
                       <property name="frameShape">
-                       <enum>QFrame::WinPanel</enum>
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="lineWidth">
+                       <number>0</number>
                       </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="pixmap">
-                       <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                       <pixmap>../../assets/pictures/resized/nosignal_180x320.jpg</pixmap>
                       </property>
                       <property name="scaledContents">
-                       <bool>true</bool>
+                       <bool>false</bool>
                       </property>
                      </widget>
                     </item>
                     <item row="1" column="2">
                      <widget class="QLabel" name="ovv_screen_uav_6">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
                       <property name="maximumSize">
                        <size>
                         <width>320</width>
@@ -9145,16 +9259,19 @@ background-color: rgb(252, 175, 62);</string>
                        </size>
                       </property>
                       <property name="frameShape">
-                       <enum>QFrame::WinPanel</enum>
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="lineWidth">
+                       <number>0</number>
                       </property>
                       <property name="text">
                        <string/>
                       </property>
                       <property name="pixmap">
-                       <pixmap>../../assets/pictures/nosignal.jpg</pixmap>
+                       <pixmap>../../assets/pictures/resized/nosignal_180x320.jpg</pixmap>
                       </property>
                       <property name="scaledContents">
-                       <bool>true</bool>
+                       <bool>false</bool>
                       </property>
                      </widget>
                     </item>
@@ -10542,7 +10659,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="url">
              <url>
-              <string>file:///media/phuongnam-d/920C22060C21E5C7/Freelancer/UAV/workspace/assets/map.html</string>
+              <string>file:///media/phuongnam-d/920C22060C21E5C7/Personal/Workspace/UAV/workspace/assets/map.html</string>
              </url>
             </property>
             <property name="zoomFactor">

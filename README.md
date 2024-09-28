@@ -152,13 +152,13 @@
 
    ```
    conda env create -f environment.yml
+   pip install mavsdk --force
    ```
 4. Activate the environment
 
    ```
-   conda activate uav
-   conda env update --name uav --file environment.yml --prune
-   pip install mavsdk
+
+
    ```
 5. Setup Gazebo for first run ([Instruction](https://docs.px4.io/main/en/sim_gazebo_classic/multi_vehicle_simulation.html))):
 
@@ -222,17 +222,12 @@
   - [ ] map -> setup map window in pyqt5
   - [ ] auto-scaling windows
   - [ ] auto and manual mode (with background for auto and black for manual)
-- [ ] Multi-threading video stream with obj detection model
+- [X] Multi-threading video stream with obj detection model
   - [ ] Save video and handling realtime
   - [ ] Locate obj in real env
   - [ ] Fine tune on custom data
 
 ## Notes
-
-1. Goto long lat control
-2. check map function to buttons (mission) -> auto update mission generated from map
-3. map issues [fixed], --> dev: get infor from map
-4. video threads
 
 ## Collaborators:
 

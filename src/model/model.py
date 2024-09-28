@@ -44,7 +44,7 @@ class DetectionModel:
             net: cv2.dnn.Net = cv2.dnn.readNetFromCaffe(
                 prototxt=self.model_cfg, caffeModel=self.model_weight
             )
-        elif "yolo" in self.model_weight:
+        elif "darknet" in self.model_weight:
             net: cv2.dnn.Net = cv2.dnn.readNetFromDarknet(
                 cfgFile=self.model_cfg, darknetModel=self.model_weight
             )
@@ -117,9 +117,7 @@ class DetectionModel:
         for i in range(0, detections.shape[2]):
             confidence = detections[0, 0, i, 2]
             if confidence > confidence_threshold:
-                bounding_box = detections[0, 0, i, 3:7] * np.array(
-                    [width, height, width, height]
-                )
+                bounding_box = detections[0, 0, i, 3:7] * np.array([width, height, width, height])
                 x_start, y_start, x_end, y_end = bounding_box.astype("int")
 
                 # 显示image中的object类别及其置信度
@@ -127,9 +125,7 @@ class DetectionModel:
                 # 画bounding box
                 cv2.rectangle(image, (x_start, y_start), (x_end, y_end), (0, 0, 255), 2)
                 # 画文字的填充矿底色
-                cv2.rectangle(
-                    image, (x_start, y_start - 18), (x_end, y_start), (0, 0, 255), -1
-                )
+                cv2.rectangle(image, (x_start, y_start - 18), (x_end, y_start), (0, 0, 255), -1)
                 # detection result的文字显示
                 cv2.putText(
                     image,

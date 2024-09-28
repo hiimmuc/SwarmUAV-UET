@@ -18,9 +18,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1920, 1080)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
@@ -35,14 +33,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.stackedWidget = QtWidgets.QStackedWidget(self.centralWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.stackedWidget.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.stackedWidget.sizePolicy().hasHeightForWidth())
         self.stackedWidget.setSizePolicy(sizePolicy)
         self.stackedWidget.setMaximumSize(QtCore.QSize(1920, 1080))
         self.stackedWidget.setLayoutDirection(QtCore.Qt.LeftToRight)
@@ -61,9 +55,7 @@ class Ui_MainWindow(object):
         self.header.setSpacing(60)
         self.header.setObjectName("header")
         self.page_name = QtWidgets.QLabel(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.page_name.sizePolicy().hasHeightForWidth())
@@ -77,9 +69,7 @@ class Ui_MainWindow(object):
         self.page_name.setObjectName("page_name")
         self.header.addWidget(self.page_name)
         self.logo2 = QtWidgets.QLabel(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.logo2.sizePolicy().hasHeightForWidth())
@@ -108,7 +98,8 @@ class Ui_MainWindow(object):
         font.setPointSize(20)
         self.logo1.setFont(font)
         self.logo1.setAutoFillBackground(False)
-        self.logo1.setStyleSheet("\n" "background-color: rgb(252, 175, 62);")
+        self.logo1.setStyleSheet("\n"
+"background-color: rgb(252, 175, 62);")
         self.logo1.setFrameShape(QtWidgets.QFrame.Box)
         self.logo1.setAlignment(QtCore.Qt.AlignCenter)
         self.logo1.setWordWrap(True)
@@ -132,68 +123,92 @@ class Ui_MainWindow(object):
         self.gridLayout = QtWidgets.QGridLayout(self.tab_all_uav_screens)
         self.gridLayout.setObjectName("gridLayout")
         self.general_screen_uav_6 = QtWidgets.QLabel(self.tab_all_uav_screens)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.general_screen_uav_6.sizePolicy().hasHeightForWidth())
+        self.general_screen_uav_6.setSizePolicy(sizePolicy)
         self.general_screen_uav_6.setMaximumSize(QtCore.QSize(592, 333))
-        self.general_screen_uav_6.setFrameShape(QtWidgets.QFrame.Box)
+        self.general_screen_uav_6.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.general_screen_uav_6.setLineWidth(0)
         self.general_screen_uav_6.setText("")
-        self.general_screen_uav_6.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.general_screen_uav_6.setScaledContents(True)
+        self.general_screen_uav_6.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg"))
+        self.general_screen_uav_6.setScaledContents(False)
         self.general_screen_uav_6.setAlignment(QtCore.Qt.AlignCenter)
         self.general_screen_uav_6.setObjectName("general_screen_uav_6")
         self.gridLayout.addWidget(self.general_screen_uav_6, 1, 2, 1, 1)
         self.general_screen_uav_1 = QtWidgets.QLabel(self.tab_all_uav_screens)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.general_screen_uav_1.sizePolicy().hasHeightForWidth())
+        self.general_screen_uav_1.setSizePolicy(sizePolicy)
         self.general_screen_uav_1.setMaximumSize(QtCore.QSize(592, 333))
-        self.general_screen_uav_1.setFrameShape(QtWidgets.QFrame.Box)
+        self.general_screen_uav_1.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.general_screen_uav_1.setLineWidth(0)
         self.general_screen_uav_1.setText("")
-        self.general_screen_uav_1.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.general_screen_uav_1.setScaledContents(True)
+        self.general_screen_uav_1.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg"))
+        self.general_screen_uav_1.setScaledContents(False)
         self.general_screen_uav_1.setAlignment(QtCore.Qt.AlignCenter)
         self.general_screen_uav_1.setObjectName("general_screen_uav_1")
         self.gridLayout.addWidget(self.general_screen_uav_1, 0, 0, 1, 1)
         self.general_screen_uav_3 = QtWidgets.QLabel(self.tab_all_uav_screens)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.general_screen_uav_3.sizePolicy().hasHeightForWidth())
+        self.general_screen_uav_3.setSizePolicy(sizePolicy)
         self.general_screen_uav_3.setMaximumSize(QtCore.QSize(592, 333))
-        self.general_screen_uav_3.setFrameShape(QtWidgets.QFrame.Box)
+        self.general_screen_uav_3.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.general_screen_uav_3.setLineWidth(0)
         self.general_screen_uav_3.setText("")
-        self.general_screen_uav_3.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.general_screen_uav_3.setScaledContents(True)
+        self.general_screen_uav_3.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg"))
+        self.general_screen_uav_3.setScaledContents(False)
         self.general_screen_uav_3.setAlignment(QtCore.Qt.AlignCenter)
         self.general_screen_uav_3.setObjectName("general_screen_uav_3")
         self.gridLayout.addWidget(self.general_screen_uav_3, 0, 2, 1, 1)
         self.general_screen_uav_2 = QtWidgets.QLabel(self.tab_all_uav_screens)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.general_screen_uav_2.sizePolicy().hasHeightForWidth())
+        self.general_screen_uav_2.setSizePolicy(sizePolicy)
         self.general_screen_uav_2.setMaximumSize(QtCore.QSize(592, 333))
-        self.general_screen_uav_2.setFrameShape(QtWidgets.QFrame.Box)
+        self.general_screen_uav_2.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.general_screen_uav_2.setLineWidth(0)
         self.general_screen_uav_2.setText("")
-        self.general_screen_uav_2.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.general_screen_uav_2.setScaledContents(True)
+        self.general_screen_uav_2.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg"))
+        self.general_screen_uav_2.setScaledContents(False)
         self.general_screen_uav_2.setAlignment(QtCore.Qt.AlignCenter)
         self.general_screen_uav_2.setObjectName("general_screen_uav_2")
         self.gridLayout.addWidget(self.general_screen_uav_2, 0, 1, 1, 1)
         self.general_screen_uav_4 = QtWidgets.QLabel(self.tab_all_uav_screens)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.general_screen_uav_4.sizePolicy().hasHeightForWidth())
+        self.general_screen_uav_4.setSizePolicy(sizePolicy)
         self.general_screen_uav_4.setMaximumSize(QtCore.QSize(592, 333))
-        self.general_screen_uav_4.setFrameShape(QtWidgets.QFrame.Box)
+        self.general_screen_uav_4.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.general_screen_uav_4.setLineWidth(0)
         self.general_screen_uav_4.setText("")
-        self.general_screen_uav_4.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.general_screen_uav_4.setScaledContents(True)
+        self.general_screen_uav_4.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg"))
+        self.general_screen_uav_4.setScaledContents(False)
         self.general_screen_uav_4.setAlignment(QtCore.Qt.AlignCenter)
         self.general_screen_uav_4.setObjectName("general_screen_uav_4")
         self.gridLayout.addWidget(self.general_screen_uav_4, 1, 0, 1, 1)
         self.general_screen_uav_5 = QtWidgets.QLabel(self.tab_all_uav_screens)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.general_screen_uav_5.sizePolicy().hasHeightForWidth())
+        self.general_screen_uav_5.setSizePolicy(sizePolicy)
         self.general_screen_uav_5.setMaximumSize(QtCore.QSize(592, 333))
-        self.general_screen_uav_5.setFrameShape(QtWidgets.QFrame.Box)
+        self.general_screen_uav_5.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.general_screen_uav_5.setLineWidth(0)
         self.general_screen_uav_5.setText("")
-        self.general_screen_uav_5.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.general_screen_uav_5.setScaledContents(True)
+        self.general_screen_uav_5.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg"))
+        self.general_screen_uav_5.setScaledContents(False)
         self.general_screen_uav_5.setAlignment(QtCore.Qt.AlignCenter)
         self.general_screen_uav_5.setObjectName("general_screen_uav_5")
         self.gridLayout.addWidget(self.general_screen_uav_5, 1, 1, 1, 1)
@@ -203,27 +218,20 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.tab_uav_1)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.LayoutH_stream_screen_1 = QtWidgets.QHBoxLayout()
-        self.LayoutH_stream_screen_1.setSizeConstraint(
-            QtWidgets.QLayout.SetDefaultConstraint
-        )
+        self.LayoutH_stream_screen_1.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.LayoutH_stream_screen_1.setContentsMargins(10, 10, 10, 10)
         self.LayoutH_stream_screen_1.setObjectName("LayoutH_stream_screen_1")
         self.stream_screen_1 = QtWidgets.QLabel(self.tab_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.stream_screen_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.stream_screen_1.sizePolicy().hasHeightForWidth())
         self.stream_screen_1.setSizePolicy(sizePolicy)
         self.stream_screen_1.setMaximumSize(QtCore.QSize(1280, 720))
-        self.stream_screen_1.setFrameShape(QtWidgets.QFrame.Box)
+        self.stream_screen_1.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.stream_screen_1.setLineWidth(0)
         self.stream_screen_1.setText("")
-        self.stream_screen_1.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg")
-        )
+        self.stream_screen_1.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/no_signal2_720x1280.jpg"))
         self.stream_screen_1.setObjectName("stream_screen_1")
         self.LayoutH_stream_screen_1.addWidget(self.stream_screen_1)
         self.horizontalLayout_2.addLayout(self.LayoutH_stream_screen_1)
@@ -418,90 +426,62 @@ class Ui_MainWindow(object):
         self.verticalLayout_52.setSpacing(0)
         self.verticalLayout_52.setObjectName("verticalLayout_52")
         self.mis_takeoff_alt_dis_uav_1 = QtWidgets.QLabel(self.param_current_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_dis_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_dis_uav_1.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_dis_uav_1.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_dis_uav_1.setMinimumSize(QtCore.QSize(30, 30))
         self.mis_takeoff_alt_dis_uav_1.setMaximumSize(QtCore.QSize(100, 30))
-        self.mis_takeoff_alt_dis_uav_1.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mis_takeoff_alt_dis_uav_1.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mis_takeoff_alt_dis_uav_1.setText("")
         self.mis_takeoff_alt_dis_uav_1.setIndent(5)
         self.mis_takeoff_alt_dis_uav_1.setObjectName("mis_takeoff_alt_dis_uav_1")
         self.verticalLayout_52.addWidget(self.mis_takeoff_alt_dis_uav_1)
         self.com_disarm_land_dis_uav_1 = QtWidgets.QLabel(self.param_current_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_dis_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_dis_uav_1.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_dis_uav_1.setSizePolicy(sizePolicy)
         self.com_disarm_land_dis_uav_1.setMinimumSize(QtCore.QSize(30, 30))
         self.com_disarm_land_dis_uav_1.setMaximumSize(QtCore.QSize(100, 30))
-        self.com_disarm_land_dis_uav_1.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.com_disarm_land_dis_uav_1.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.com_disarm_land_dis_uav_1.setText("")
         self.com_disarm_land_dis_uav_1.setIndent(5)
         self.com_disarm_land_dis_uav_1.setObjectName("com_disarm_land_dis_uav_1")
         self.verticalLayout_52.addWidget(self.com_disarm_land_dis_uav_1)
         self.mpc_tko_speed_dis_uav_1 = QtWidgets.QLabel(self.param_current_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_dis_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_dis_uav_1.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_dis_uav_1.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_dis_uav_1.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_tko_speed_dis_uav_1.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_tko_speed_dis_uav_1.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_tko_speed_dis_uav_1.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_tko_speed_dis_uav_1.setText("")
         self.mpc_tko_speed_dis_uav_1.setIndent(5)
         self.mpc_tko_speed_dis_uav_1.setObjectName("mpc_tko_speed_dis_uav_1")
         self.verticalLayout_52.addWidget(self.mpc_tko_speed_dis_uav_1)
         self.mpc_land_speed_dis_uav_1 = QtWidgets.QLabel(self.param_current_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_dis_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_dis_uav_1.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_dis_uav_1.setSizePolicy(sizePolicy)
         self.mpc_land_speed_dis_uav_1.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_land_speed_dis_uav_1.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_land_speed_dis_uav_1.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_land_speed_dis_uav_1.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_land_speed_dis_uav_1.setText("")
         self.mpc_land_speed_dis_uav_1.setIndent(5)
         self.mpc_land_speed_dis_uav_1.setObjectName("mpc_land_speed_dis_uav_1")
         self.verticalLayout_52.addWidget(self.mpc_land_speed_dis_uav_1)
         self.mpc_xy_p_dis_uav_1 = QtWidgets.QLabel(self.param_current_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_dis_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_dis_uav_1.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_dis_uav_1.setSizePolicy(sizePolicy)
         self.mpc_xy_p_dis_uav_1.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_p_dis_uav_1.setMaximumSize(QtCore.QSize(100, 30))
@@ -511,52 +491,36 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_dis_uav_1.setObjectName("mpc_xy_p_dis_uav_1")
         self.verticalLayout_52.addWidget(self.mpc_xy_p_dis_uav_1)
         self.mpc_xy_vel_d_acc_dis_uav_1 = QtWidgets.QLabel(self.param_current_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_dis_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_dis_uav_1.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_dis_uav_1.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_dis_uav_1.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_vel_d_acc_dis_uav_1.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_d_acc_dis_uav_1.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_d_acc_dis_uav_1.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_d_acc_dis_uav_1.setText("")
         self.mpc_xy_vel_d_acc_dis_uav_1.setIndent(5)
         self.mpc_xy_vel_d_acc_dis_uav_1.setObjectName("mpc_xy_vel_d_acc_dis_uav_1")
         self.verticalLayout_52.addWidget(self.mpc_xy_vel_d_acc_dis_uav_1)
         self.mpc_xy_vel_p_acc_dis_uav_1 = QtWidgets.QLabel(self.param_current_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_dis_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_dis_uav_1.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_dis_uav_1.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_dis_uav_1.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_vel_p_acc_dis_uav_1.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_p_acc_dis_uav_1.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_p_acc_dis_uav_1.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_p_acc_dis_uav_1.setText("")
         self.mpc_xy_vel_p_acc_dis_uav_1.setIndent(5)
         self.mpc_xy_vel_p_acc_dis_uav_1.setObjectName("mpc_xy_vel_p_acc_dis_uav_1")
         self.verticalLayout_52.addWidget(self.mpc_xy_vel_p_acc_dis_uav_1)
         self.mc_pitch_p_dis_uav_1 = QtWidgets.QLabel(self.param_current_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_dis_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_dis_uav_1.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_dis_uav_1.setSizePolicy(sizePolicy)
         self.mc_pitch_p_dis_uav_1.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_pitch_p_dis_uav_1.setMaximumSize(QtCore.QSize(100, 30))
@@ -566,14 +530,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_dis_uav_1.setObjectName("mc_pitch_p_dis_uav_1")
         self.verticalLayout_52.addWidget(self.mc_pitch_p_dis_uav_1)
         self.mc_roll_p_dis_uav_1 = QtWidgets.QLabel(self.param_current_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_dis_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_dis_uav_1.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_dis_uav_1.setSizePolicy(sizePolicy)
         self.mc_roll_p_dis_uav_1.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_roll_p_dis_uav_1.setMaximumSize(QtCore.QSize(100, 30))
@@ -583,14 +543,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_dis_uav_1.setObjectName("mc_roll_p_dis_uav_1")
         self.verticalLayout_52.addWidget(self.mc_roll_p_dis_uav_1)
         self.mc_yaw_p_dis_uav_1 = QtWidgets.QLabel(self.param_current_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_dis_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_dis_uav_1.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_dis_uav_1.setSizePolicy(sizePolicy)
         self.mc_yaw_p_dis_uav_1.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_yaw_p_dis_uav_1.setMaximumSize(QtCore.QSize(100, 30))
@@ -600,14 +556,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_dis_uav_1.setObjectName("mc_yaw_p_dis_uav_1")
         self.verticalLayout_52.addWidget(self.mc_yaw_p_dis_uav_1)
         self.btn_param_dis_uav_1 = QtWidgets.QPushButton(self.param_current_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_dis_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_dis_uav_1.sizePolicy().hasHeightForWidth())
         self.btn_param_dis_uav_1.setSizePolicy(sizePolicy)
         self.btn_param_dis_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_param_dis_uav_1.setStyleSheet("background-color: rgb(239, 41, 41);")
@@ -626,94 +578,66 @@ class Ui_MainWindow(object):
         self.verticalLayout_51.setSpacing(0)
         self.verticalLayout_51.setObjectName("verticalLayout_51")
         self.mis_takeoff_alt_set_uav_1 = QtWidgets.QLineEdit(self.param_set_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_set_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_set_uav_1.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_set_uav_1.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_set_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mis_takeoff_alt_set_uav_1.setFont(font)
         self.mis_takeoff_alt_set_uav_1.setAutoFillBackground(False)
-        self.mis_takeoff_alt_set_uav_1.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mis_takeoff_alt_set_uav_1.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mis_takeoff_alt_set_uav_1.setObjectName("mis_takeoff_alt_set_uav_1")
         self.verticalLayout_51.addWidget(self.mis_takeoff_alt_set_uav_1)
         self.com_disarm_land_set_uav_1 = QtWidgets.QLineEdit(self.param_set_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_set_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_set_uav_1.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_set_uav_1.setSizePolicy(sizePolicy)
         self.com_disarm_land_set_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.com_disarm_land_set_uav_1.setFont(font)
         self.com_disarm_land_set_uav_1.setAutoFillBackground(False)
-        self.com_disarm_land_set_uav_1.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.com_disarm_land_set_uav_1.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.com_disarm_land_set_uav_1.setObjectName("com_disarm_land_set_uav_1")
         self.verticalLayout_51.addWidget(self.com_disarm_land_set_uav_1)
         self.mpc_tko_speed_set_uav_1 = QtWidgets.QLineEdit(self.param_set_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_set_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_set_uav_1.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_set_uav_1.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_set_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_tko_speed_set_uav_1.setFont(font)
         self.mpc_tko_speed_set_uav_1.setAutoFillBackground(False)
-        self.mpc_tko_speed_set_uav_1.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_tko_speed_set_uav_1.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_tko_speed_set_uav_1.setObjectName("mpc_tko_speed_set_uav_1")
         self.verticalLayout_51.addWidget(self.mpc_tko_speed_set_uav_1)
         self.mpc_land_speed_set_uav_1 = QtWidgets.QLineEdit(self.param_set_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_set_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_set_uav_1.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_set_uav_1.setSizePolicy(sizePolicy)
         self.mpc_land_speed_set_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_land_speed_set_uav_1.setFont(font)
         self.mpc_land_speed_set_uav_1.setAutoFillBackground(False)
-        self.mpc_land_speed_set_uav_1.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_land_speed_set_uav_1.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_land_speed_set_uav_1.setObjectName("mpc_land_speed_set_uav_1")
         self.verticalLayout_51.addWidget(self.mpc_land_speed_set_uav_1)
         self.mpc_xy_p_set_uav_1 = QtWidgets.QLineEdit(self.param_set_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_set_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_set_uav_1.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_set_uav_1.setSizePolicy(sizePolicy)
         self.mpc_xy_p_set_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -724,54 +648,38 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_set_uav_1.setObjectName("mpc_xy_p_set_uav_1")
         self.verticalLayout_51.addWidget(self.mpc_xy_p_set_uav_1)
         self.mpc_xy_vel_d_acc_set_uav_1 = QtWidgets.QLineEdit(self.param_set_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_set_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_set_uav_1.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_set_uav_1.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_set_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_d_acc_set_uav_1.setFont(font)
         self.mpc_xy_vel_d_acc_set_uav_1.setAutoFillBackground(False)
-        self.mpc_xy_vel_d_acc_set_uav_1.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_d_acc_set_uav_1.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_d_acc_set_uav_1.setObjectName("mpc_xy_vel_d_acc_set_uav_1")
         self.verticalLayout_51.addWidget(self.mpc_xy_vel_d_acc_set_uav_1)
         self.mpc_xy_vel_p_acc_set_uav_1 = QtWidgets.QLineEdit(self.param_set_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_set_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_set_uav_1.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_set_uav_1.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_set_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_p_acc_set_uav_1.setFont(font)
         self.mpc_xy_vel_p_acc_set_uav_1.setAutoFillBackground(False)
-        self.mpc_xy_vel_p_acc_set_uav_1.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_p_acc_set_uav_1.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_p_acc_set_uav_1.setObjectName("mpc_xy_vel_p_acc_set_uav_1")
         self.verticalLayout_51.addWidget(self.mpc_xy_vel_p_acc_set_uav_1)
         self.mc_pitch_p_set_uav_1 = QtWidgets.QLineEdit(self.param_set_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_set_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_set_uav_1.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_set_uav_1.setSizePolicy(sizePolicy)
         self.mc_pitch_p_set_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -782,14 +690,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_set_uav_1.setObjectName("mc_pitch_p_set_uav_1")
         self.verticalLayout_51.addWidget(self.mc_pitch_p_set_uav_1)
         self.mc_roll_p_set_uav_1 = QtWidgets.QLineEdit(self.param_set_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_set_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_set_uav_1.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_set_uav_1.setSizePolicy(sizePolicy)
         self.mc_roll_p_set_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -800,14 +704,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_set_uav_1.setObjectName("mc_roll_p_set_uav_1")
         self.verticalLayout_51.addWidget(self.mc_roll_p_set_uav_1)
         self.mc_yaw_p_set_uav_1 = QtWidgets.QLineEdit(self.param_set_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_set_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_set_uav_1.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_set_uav_1.setSizePolicy(sizePolicy)
         self.mc_yaw_p_set_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -818,14 +718,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_set_uav_1.setObjectName("mc_yaw_p_set_uav_1")
         self.verticalLayout_51.addWidget(self.mc_yaw_p_set_uav_1)
         self.btn_param_set_uav_1 = QtWidgets.QPushButton(self.param_set_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_set_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_set_uav_1.sizePolicy().hasHeightForWidth())
         self.btn_param_set_uav_1.setSizePolicy(sizePolicy)
         self.btn_param_set_uav_1.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_param_set_uav_1.setStyleSheet("background-color: rgb(239, 41, 41);")
@@ -836,14 +732,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.information_uav_1 = QtWidgets.QTextBrowser(self.tab_uav_1)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.information_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.information_uav_1.sizePolicy().hasHeightForWidth())
         self.information_uav_1.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("Ubuntu Mono")
@@ -873,27 +765,20 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.tab_uav_2)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.LayoutH_stream_screen_2 = QtWidgets.QHBoxLayout()
-        self.LayoutH_stream_screen_2.setSizeConstraint(
-            QtWidgets.QLayout.SetDefaultConstraint
-        )
+        self.LayoutH_stream_screen_2.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.LayoutH_stream_screen_2.setContentsMargins(10, 10, 10, 10)
         self.LayoutH_stream_screen_2.setObjectName("LayoutH_stream_screen_2")
         self.stream_screen_2 = QtWidgets.QLabel(self.tab_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.stream_screen_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.stream_screen_2.sizePolicy().hasHeightForWidth())
         self.stream_screen_2.setSizePolicy(sizePolicy)
         self.stream_screen_2.setMaximumSize(QtCore.QSize(1280, 720))
-        self.stream_screen_2.setFrameShape(QtWidgets.QFrame.Box)
+        self.stream_screen_2.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.stream_screen_2.setLineWidth(0)
         self.stream_screen_2.setText("")
-        self.stream_screen_2.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg")
-        )
+        self.stream_screen_2.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/no_signal2_720x1280.jpg"))
         self.stream_screen_2.setObjectName("stream_screen_2")
         self.LayoutH_stream_screen_2.addWidget(self.stream_screen_2)
         self.horizontalLayout_3.addLayout(self.LayoutH_stream_screen_2)
@@ -1087,90 +972,62 @@ class Ui_MainWindow(object):
         self.verticalLayout_58.setSpacing(0)
         self.verticalLayout_58.setObjectName("verticalLayout_58")
         self.mis_takeoff_alt_dis_uav_2 = QtWidgets.QLabel(self.param_current_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_dis_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_dis_uav_2.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_dis_uav_2.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_dis_uav_2.setMinimumSize(QtCore.QSize(30, 30))
         self.mis_takeoff_alt_dis_uav_2.setMaximumSize(QtCore.QSize(100, 30))
-        self.mis_takeoff_alt_dis_uav_2.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mis_takeoff_alt_dis_uav_2.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mis_takeoff_alt_dis_uav_2.setText("")
         self.mis_takeoff_alt_dis_uav_2.setIndent(5)
         self.mis_takeoff_alt_dis_uav_2.setObjectName("mis_takeoff_alt_dis_uav_2")
         self.verticalLayout_58.addWidget(self.mis_takeoff_alt_dis_uav_2)
         self.com_disarm_land_dis_uav_2 = QtWidgets.QLabel(self.param_current_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_dis_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_dis_uav_2.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_dis_uav_2.setSizePolicy(sizePolicy)
         self.com_disarm_land_dis_uav_2.setMinimumSize(QtCore.QSize(30, 30))
         self.com_disarm_land_dis_uav_2.setMaximumSize(QtCore.QSize(100, 30))
-        self.com_disarm_land_dis_uav_2.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.com_disarm_land_dis_uav_2.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.com_disarm_land_dis_uav_2.setText("")
         self.com_disarm_land_dis_uav_2.setIndent(5)
         self.com_disarm_land_dis_uav_2.setObjectName("com_disarm_land_dis_uav_2")
         self.verticalLayout_58.addWidget(self.com_disarm_land_dis_uav_2)
         self.mpc_tko_speed_dis_uav_2 = QtWidgets.QLabel(self.param_current_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_dis_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_dis_uav_2.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_dis_uav_2.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_dis_uav_2.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_tko_speed_dis_uav_2.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_tko_speed_dis_uav_2.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_tko_speed_dis_uav_2.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_tko_speed_dis_uav_2.setText("")
         self.mpc_tko_speed_dis_uav_2.setIndent(5)
         self.mpc_tko_speed_dis_uav_2.setObjectName("mpc_tko_speed_dis_uav_2")
         self.verticalLayout_58.addWidget(self.mpc_tko_speed_dis_uav_2)
         self.mpc_land_speed_dis_uav_2 = QtWidgets.QLabel(self.param_current_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_dis_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_dis_uav_2.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_dis_uav_2.setSizePolicy(sizePolicy)
         self.mpc_land_speed_dis_uav_2.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_land_speed_dis_uav_2.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_land_speed_dis_uav_2.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_land_speed_dis_uav_2.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_land_speed_dis_uav_2.setText("")
         self.mpc_land_speed_dis_uav_2.setIndent(5)
         self.mpc_land_speed_dis_uav_2.setObjectName("mpc_land_speed_dis_uav_2")
         self.verticalLayout_58.addWidget(self.mpc_land_speed_dis_uav_2)
         self.mpc_xy_p_dis_uav_2 = QtWidgets.QLabel(self.param_current_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_dis_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_dis_uav_2.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_dis_uav_2.setSizePolicy(sizePolicy)
         self.mpc_xy_p_dis_uav_2.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_p_dis_uav_2.setMaximumSize(QtCore.QSize(100, 30))
@@ -1180,52 +1037,36 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_dis_uav_2.setObjectName("mpc_xy_p_dis_uav_2")
         self.verticalLayout_58.addWidget(self.mpc_xy_p_dis_uav_2)
         self.mpc_xy_vel_d_acc_dis_uav_2 = QtWidgets.QLabel(self.param_current_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_dis_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_dis_uav_2.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_dis_uav_2.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_dis_uav_2.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_vel_d_acc_dis_uav_2.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_d_acc_dis_uav_2.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_d_acc_dis_uav_2.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_d_acc_dis_uav_2.setText("")
         self.mpc_xy_vel_d_acc_dis_uav_2.setIndent(5)
         self.mpc_xy_vel_d_acc_dis_uav_2.setObjectName("mpc_xy_vel_d_acc_dis_uav_2")
         self.verticalLayout_58.addWidget(self.mpc_xy_vel_d_acc_dis_uav_2)
         self.mpc_xy_vel_p_acc_dis_uav_2 = QtWidgets.QLabel(self.param_current_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_dis_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_dis_uav_2.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_dis_uav_2.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_dis_uav_2.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_vel_p_acc_dis_uav_2.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_p_acc_dis_uav_2.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_p_acc_dis_uav_2.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_p_acc_dis_uav_2.setText("")
         self.mpc_xy_vel_p_acc_dis_uav_2.setIndent(5)
         self.mpc_xy_vel_p_acc_dis_uav_2.setObjectName("mpc_xy_vel_p_acc_dis_uav_2")
         self.verticalLayout_58.addWidget(self.mpc_xy_vel_p_acc_dis_uav_2)
         self.mc_pitch_p_dis_uav_2 = QtWidgets.QLabel(self.param_current_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_dis_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_dis_uav_2.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_dis_uav_2.setSizePolicy(sizePolicy)
         self.mc_pitch_p_dis_uav_2.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_pitch_p_dis_uav_2.setMaximumSize(QtCore.QSize(100, 30))
@@ -1235,14 +1076,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_dis_uav_2.setObjectName("mc_pitch_p_dis_uav_2")
         self.verticalLayout_58.addWidget(self.mc_pitch_p_dis_uav_2)
         self.mc_roll_p_dis_uav_2 = QtWidgets.QLabel(self.param_current_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_dis_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_dis_uav_2.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_dis_uav_2.setSizePolicy(sizePolicy)
         self.mc_roll_p_dis_uav_2.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_roll_p_dis_uav_2.setMaximumSize(QtCore.QSize(100, 30))
@@ -1252,14 +1089,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_dis_uav_2.setObjectName("mc_roll_p_dis_uav_2")
         self.verticalLayout_58.addWidget(self.mc_roll_p_dis_uav_2)
         self.mc_yaw_p_dis_uav_2 = QtWidgets.QLabel(self.param_current_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_dis_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_dis_uav_2.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_dis_uav_2.setSizePolicy(sizePolicy)
         self.mc_yaw_p_dis_uav_2.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_yaw_p_dis_uav_2.setMaximumSize(QtCore.QSize(100, 30))
@@ -1269,14 +1102,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_dis_uav_2.setObjectName("mc_yaw_p_dis_uav_2")
         self.verticalLayout_58.addWidget(self.mc_yaw_p_dis_uav_2)
         self.btn_param_dis_uav_2 = QtWidgets.QPushButton(self.param_current_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_dis_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_dis_uav_2.sizePolicy().hasHeightForWidth())
         self.btn_param_dis_uav_2.setSizePolicy(sizePolicy)
         self.btn_param_dis_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_param_dis_uav_2.setStyleSheet("background-color: rgb(239, 41, 41);")
@@ -1295,95 +1124,67 @@ class Ui_MainWindow(object):
         self.verticalLayout_59.setSpacing(0)
         self.verticalLayout_59.setObjectName("verticalLayout_59")
         self.mis_takeoff_alt_set_uav_2 = QtWidgets.QLineEdit(self.param_set_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_set_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_set_uav_2.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_set_uav_2.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_set_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mis_takeoff_alt_set_uav_2.setFont(font)
         self.mis_takeoff_alt_set_uav_2.setAutoFillBackground(False)
-        self.mis_takeoff_alt_set_uav_2.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mis_takeoff_alt_set_uav_2.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mis_takeoff_alt_set_uav_2.setText("")
         self.mis_takeoff_alt_set_uav_2.setObjectName("mis_takeoff_alt_set_uav_2")
         self.verticalLayout_59.addWidget(self.mis_takeoff_alt_set_uav_2)
         self.com_disarm_land_set_uav_2 = QtWidgets.QLineEdit(self.param_set_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_set_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_set_uav_2.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_set_uav_2.setSizePolicy(sizePolicy)
         self.com_disarm_land_set_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.com_disarm_land_set_uav_2.setFont(font)
         self.com_disarm_land_set_uav_2.setAutoFillBackground(False)
-        self.com_disarm_land_set_uav_2.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.com_disarm_land_set_uav_2.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.com_disarm_land_set_uav_2.setObjectName("com_disarm_land_set_uav_2")
         self.verticalLayout_59.addWidget(self.com_disarm_land_set_uav_2)
         self.mpc_tko_speed_set_uav_2 = QtWidgets.QLineEdit(self.param_set_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_set_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_set_uav_2.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_set_uav_2.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_set_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_tko_speed_set_uav_2.setFont(font)
         self.mpc_tko_speed_set_uav_2.setAutoFillBackground(False)
-        self.mpc_tko_speed_set_uav_2.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_tko_speed_set_uav_2.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_tko_speed_set_uav_2.setObjectName("mpc_tko_speed_set_uav_2")
         self.verticalLayout_59.addWidget(self.mpc_tko_speed_set_uav_2)
         self.mpc_land_speed_set_uav_2 = QtWidgets.QLineEdit(self.param_set_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_set_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_set_uav_2.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_set_uav_2.setSizePolicy(sizePolicy)
         self.mpc_land_speed_set_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_land_speed_set_uav_2.setFont(font)
         self.mpc_land_speed_set_uav_2.setAutoFillBackground(False)
-        self.mpc_land_speed_set_uav_2.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_land_speed_set_uav_2.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_land_speed_set_uav_2.setObjectName("mpc_land_speed_set_uav_2")
         self.verticalLayout_59.addWidget(self.mpc_land_speed_set_uav_2)
         self.mpc_xy_p_set_uav_2 = QtWidgets.QLineEdit(self.param_set_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_set_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_set_uav_2.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_set_uav_2.setSizePolicy(sizePolicy)
         self.mpc_xy_p_set_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -1394,54 +1195,38 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_set_uav_2.setObjectName("mpc_xy_p_set_uav_2")
         self.verticalLayout_59.addWidget(self.mpc_xy_p_set_uav_2)
         self.mpc_xy_vel_d_acc_set_uav_2 = QtWidgets.QLineEdit(self.param_set_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_set_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_set_uav_2.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_set_uav_2.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_set_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_d_acc_set_uav_2.setFont(font)
         self.mpc_xy_vel_d_acc_set_uav_2.setAutoFillBackground(False)
-        self.mpc_xy_vel_d_acc_set_uav_2.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_d_acc_set_uav_2.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_d_acc_set_uav_2.setObjectName("mpc_xy_vel_d_acc_set_uav_2")
         self.verticalLayout_59.addWidget(self.mpc_xy_vel_d_acc_set_uav_2)
         self.mpc_xy_vel_p_acc_set_uav_2 = QtWidgets.QLineEdit(self.param_set_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_set_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_set_uav_2.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_set_uav_2.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_set_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_p_acc_set_uav_2.setFont(font)
         self.mpc_xy_vel_p_acc_set_uav_2.setAutoFillBackground(False)
-        self.mpc_xy_vel_p_acc_set_uav_2.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_p_acc_set_uav_2.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_p_acc_set_uav_2.setObjectName("mpc_xy_vel_p_acc_set_uav_2")
         self.verticalLayout_59.addWidget(self.mpc_xy_vel_p_acc_set_uav_2)
         self.mc_pitch_p_set_uav_2 = QtWidgets.QLineEdit(self.param_set_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_set_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_set_uav_2.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_set_uav_2.setSizePolicy(sizePolicy)
         self.mc_pitch_p_set_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -1452,14 +1237,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_set_uav_2.setObjectName("mc_pitch_p_set_uav_2")
         self.verticalLayout_59.addWidget(self.mc_pitch_p_set_uav_2)
         self.mc_roll_p_set_uav_2 = QtWidgets.QLineEdit(self.param_set_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_set_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_set_uav_2.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_set_uav_2.setSizePolicy(sizePolicy)
         self.mc_roll_p_set_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -1470,14 +1251,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_set_uav_2.setObjectName("mc_roll_p_set_uav_2")
         self.verticalLayout_59.addWidget(self.mc_roll_p_set_uav_2)
         self.mc_yaw_p_set_uav_2 = QtWidgets.QLineEdit(self.param_set_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_set_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_set_uav_2.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_set_uav_2.setSizePolicy(sizePolicy)
         self.mc_yaw_p_set_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -1488,14 +1265,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_set_uav_2.setObjectName("mc_yaw_p_set_uav_2")
         self.verticalLayout_59.addWidget(self.mc_yaw_p_set_uav_2)
         self.btn_param_set_uav_2 = QtWidgets.QPushButton(self.param_set_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_set_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_set_uav_2.sizePolicy().hasHeightForWidth())
         self.btn_param_set_uav_2.setSizePolicy(sizePolicy)
         self.btn_param_set_uav_2.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_param_set_uav_2.setStyleSheet("background-color: rgb(239, 41, 41);")
@@ -1506,14 +1279,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.information_uav_2 = QtWidgets.QTextBrowser(self.tab_uav_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.information_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.information_uav_2.sizePolicy().hasHeightForWidth())
         self.information_uav_2.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("Ubuntu Mono")
@@ -1543,27 +1312,19 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.tab_uav_3)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.LayoutH_stream_screen_3 = QtWidgets.QHBoxLayout()
-        self.LayoutH_stream_screen_3.setSizeConstraint(
-            QtWidgets.QLayout.SetDefaultConstraint
-        )
+        self.LayoutH_stream_screen_3.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.LayoutH_stream_screen_3.setContentsMargins(10, 10, 10, 10)
         self.LayoutH_stream_screen_3.setObjectName("LayoutH_stream_screen_3")
         self.stream_screen_3 = QtWidgets.QLabel(self.tab_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.stream_screen_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.stream_screen_3.sizePolicy().hasHeightForWidth())
         self.stream_screen_3.setSizePolicy(sizePolicy)
         self.stream_screen_3.setMaximumSize(QtCore.QSize(1280, 720))
         self.stream_screen_3.setFrameShape(QtWidgets.QFrame.Box)
         self.stream_screen_3.setText("")
-        self.stream_screen_3.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg")
-        )
+        self.stream_screen_3.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg"))
         self.stream_screen_3.setObjectName("stream_screen_3")
         self.LayoutH_stream_screen_3.addWidget(self.stream_screen_3)
         self.horizontalLayout_6.addLayout(self.LayoutH_stream_screen_3)
@@ -1746,14 +1507,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_54.addWidget(self.param_name_blank_3)
         self.LayoutH_param_uav_3.addWidget(self.param_name_uav_3)
         self.param_current_uav_3 = QtWidgets.QFrame(self.tab_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.param_current_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.param_current_uav_3.sizePolicy().hasHeightForWidth())
         self.param_current_uav_3.setSizePolicy(sizePolicy)
         self.param_current_uav_3.setMinimumSize(QtCore.QSize(100, 0))
         self.param_current_uav_3.setMaximumSize(QtCore.QSize(100, 400))
@@ -1766,90 +1523,62 @@ class Ui_MainWindow(object):
         self.verticalLayout_55.setSpacing(0)
         self.verticalLayout_55.setObjectName("verticalLayout_55")
         self.mis_takeoff_alt_dis_uav_3 = QtWidgets.QLabel(self.param_current_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_dis_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_dis_uav_3.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_dis_uav_3.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_dis_uav_3.setMinimumSize(QtCore.QSize(30, 30))
         self.mis_takeoff_alt_dis_uav_3.setMaximumSize(QtCore.QSize(100, 30))
-        self.mis_takeoff_alt_dis_uav_3.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mis_takeoff_alt_dis_uav_3.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mis_takeoff_alt_dis_uav_3.setText("")
         self.mis_takeoff_alt_dis_uav_3.setIndent(5)
         self.mis_takeoff_alt_dis_uav_3.setObjectName("mis_takeoff_alt_dis_uav_3")
         self.verticalLayout_55.addWidget(self.mis_takeoff_alt_dis_uav_3)
         self.com_disarm_land_dis_uav_3 = QtWidgets.QLabel(self.param_current_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_dis_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_dis_uav_3.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_dis_uav_3.setSizePolicy(sizePolicy)
         self.com_disarm_land_dis_uav_3.setMinimumSize(QtCore.QSize(30, 30))
         self.com_disarm_land_dis_uav_3.setMaximumSize(QtCore.QSize(100, 30))
-        self.com_disarm_land_dis_uav_3.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.com_disarm_land_dis_uav_3.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.com_disarm_land_dis_uav_3.setText("")
         self.com_disarm_land_dis_uav_3.setIndent(5)
         self.com_disarm_land_dis_uav_3.setObjectName("com_disarm_land_dis_uav_3")
         self.verticalLayout_55.addWidget(self.com_disarm_land_dis_uav_3)
         self.mpc_tko_speed_dis_uav_3 = QtWidgets.QLabel(self.param_current_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_dis_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_dis_uav_3.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_dis_uav_3.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_dis_uav_3.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_tko_speed_dis_uav_3.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_tko_speed_dis_uav_3.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_tko_speed_dis_uav_3.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_tko_speed_dis_uav_3.setText("")
         self.mpc_tko_speed_dis_uav_3.setIndent(5)
         self.mpc_tko_speed_dis_uav_3.setObjectName("mpc_tko_speed_dis_uav_3")
         self.verticalLayout_55.addWidget(self.mpc_tko_speed_dis_uav_3)
         self.mpc_land_speed_dis_uav_3 = QtWidgets.QLabel(self.param_current_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_dis_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_dis_uav_3.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_dis_uav_3.setSizePolicy(sizePolicy)
         self.mpc_land_speed_dis_uav_3.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_land_speed_dis_uav_3.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_land_speed_dis_uav_3.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_land_speed_dis_uav_3.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_land_speed_dis_uav_3.setText("")
         self.mpc_land_speed_dis_uav_3.setIndent(5)
         self.mpc_land_speed_dis_uav_3.setObjectName("mpc_land_speed_dis_uav_3")
         self.verticalLayout_55.addWidget(self.mpc_land_speed_dis_uav_3)
         self.mpc_xy_p_dis_uav_3 = QtWidgets.QLabel(self.param_current_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_dis_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_dis_uav_3.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_dis_uav_3.setSizePolicy(sizePolicy)
         self.mpc_xy_p_dis_uav_3.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_p_dis_uav_3.setMaximumSize(QtCore.QSize(100, 30))
@@ -1859,52 +1588,36 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_dis_uav_3.setObjectName("mpc_xy_p_dis_uav_3")
         self.verticalLayout_55.addWidget(self.mpc_xy_p_dis_uav_3)
         self.mpc_xy_vel_d_acc_dis_uav_3 = QtWidgets.QLabel(self.param_current_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_dis_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_dis_uav_3.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_dis_uav_3.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_dis_uav_3.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_vel_d_acc_dis_uav_3.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_d_acc_dis_uav_3.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_d_acc_dis_uav_3.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_d_acc_dis_uav_3.setText("")
         self.mpc_xy_vel_d_acc_dis_uav_3.setIndent(5)
         self.mpc_xy_vel_d_acc_dis_uav_3.setObjectName("mpc_xy_vel_d_acc_dis_uav_3")
         self.verticalLayout_55.addWidget(self.mpc_xy_vel_d_acc_dis_uav_3)
         self.mpc_xy_vel_p_acc_dis_uav_3 = QtWidgets.QLabel(self.param_current_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_dis_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_dis_uav_3.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_dis_uav_3.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_dis_uav_3.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_vel_p_acc_dis_uav_3.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_p_acc_dis_uav_3.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_p_acc_dis_uav_3.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_p_acc_dis_uav_3.setText("")
         self.mpc_xy_vel_p_acc_dis_uav_3.setIndent(5)
         self.mpc_xy_vel_p_acc_dis_uav_3.setObjectName("mpc_xy_vel_p_acc_dis_uav_3")
         self.verticalLayout_55.addWidget(self.mpc_xy_vel_p_acc_dis_uav_3)
         self.mc_pitch_p_dis_uav_3 = QtWidgets.QLabel(self.param_current_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_dis_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_dis_uav_3.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_dis_uav_3.setSizePolicy(sizePolicy)
         self.mc_pitch_p_dis_uav_3.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_pitch_p_dis_uav_3.setMaximumSize(QtCore.QSize(100, 30))
@@ -1914,14 +1627,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_dis_uav_3.setObjectName("mc_pitch_p_dis_uav_3")
         self.verticalLayout_55.addWidget(self.mc_pitch_p_dis_uav_3)
         self.mc_roll_p_dis_uav_3 = QtWidgets.QLabel(self.param_current_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_dis_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_dis_uav_3.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_dis_uav_3.setSizePolicy(sizePolicy)
         self.mc_roll_p_dis_uav_3.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_roll_p_dis_uav_3.setMaximumSize(QtCore.QSize(100, 30))
@@ -1931,14 +1640,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_dis_uav_3.setObjectName("mc_roll_p_dis_uav_3")
         self.verticalLayout_55.addWidget(self.mc_roll_p_dis_uav_3)
         self.mc_yaw_p_dis_uav_3 = QtWidgets.QLabel(self.param_current_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_dis_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_dis_uav_3.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_dis_uav_3.setSizePolicy(sizePolicy)
         self.mc_yaw_p_dis_uav_3.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_yaw_p_dis_uav_3.setMaximumSize(QtCore.QSize(100, 30))
@@ -1948,14 +1653,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_dis_uav_3.setObjectName("mc_yaw_p_dis_uav_3")
         self.verticalLayout_55.addWidget(self.mc_yaw_p_dis_uav_3)
         self.btn_param_dis_uav_3 = QtWidgets.QPushButton(self.param_current_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_dis_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_dis_uav_3.sizePolicy().hasHeightForWidth())
         self.btn_param_dis_uav_3.setSizePolicy(sizePolicy)
         self.btn_param_dis_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_param_dis_uav_3.setStyleSheet("background-color: rgb(239, 41, 41);")
@@ -1963,14 +1664,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_55.addWidget(self.btn_param_dis_uav_3)
         self.LayoutH_param_uav_3.addWidget(self.param_current_uav_3)
         self.param_set_uav_3 = QtWidgets.QFrame(self.tab_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.param_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.param_set_uav_3.sizePolicy().hasHeightForWidth())
         self.param_set_uav_3.setSizePolicy(sizePolicy)
         self.param_set_uav_3.setMinimumSize(QtCore.QSize(100, 0))
         self.param_set_uav_3.setMaximumSize(QtCore.QSize(100, 400))
@@ -1983,94 +1680,66 @@ class Ui_MainWindow(object):
         self.verticalLayout_56.setSpacing(0)
         self.verticalLayout_56.setObjectName("verticalLayout_56")
         self.mis_takeoff_alt_set_uav_3 = QtWidgets.QLineEdit(self.param_set_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_set_uav_3.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_set_uav_3.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_set_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mis_takeoff_alt_set_uav_3.setFont(font)
         self.mis_takeoff_alt_set_uav_3.setAutoFillBackground(False)
-        self.mis_takeoff_alt_set_uav_3.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mis_takeoff_alt_set_uav_3.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mis_takeoff_alt_set_uav_3.setObjectName("mis_takeoff_alt_set_uav_3")
         self.verticalLayout_56.addWidget(self.mis_takeoff_alt_set_uav_3)
         self.com_disarm_land_set_uav_3 = QtWidgets.QLineEdit(self.param_set_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_set_uav_3.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_set_uav_3.setSizePolicy(sizePolicy)
         self.com_disarm_land_set_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.com_disarm_land_set_uav_3.setFont(font)
         self.com_disarm_land_set_uav_3.setAutoFillBackground(False)
-        self.com_disarm_land_set_uav_3.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.com_disarm_land_set_uav_3.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.com_disarm_land_set_uav_3.setObjectName("com_disarm_land_set_uav_3")
         self.verticalLayout_56.addWidget(self.com_disarm_land_set_uav_3)
         self.mpc_tko_speed_set_uav_3 = QtWidgets.QLineEdit(self.param_set_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_set_uav_3.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_set_uav_3.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_set_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_tko_speed_set_uav_3.setFont(font)
         self.mpc_tko_speed_set_uav_3.setAutoFillBackground(False)
-        self.mpc_tko_speed_set_uav_3.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_tko_speed_set_uav_3.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_tko_speed_set_uav_3.setObjectName("mpc_tko_speed_set_uav_3")
         self.verticalLayout_56.addWidget(self.mpc_tko_speed_set_uav_3)
         self.mpc_land_speed_set_uav_3 = QtWidgets.QLineEdit(self.param_set_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_set_uav_3.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_set_uav_3.setSizePolicy(sizePolicy)
         self.mpc_land_speed_set_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_land_speed_set_uav_3.setFont(font)
         self.mpc_land_speed_set_uav_3.setAutoFillBackground(False)
-        self.mpc_land_speed_set_uav_3.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_land_speed_set_uav_3.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_land_speed_set_uav_3.setObjectName("mpc_land_speed_set_uav_3")
         self.verticalLayout_56.addWidget(self.mpc_land_speed_set_uav_3)
         self.mpc_xy_p_set_uav_3 = QtWidgets.QLineEdit(self.param_set_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_set_uav_3.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_set_uav_3.setSizePolicy(sizePolicy)
         self.mpc_xy_p_set_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -2081,54 +1750,38 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_set_uav_3.setObjectName("mpc_xy_p_set_uav_3")
         self.verticalLayout_56.addWidget(self.mpc_xy_p_set_uav_3)
         self.mpc_xy_vel_d_acc_set_uav_3 = QtWidgets.QLineEdit(self.param_set_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_set_uav_3.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_set_uav_3.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_set_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_d_acc_set_uav_3.setFont(font)
         self.mpc_xy_vel_d_acc_set_uav_3.setAutoFillBackground(False)
-        self.mpc_xy_vel_d_acc_set_uav_3.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_d_acc_set_uav_3.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_d_acc_set_uav_3.setObjectName("mpc_xy_vel_d_acc_set_uav_3")
         self.verticalLayout_56.addWidget(self.mpc_xy_vel_d_acc_set_uav_3)
         self.mpc_xy_vel_p_acc_set_uav_3 = QtWidgets.QLineEdit(self.param_set_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_set_uav_3.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_set_uav_3.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_set_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_p_acc_set_uav_3.setFont(font)
         self.mpc_xy_vel_p_acc_set_uav_3.setAutoFillBackground(False)
-        self.mpc_xy_vel_p_acc_set_uav_3.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_p_acc_set_uav_3.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_p_acc_set_uav_3.setObjectName("mpc_xy_vel_p_acc_set_uav_3")
         self.verticalLayout_56.addWidget(self.mpc_xy_vel_p_acc_set_uav_3)
         self.mc_pitch_p_set_uav_3 = QtWidgets.QLineEdit(self.param_set_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_set_uav_3.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_set_uav_3.setSizePolicy(sizePolicy)
         self.mc_pitch_p_set_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -2139,14 +1792,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_set_uav_3.setObjectName("mc_pitch_p_set_uav_3")
         self.verticalLayout_56.addWidget(self.mc_pitch_p_set_uav_3)
         self.mc_roll_p_set_uav_3 = QtWidgets.QLineEdit(self.param_set_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_set_uav_3.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_set_uav_3.setSizePolicy(sizePolicy)
         self.mc_roll_p_set_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -2157,14 +1806,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_set_uav_3.setObjectName("mc_roll_p_set_uav_3")
         self.verticalLayout_56.addWidget(self.mc_roll_p_set_uav_3)
         self.mc_yaw_p_set_uav_3 = QtWidgets.QLineEdit(self.param_set_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_set_uav_3.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_set_uav_3.setSizePolicy(sizePolicy)
         self.mc_yaw_p_set_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -2175,14 +1820,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_set_uav_3.setObjectName("mc_yaw_p_set_uav_3")
         self.verticalLayout_56.addWidget(self.mc_yaw_p_set_uav_3)
         self.btn_param_set_uav_3 = QtWidgets.QPushButton(self.param_set_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_set_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_set_uav_3.sizePolicy().hasHeightForWidth())
         self.btn_param_set_uav_3.setSizePolicy(sizePolicy)
         self.btn_param_set_uav_3.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_param_set_uav_3.setStyleSheet("background-color: rgb(239, 41, 41);")
@@ -2193,14 +1834,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.information_uav_3 = QtWidgets.QTextBrowser(self.tab_uav_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.information_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.information_uav_3.sizePolicy().hasHeightForWidth())
         self.information_uav_3.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("Ubuntu Mono")
@@ -2230,27 +1867,19 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout(self.tab_uav_4)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.LayoutH_stream_screen_4 = QtWidgets.QHBoxLayout()
-        self.LayoutH_stream_screen_4.setSizeConstraint(
-            QtWidgets.QLayout.SetDefaultConstraint
-        )
+        self.LayoutH_stream_screen_4.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.LayoutH_stream_screen_4.setContentsMargins(10, 10, 10, 10)
         self.LayoutH_stream_screen_4.setObjectName("LayoutH_stream_screen_4")
         self.stream_screen_4 = QtWidgets.QLabel(self.tab_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.stream_screen_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.stream_screen_4.sizePolicy().hasHeightForWidth())
         self.stream_screen_4.setSizePolicy(sizePolicy)
         self.stream_screen_4.setMaximumSize(QtCore.QSize(1280, 720))
         self.stream_screen_4.setFrameShape(QtWidgets.QFrame.Box)
         self.stream_screen_4.setText("")
-        self.stream_screen_4.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg")
-        )
+        self.stream_screen_4.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg"))
         self.stream_screen_4.setObjectName("stream_screen_4")
         self.LayoutH_stream_screen_4.addWidget(self.stream_screen_4)
         self.horizontalLayout_8.addLayout(self.LayoutH_stream_screen_4)
@@ -2433,14 +2062,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_60.addWidget(self.param_name_blank_4)
         self.LayoutH_param_uav_4.addWidget(self.param_name_uav_4)
         self.param_current_uav_4 = QtWidgets.QFrame(self.tab_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.param_current_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.param_current_uav_4.sizePolicy().hasHeightForWidth())
         self.param_current_uav_4.setSizePolicy(sizePolicy)
         self.param_current_uav_4.setMinimumSize(QtCore.QSize(100, 0))
         self.param_current_uav_4.setMaximumSize(QtCore.QSize(100, 400))
@@ -2453,90 +2078,62 @@ class Ui_MainWindow(object):
         self.verticalLayout_61.setSpacing(0)
         self.verticalLayout_61.setObjectName("verticalLayout_61")
         self.mis_takeoff_alt_dis_uav_4 = QtWidgets.QLabel(self.param_current_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_dis_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_dis_uav_4.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_dis_uav_4.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_dis_uav_4.setMinimumSize(QtCore.QSize(30, 30))
         self.mis_takeoff_alt_dis_uav_4.setMaximumSize(QtCore.QSize(100, 30))
-        self.mis_takeoff_alt_dis_uav_4.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mis_takeoff_alt_dis_uav_4.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mis_takeoff_alt_dis_uav_4.setText("")
         self.mis_takeoff_alt_dis_uav_4.setIndent(5)
         self.mis_takeoff_alt_dis_uav_4.setObjectName("mis_takeoff_alt_dis_uav_4")
         self.verticalLayout_61.addWidget(self.mis_takeoff_alt_dis_uav_4)
         self.com_disarm_land_dis_uav_4 = QtWidgets.QLabel(self.param_current_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_dis_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_dis_uav_4.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_dis_uav_4.setSizePolicy(sizePolicy)
         self.com_disarm_land_dis_uav_4.setMinimumSize(QtCore.QSize(30, 30))
         self.com_disarm_land_dis_uav_4.setMaximumSize(QtCore.QSize(100, 30))
-        self.com_disarm_land_dis_uav_4.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.com_disarm_land_dis_uav_4.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.com_disarm_land_dis_uav_4.setText("")
         self.com_disarm_land_dis_uav_4.setIndent(5)
         self.com_disarm_land_dis_uav_4.setObjectName("com_disarm_land_dis_uav_4")
         self.verticalLayout_61.addWidget(self.com_disarm_land_dis_uav_4)
         self.mpc_tko_speed_dis_uav_4 = QtWidgets.QLabel(self.param_current_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_dis_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_dis_uav_4.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_dis_uav_4.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_dis_uav_4.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_tko_speed_dis_uav_4.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_tko_speed_dis_uav_4.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_tko_speed_dis_uav_4.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_tko_speed_dis_uav_4.setText("")
         self.mpc_tko_speed_dis_uav_4.setIndent(5)
         self.mpc_tko_speed_dis_uav_4.setObjectName("mpc_tko_speed_dis_uav_4")
         self.verticalLayout_61.addWidget(self.mpc_tko_speed_dis_uav_4)
         self.mpc_land_speed_dis_uav_4 = QtWidgets.QLabel(self.param_current_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_dis_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_dis_uav_4.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_dis_uav_4.setSizePolicy(sizePolicy)
         self.mpc_land_speed_dis_uav_4.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_land_speed_dis_uav_4.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_land_speed_dis_uav_4.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_land_speed_dis_uav_4.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_land_speed_dis_uav_4.setText("")
         self.mpc_land_speed_dis_uav_4.setIndent(5)
         self.mpc_land_speed_dis_uav_4.setObjectName("mpc_land_speed_dis_uav_4")
         self.verticalLayout_61.addWidget(self.mpc_land_speed_dis_uav_4)
         self.mpc_xy_p_dis_uav_4 = QtWidgets.QLabel(self.param_current_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_dis_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_dis_uav_4.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_dis_uav_4.setSizePolicy(sizePolicy)
         self.mpc_xy_p_dis_uav_4.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_p_dis_uav_4.setMaximumSize(QtCore.QSize(100, 30))
@@ -2546,52 +2143,36 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_dis_uav_4.setObjectName("mpc_xy_p_dis_uav_4")
         self.verticalLayout_61.addWidget(self.mpc_xy_p_dis_uav_4)
         self.mpc_xy_vel_d_acc_dis_uav_4 = QtWidgets.QLabel(self.param_current_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_dis_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_dis_uav_4.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_dis_uav_4.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_dis_uav_4.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_vel_d_acc_dis_uav_4.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_d_acc_dis_uav_4.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_d_acc_dis_uav_4.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_d_acc_dis_uav_4.setText("")
         self.mpc_xy_vel_d_acc_dis_uav_4.setIndent(5)
         self.mpc_xy_vel_d_acc_dis_uav_4.setObjectName("mpc_xy_vel_d_acc_dis_uav_4")
         self.verticalLayout_61.addWidget(self.mpc_xy_vel_d_acc_dis_uav_4)
         self.mpc_xy_vel_p_acc_dis_uav_4 = QtWidgets.QLabel(self.param_current_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_dis_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_dis_uav_4.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_dis_uav_4.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_dis_uav_4.setMinimumSize(QtCore.QSize(30, 30))
         self.mpc_xy_vel_p_acc_dis_uav_4.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_p_acc_dis_uav_4.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_p_acc_dis_uav_4.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_p_acc_dis_uav_4.setText("")
         self.mpc_xy_vel_p_acc_dis_uav_4.setIndent(5)
         self.mpc_xy_vel_p_acc_dis_uav_4.setObjectName("mpc_xy_vel_p_acc_dis_uav_4")
         self.verticalLayout_61.addWidget(self.mpc_xy_vel_p_acc_dis_uav_4)
         self.mc_pitch_p_dis_uav_4 = QtWidgets.QLabel(self.param_current_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_dis_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_dis_uav_4.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_dis_uav_4.setSizePolicy(sizePolicy)
         self.mc_pitch_p_dis_uav_4.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_pitch_p_dis_uav_4.setMaximumSize(QtCore.QSize(100, 30))
@@ -2601,14 +2182,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_dis_uav_4.setObjectName("mc_pitch_p_dis_uav_4")
         self.verticalLayout_61.addWidget(self.mc_pitch_p_dis_uav_4)
         self.mc_roll_p_dis_uav_4 = QtWidgets.QLabel(self.param_current_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_dis_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_dis_uav_4.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_dis_uav_4.setSizePolicy(sizePolicy)
         self.mc_roll_p_dis_uav_4.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_roll_p_dis_uav_4.setMaximumSize(QtCore.QSize(100, 30))
@@ -2618,14 +2195,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_dis_uav_4.setObjectName("mc_roll_p_dis_uav_4")
         self.verticalLayout_61.addWidget(self.mc_roll_p_dis_uav_4)
         self.mc_yaw_p_dis_uav_4 = QtWidgets.QLabel(self.param_current_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_dis_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_dis_uav_4.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_dis_uav_4.setSizePolicy(sizePolicy)
         self.mc_yaw_p_dis_uav_4.setMinimumSize(QtCore.QSize(30, 30))
         self.mc_yaw_p_dis_uav_4.setMaximumSize(QtCore.QSize(100, 30))
@@ -2635,14 +2208,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_dis_uav_4.setObjectName("mc_yaw_p_dis_uav_4")
         self.verticalLayout_61.addWidget(self.mc_yaw_p_dis_uav_4)
         self.btn_param_dis_uav_4 = QtWidgets.QPushButton(self.param_current_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_dis_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_dis_uav_4.sizePolicy().hasHeightForWidth())
         self.btn_param_dis_uav_4.setSizePolicy(sizePolicy)
         self.btn_param_dis_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_param_dis_uav_4.setStyleSheet("background-color: rgb(239, 41, 41);")
@@ -2661,94 +2230,66 @@ class Ui_MainWindow(object):
         self.verticalLayout_62.setSpacing(0)
         self.verticalLayout_62.setObjectName("verticalLayout_62")
         self.mis_takeoff_alt_set_uav_4 = QtWidgets.QLineEdit(self.param_set_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_set_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_set_uav_4.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_set_uav_4.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_set_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mis_takeoff_alt_set_uav_4.setFont(font)
         self.mis_takeoff_alt_set_uav_4.setAutoFillBackground(False)
-        self.mis_takeoff_alt_set_uav_4.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mis_takeoff_alt_set_uav_4.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mis_takeoff_alt_set_uav_4.setObjectName("mis_takeoff_alt_set_uav_4")
         self.verticalLayout_62.addWidget(self.mis_takeoff_alt_set_uav_4)
         self.com_disarm_land_set_uav_4 = QtWidgets.QLineEdit(self.param_set_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_set_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_set_uav_4.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_set_uav_4.setSizePolicy(sizePolicy)
         self.com_disarm_land_set_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.com_disarm_land_set_uav_4.setFont(font)
         self.com_disarm_land_set_uav_4.setAutoFillBackground(False)
-        self.com_disarm_land_set_uav_4.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.com_disarm_land_set_uav_4.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.com_disarm_land_set_uav_4.setObjectName("com_disarm_land_set_uav_4")
         self.verticalLayout_62.addWidget(self.com_disarm_land_set_uav_4)
         self.mpc_tko_speed_set_uav_4 = QtWidgets.QLineEdit(self.param_set_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_set_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_set_uav_4.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_set_uav_4.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_set_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_tko_speed_set_uav_4.setFont(font)
         self.mpc_tko_speed_set_uav_4.setAutoFillBackground(False)
-        self.mpc_tko_speed_set_uav_4.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_tko_speed_set_uav_4.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_tko_speed_set_uav_4.setObjectName("mpc_tko_speed_set_uav_4")
         self.verticalLayout_62.addWidget(self.mpc_tko_speed_set_uav_4)
         self.mpc_land_speed_set_uav_4 = QtWidgets.QLineEdit(self.param_set_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_set_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_set_uav_4.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_set_uav_4.setSizePolicy(sizePolicy)
         self.mpc_land_speed_set_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_land_speed_set_uav_4.setFont(font)
         self.mpc_land_speed_set_uav_4.setAutoFillBackground(False)
-        self.mpc_land_speed_set_uav_4.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_land_speed_set_uav_4.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_land_speed_set_uav_4.setObjectName("mpc_land_speed_set_uav_4")
         self.verticalLayout_62.addWidget(self.mpc_land_speed_set_uav_4)
         self.mpc_xy_p_set_uav_4 = QtWidgets.QLineEdit(self.param_set_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_set_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_set_uav_4.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_set_uav_4.setSizePolicy(sizePolicy)
         self.mpc_xy_p_set_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -2759,54 +2300,38 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_set_uav_4.setObjectName("mpc_xy_p_set_uav_4")
         self.verticalLayout_62.addWidget(self.mpc_xy_p_set_uav_4)
         self.mpc_xy_vel_d_acc_set_uav_4 = QtWidgets.QLineEdit(self.param_set_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_set_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_set_uav_4.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_set_uav_4.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_set_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_d_acc_set_uav_4.setFont(font)
         self.mpc_xy_vel_d_acc_set_uav_4.setAutoFillBackground(False)
-        self.mpc_xy_vel_d_acc_set_uav_4.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_d_acc_set_uav_4.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_d_acc_set_uav_4.setObjectName("mpc_xy_vel_d_acc_set_uav_4")
         self.verticalLayout_62.addWidget(self.mpc_xy_vel_d_acc_set_uav_4)
         self.mpc_xy_vel_p_acc_set_uav_4 = QtWidgets.QLineEdit(self.param_set_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_set_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_set_uav_4.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_set_uav_4.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_set_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_p_acc_set_uav_4.setFont(font)
         self.mpc_xy_vel_p_acc_set_uav_4.setAutoFillBackground(False)
-        self.mpc_xy_vel_p_acc_set_uav_4.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_p_acc_set_uav_4.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_p_acc_set_uav_4.setObjectName("mpc_xy_vel_p_acc_set_uav_4")
         self.verticalLayout_62.addWidget(self.mpc_xy_vel_p_acc_set_uav_4)
         self.mc_pitch_p_set_uav_4 = QtWidgets.QLineEdit(self.param_set_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_set_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_set_uav_4.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_set_uav_4.setSizePolicy(sizePolicy)
         self.mc_pitch_p_set_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -2817,14 +2342,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_set_uav_4.setObjectName("mc_pitch_p_set_uav_4")
         self.verticalLayout_62.addWidget(self.mc_pitch_p_set_uav_4)
         self.mc_roll_p_set_uav_4 = QtWidgets.QLineEdit(self.param_set_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_set_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_set_uav_4.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_set_uav_4.setSizePolicy(sizePolicy)
         self.mc_roll_p_set_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -2835,14 +2356,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_set_uav_4.setObjectName("mc_roll_p_set_uav_4")
         self.verticalLayout_62.addWidget(self.mc_roll_p_set_uav_4)
         self.mc_yaw_p_set_uav_4 = QtWidgets.QLineEdit(self.param_set_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_set_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_set_uav_4.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_set_uav_4.setSizePolicy(sizePolicy)
         self.mc_yaw_p_set_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -2853,14 +2370,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_set_uav_4.setObjectName("mc_yaw_p_set_uav_4")
         self.verticalLayout_62.addWidget(self.mc_yaw_p_set_uav_4)
         self.btn_param_set_uav_4 = QtWidgets.QPushButton(self.param_set_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_set_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_set_uav_4.sizePolicy().hasHeightForWidth())
         self.btn_param_set_uav_4.setSizePolicy(sizePolicy)
         self.btn_param_set_uav_4.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_param_set_uav_4.setStyleSheet("background-color: rgb(239, 41, 41);")
@@ -2871,14 +2384,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.information_uav_4 = QtWidgets.QTextBrowser(self.tab_uav_4)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.information_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.information_uav_4.sizePolicy().hasHeightForWidth())
         self.information_uav_4.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("Ubuntu Mono")
@@ -2908,27 +2417,19 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout(self.tab_uav_5)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
         self.LayoutH_stream_screen_5 = QtWidgets.QHBoxLayout()
-        self.LayoutH_stream_screen_5.setSizeConstraint(
-            QtWidgets.QLayout.SetDefaultConstraint
-        )
+        self.LayoutH_stream_screen_5.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.LayoutH_stream_screen_5.setContentsMargins(10, 10, 10, 10)
         self.LayoutH_stream_screen_5.setObjectName("LayoutH_stream_screen_5")
         self.stream_screen_5 = QtWidgets.QLabel(self.tab_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.stream_screen_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.stream_screen_5.sizePolicy().hasHeightForWidth())
         self.stream_screen_5.setSizePolicy(sizePolicy)
         self.stream_screen_5.setMaximumSize(QtCore.QSize(1280, 720))
         self.stream_screen_5.setFrameShape(QtWidgets.QFrame.Box)
         self.stream_screen_5.setText("")
-        self.stream_screen_5.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg")
-        )
+        self.stream_screen_5.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg"))
         self.stream_screen_5.setObjectName("stream_screen_5")
         self.LayoutH_stream_screen_5.addWidget(self.stream_screen_5)
         self.horizontalLayout_10.addLayout(self.LayoutH_stream_screen_5)
@@ -3122,90 +2623,62 @@ class Ui_MainWindow(object):
         self.verticalLayout_64.setSpacing(0)
         self.verticalLayout_64.setObjectName("verticalLayout_64")
         self.mis_takeoff_alt_dis_uav_5 = QtWidgets.QLabel(self.param_current_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_dis_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_dis_uav_5.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_dis_uav_5.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_dis_uav_5.setMinimumSize(QtCore.QSize(0, 30))
         self.mis_takeoff_alt_dis_uav_5.setMaximumSize(QtCore.QSize(100, 30))
-        self.mis_takeoff_alt_dis_uav_5.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mis_takeoff_alt_dis_uav_5.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mis_takeoff_alt_dis_uav_5.setText("")
         self.mis_takeoff_alt_dis_uav_5.setIndent(5)
         self.mis_takeoff_alt_dis_uav_5.setObjectName("mis_takeoff_alt_dis_uav_5")
         self.verticalLayout_64.addWidget(self.mis_takeoff_alt_dis_uav_5)
         self.com_disarm_land_dis_uav_5 = QtWidgets.QLabel(self.param_current_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_dis_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_dis_uav_5.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_dis_uav_5.setSizePolicy(sizePolicy)
         self.com_disarm_land_dis_uav_5.setMinimumSize(QtCore.QSize(0, 30))
         self.com_disarm_land_dis_uav_5.setMaximumSize(QtCore.QSize(100, 30))
-        self.com_disarm_land_dis_uav_5.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.com_disarm_land_dis_uav_5.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.com_disarm_land_dis_uav_5.setText("")
         self.com_disarm_land_dis_uav_5.setIndent(5)
         self.com_disarm_land_dis_uav_5.setObjectName("com_disarm_land_dis_uav_5")
         self.verticalLayout_64.addWidget(self.com_disarm_land_dis_uav_5)
         self.mpc_tko_speed_dis_uav_5 = QtWidgets.QLabel(self.param_current_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_dis_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_dis_uav_5.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_dis_uav_5.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_dis_uav_5.setMinimumSize(QtCore.QSize(0, 30))
         self.mpc_tko_speed_dis_uav_5.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_tko_speed_dis_uav_5.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_tko_speed_dis_uav_5.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_tko_speed_dis_uav_5.setText("")
         self.mpc_tko_speed_dis_uav_5.setIndent(5)
         self.mpc_tko_speed_dis_uav_5.setObjectName("mpc_tko_speed_dis_uav_5")
         self.verticalLayout_64.addWidget(self.mpc_tko_speed_dis_uav_5)
         self.mpc_land_speed_dis_uav_5 = QtWidgets.QLabel(self.param_current_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_dis_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_dis_uav_5.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_dis_uav_5.setSizePolicy(sizePolicy)
         self.mpc_land_speed_dis_uav_5.setMinimumSize(QtCore.QSize(0, 30))
         self.mpc_land_speed_dis_uav_5.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_land_speed_dis_uav_5.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_land_speed_dis_uav_5.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_land_speed_dis_uav_5.setText("")
         self.mpc_land_speed_dis_uav_5.setIndent(5)
         self.mpc_land_speed_dis_uav_5.setObjectName("mpc_land_speed_dis_uav_5")
         self.verticalLayout_64.addWidget(self.mpc_land_speed_dis_uav_5)
         self.mpc_xy_p_dis_uav_5 = QtWidgets.QLabel(self.param_current_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_dis_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_dis_uav_5.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_dis_uav_5.setSizePolicy(sizePolicy)
         self.mpc_xy_p_dis_uav_5.setMinimumSize(QtCore.QSize(0, 30))
         self.mpc_xy_p_dis_uav_5.setMaximumSize(QtCore.QSize(100, 30))
@@ -3215,52 +2688,36 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_dis_uav_5.setObjectName("mpc_xy_p_dis_uav_5")
         self.verticalLayout_64.addWidget(self.mpc_xy_p_dis_uav_5)
         self.mpc_xy_vel_d_acc_dis_uav_5 = QtWidgets.QLabel(self.param_current_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_dis_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_dis_uav_5.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_dis_uav_5.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_dis_uav_5.setMinimumSize(QtCore.QSize(0, 30))
         self.mpc_xy_vel_d_acc_dis_uav_5.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_d_acc_dis_uav_5.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_d_acc_dis_uav_5.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_d_acc_dis_uav_5.setText("")
         self.mpc_xy_vel_d_acc_dis_uav_5.setIndent(5)
         self.mpc_xy_vel_d_acc_dis_uav_5.setObjectName("mpc_xy_vel_d_acc_dis_uav_5")
         self.verticalLayout_64.addWidget(self.mpc_xy_vel_d_acc_dis_uav_5)
         self.mpc_xy_vel_p_acc_dis_uav_5 = QtWidgets.QLabel(self.param_current_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_dis_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_dis_uav_5.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_dis_uav_5.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_dis_uav_5.setMinimumSize(QtCore.QSize(0, 30))
         self.mpc_xy_vel_p_acc_dis_uav_5.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_p_acc_dis_uav_5.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_p_acc_dis_uav_5.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_p_acc_dis_uav_5.setText("")
         self.mpc_xy_vel_p_acc_dis_uav_5.setIndent(5)
         self.mpc_xy_vel_p_acc_dis_uav_5.setObjectName("mpc_xy_vel_p_acc_dis_uav_5")
         self.verticalLayout_64.addWidget(self.mpc_xy_vel_p_acc_dis_uav_5)
         self.mc_pitch_p_dis_uav_5 = QtWidgets.QLabel(self.param_current_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_dis_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_dis_uav_5.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_dis_uav_5.setSizePolicy(sizePolicy)
         self.mc_pitch_p_dis_uav_5.setMinimumSize(QtCore.QSize(0, 30))
         self.mc_pitch_p_dis_uav_5.setMaximumSize(QtCore.QSize(100, 30))
@@ -3270,14 +2727,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_dis_uav_5.setObjectName("mc_pitch_p_dis_uav_5")
         self.verticalLayout_64.addWidget(self.mc_pitch_p_dis_uav_5)
         self.mc_roll_p_dis_uav_5 = QtWidgets.QLabel(self.param_current_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_dis_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_dis_uav_5.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_dis_uav_5.setSizePolicy(sizePolicy)
         self.mc_roll_p_dis_uav_5.setMinimumSize(QtCore.QSize(0, 30))
         self.mc_roll_p_dis_uav_5.setMaximumSize(QtCore.QSize(100, 30))
@@ -3287,14 +2740,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_dis_uav_5.setObjectName("mc_roll_p_dis_uav_5")
         self.verticalLayout_64.addWidget(self.mc_roll_p_dis_uav_5)
         self.mc_yaw_p_dis_uav_5 = QtWidgets.QLabel(self.param_current_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_dis_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_dis_uav_5.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_dis_uav_5.setSizePolicy(sizePolicy)
         self.mc_yaw_p_dis_uav_5.setMinimumSize(QtCore.QSize(0, 30))
         self.mc_yaw_p_dis_uav_5.setMaximumSize(QtCore.QSize(100, 30))
@@ -3304,14 +2753,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_dis_uav_5.setObjectName("mc_yaw_p_dis_uav_5")
         self.verticalLayout_64.addWidget(self.mc_yaw_p_dis_uav_5)
         self.btn_param_dis_uav_5 = QtWidgets.QPushButton(self.param_current_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_dis_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_dis_uav_5.sizePolicy().hasHeightForWidth())
         self.btn_param_dis_uav_5.setSizePolicy(sizePolicy)
         self.btn_param_dis_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_param_dis_uav_5.setStyleSheet("background-color: rgb(239, 41, 41);")
@@ -3330,94 +2775,66 @@ class Ui_MainWindow(object):
         self.verticalLayout_65.setSpacing(0)
         self.verticalLayout_65.setObjectName("verticalLayout_65")
         self.mis_takeoff_alt_set_uav_5 = QtWidgets.QLineEdit(self.param_set_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_set_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_set_uav_5.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_set_uav_5.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_set_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mis_takeoff_alt_set_uav_5.setFont(font)
         self.mis_takeoff_alt_set_uav_5.setAutoFillBackground(False)
-        self.mis_takeoff_alt_set_uav_5.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mis_takeoff_alt_set_uav_5.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mis_takeoff_alt_set_uav_5.setObjectName("mis_takeoff_alt_set_uav_5")
         self.verticalLayout_65.addWidget(self.mis_takeoff_alt_set_uav_5)
         self.com_disarm_land_set_uav_5 = QtWidgets.QLineEdit(self.param_set_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_set_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_set_uav_5.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_set_uav_5.setSizePolicy(sizePolicy)
         self.com_disarm_land_set_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.com_disarm_land_set_uav_5.setFont(font)
         self.com_disarm_land_set_uav_5.setAutoFillBackground(False)
-        self.com_disarm_land_set_uav_5.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.com_disarm_land_set_uav_5.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.com_disarm_land_set_uav_5.setObjectName("com_disarm_land_set_uav_5")
         self.verticalLayout_65.addWidget(self.com_disarm_land_set_uav_5)
         self.mpc_tko_speed_set_uav_5 = QtWidgets.QLineEdit(self.param_set_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_set_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_set_uav_5.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_set_uav_5.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_set_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_tko_speed_set_uav_5.setFont(font)
         self.mpc_tko_speed_set_uav_5.setAutoFillBackground(False)
-        self.mpc_tko_speed_set_uav_5.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_tko_speed_set_uav_5.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_tko_speed_set_uav_5.setObjectName("mpc_tko_speed_set_uav_5")
         self.verticalLayout_65.addWidget(self.mpc_tko_speed_set_uav_5)
         self.mpc_land_speed_set_uav_5 = QtWidgets.QLineEdit(self.param_set_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_set_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_set_uav_5.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_set_uav_5.setSizePolicy(sizePolicy)
         self.mpc_land_speed_set_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_land_speed_set_uav_5.setFont(font)
         self.mpc_land_speed_set_uav_5.setAutoFillBackground(False)
-        self.mpc_land_speed_set_uav_5.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_land_speed_set_uav_5.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_land_speed_set_uav_5.setObjectName("mpc_land_speed_set_uav_5")
         self.verticalLayout_65.addWidget(self.mpc_land_speed_set_uav_5)
         self.mpc_xy_p_set_uav_5 = QtWidgets.QLineEdit(self.param_set_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_set_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_set_uav_5.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_set_uav_5.setSizePolicy(sizePolicy)
         self.mpc_xy_p_set_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -3428,54 +2845,38 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_set_uav_5.setObjectName("mpc_xy_p_set_uav_5")
         self.verticalLayout_65.addWidget(self.mpc_xy_p_set_uav_5)
         self.mpc_xy_vel_d_acc_set_uav_5 = QtWidgets.QLineEdit(self.param_set_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_set_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_set_uav_5.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_set_uav_5.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_set_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_d_acc_set_uav_5.setFont(font)
         self.mpc_xy_vel_d_acc_set_uav_5.setAutoFillBackground(False)
-        self.mpc_xy_vel_d_acc_set_uav_5.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_d_acc_set_uav_5.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_d_acc_set_uav_5.setObjectName("mpc_xy_vel_d_acc_set_uav_5")
         self.verticalLayout_65.addWidget(self.mpc_xy_vel_d_acc_set_uav_5)
         self.mpc_xy_vel_p_acc_set_uav_5 = QtWidgets.QLineEdit(self.param_set_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_set_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_set_uav_5.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_set_uav_5.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_set_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_p_acc_set_uav_5.setFont(font)
         self.mpc_xy_vel_p_acc_set_uav_5.setAutoFillBackground(False)
-        self.mpc_xy_vel_p_acc_set_uav_5.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_p_acc_set_uav_5.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_p_acc_set_uav_5.setObjectName("mpc_xy_vel_p_acc_set_uav_5")
         self.verticalLayout_65.addWidget(self.mpc_xy_vel_p_acc_set_uav_5)
         self.mc_pitch_p_set_uav_5 = QtWidgets.QLineEdit(self.param_set_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_set_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_set_uav_5.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_set_uav_5.setSizePolicy(sizePolicy)
         self.mc_pitch_p_set_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -3486,14 +2887,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_set_uav_5.setObjectName("mc_pitch_p_set_uav_5")
         self.verticalLayout_65.addWidget(self.mc_pitch_p_set_uav_5)
         self.mc_roll_p_set_uav_5 = QtWidgets.QLineEdit(self.param_set_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_set_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_set_uav_5.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_set_uav_5.setSizePolicy(sizePolicy)
         self.mc_roll_p_set_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -3504,14 +2901,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_set_uav_5.setObjectName("mc_roll_p_set_uav_5")
         self.verticalLayout_65.addWidget(self.mc_roll_p_set_uav_5)
         self.mc_yaw_p_set_uav_5 = QtWidgets.QLineEdit(self.param_set_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_set_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_set_uav_5.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_set_uav_5.setSizePolicy(sizePolicy)
         self.mc_yaw_p_set_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         font = QtGui.QFont()
@@ -3522,14 +2915,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_set_uav_5.setObjectName("mc_yaw_p_set_uav_5")
         self.verticalLayout_65.addWidget(self.mc_yaw_p_set_uav_5)
         self.btn_param_set_uav_5 = QtWidgets.QPushButton(self.param_set_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_set_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_set_uav_5.sizePolicy().hasHeightForWidth())
         self.btn_param_set_uav_5.setSizePolicy(sizePolicy)
         self.btn_param_set_uav_5.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_param_set_uav_5.setStyleSheet("background-color: rgb(239, 41, 41);")
@@ -3540,14 +2929,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         self.information_uav_5 = QtWidgets.QTextBrowser(self.tab_uav_5)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.information_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.information_uav_5.sizePolicy().hasHeightForWidth())
         self.information_uav_5.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("Ubuntu Mono")
@@ -3578,27 +2963,20 @@ class Ui_MainWindow(object):
         self.horizontalLayout_13 = QtWidgets.QHBoxLayout(self.tab_uav_6)
         self.horizontalLayout_13.setObjectName("horizontalLayout_13")
         self.LayoutH_stream_screen_6 = QtWidgets.QHBoxLayout()
-        self.LayoutH_stream_screen_6.setSizeConstraint(
-            QtWidgets.QLayout.SetDefaultConstraint
-        )
+        self.LayoutH_stream_screen_6.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.LayoutH_stream_screen_6.setContentsMargins(10, 10, 10, 10)
         self.LayoutH_stream_screen_6.setObjectName("LayoutH_stream_screen_6")
         self.stream_screen_6 = QtWidgets.QLabel(self.tab_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.stream_screen_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.stream_screen_6.sizePolicy().hasHeightForWidth())
         self.stream_screen_6.setSizePolicy(sizePolicy)
         self.stream_screen_6.setMaximumSize(QtCore.QSize(1280, 720))
-        self.stream_screen_6.setFrameShape(QtWidgets.QFrame.Box)
+        self.stream_screen_6.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.stream_screen_6.setLineWidth(0)
         self.stream_screen_6.setText("")
-        self.stream_screen_6.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg")
-        )
+        self.stream_screen_6.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/no_signal2_720x1280.jpg"))
         self.stream_screen_6.setObjectName("stream_screen_6")
         self.LayoutH_stream_screen_6.addWidget(self.stream_screen_6)
         self.horizontalLayout_13.addLayout(self.LayoutH_stream_screen_6)
@@ -3784,14 +3162,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_66.addWidget(self.param_name_blank_6)
         self.LayoutH_param_uav_6.addWidget(self.param_name_uav_6)
         self.param_current_uav_6 = QtWidgets.QFrame(self.tab_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.param_current_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.param_current_uav_6.sizePolicy().hasHeightForWidth())
         self.param_current_uav_6.setSizePolicy(sizePolicy)
         self.param_current_uav_6.setMinimumSize(QtCore.QSize(100, 0))
         self.param_current_uav_6.setMaximumSize(QtCore.QSize(50, 400))
@@ -3805,90 +3179,62 @@ class Ui_MainWindow(object):
         self.verticalLayout_67.setSpacing(0)
         self.verticalLayout_67.setObjectName("verticalLayout_67")
         self.mis_takeoff_alt_dis_uav_6 = QtWidgets.QLabel(self.param_current_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_dis_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_dis_uav_6.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_dis_uav_6.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_dis_uav_6.setMinimumSize(QtCore.QSize(0, 30))
         self.mis_takeoff_alt_dis_uav_6.setMaximumSize(QtCore.QSize(100, 30))
-        self.mis_takeoff_alt_dis_uav_6.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mis_takeoff_alt_dis_uav_6.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mis_takeoff_alt_dis_uav_6.setText("")
         self.mis_takeoff_alt_dis_uav_6.setIndent(5)
         self.mis_takeoff_alt_dis_uav_6.setObjectName("mis_takeoff_alt_dis_uav_6")
         self.verticalLayout_67.addWidget(self.mis_takeoff_alt_dis_uav_6)
         self.com_disarm_land_dis_uav_6 = QtWidgets.QLabel(self.param_current_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_dis_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_dis_uav_6.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_dis_uav_6.setSizePolicy(sizePolicy)
         self.com_disarm_land_dis_uav_6.setMinimumSize(QtCore.QSize(0, 30))
         self.com_disarm_land_dis_uav_6.setMaximumSize(QtCore.QSize(100, 30))
-        self.com_disarm_land_dis_uav_6.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.com_disarm_land_dis_uav_6.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.com_disarm_land_dis_uav_6.setText("")
         self.com_disarm_land_dis_uav_6.setIndent(5)
         self.com_disarm_land_dis_uav_6.setObjectName("com_disarm_land_dis_uav_6")
         self.verticalLayout_67.addWidget(self.com_disarm_land_dis_uav_6)
         self.mpc_tko_speed_dis_uav_6 = QtWidgets.QLabel(self.param_current_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_dis_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_dis_uav_6.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_dis_uav_6.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_dis_uav_6.setMinimumSize(QtCore.QSize(0, 30))
         self.mpc_tko_speed_dis_uav_6.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_tko_speed_dis_uav_6.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_tko_speed_dis_uav_6.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_tko_speed_dis_uav_6.setText("")
         self.mpc_tko_speed_dis_uav_6.setIndent(5)
         self.mpc_tko_speed_dis_uav_6.setObjectName("mpc_tko_speed_dis_uav_6")
         self.verticalLayout_67.addWidget(self.mpc_tko_speed_dis_uav_6)
         self.mpc_land_speed_dis_uav_6 = QtWidgets.QLabel(self.param_current_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_dis_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_dis_uav_6.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_dis_uav_6.setSizePolicy(sizePolicy)
         self.mpc_land_speed_dis_uav_6.setMinimumSize(QtCore.QSize(0, 30))
         self.mpc_land_speed_dis_uav_6.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_land_speed_dis_uav_6.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_land_speed_dis_uav_6.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_land_speed_dis_uav_6.setText("")
         self.mpc_land_speed_dis_uav_6.setIndent(5)
         self.mpc_land_speed_dis_uav_6.setObjectName("mpc_land_speed_dis_uav_6")
         self.verticalLayout_67.addWidget(self.mpc_land_speed_dis_uav_6)
         self.mpc_xy_p_dis_uav_6 = QtWidgets.QLabel(self.param_current_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_dis_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_dis_uav_6.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_dis_uav_6.setSizePolicy(sizePolicy)
         self.mpc_xy_p_dis_uav_6.setMinimumSize(QtCore.QSize(0, 30))
         self.mpc_xy_p_dis_uav_6.setMaximumSize(QtCore.QSize(100, 30))
@@ -3898,52 +3244,36 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_dis_uav_6.setObjectName("mpc_xy_p_dis_uav_6")
         self.verticalLayout_67.addWidget(self.mpc_xy_p_dis_uav_6)
         self.mpc_xy_vel_d_acc_dis_uav_6 = QtWidgets.QLabel(self.param_current_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_dis_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_dis_uav_6.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_dis_uav_6.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_dis_uav_6.setMinimumSize(QtCore.QSize(0, 30))
         self.mpc_xy_vel_d_acc_dis_uav_6.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_d_acc_dis_uav_6.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_d_acc_dis_uav_6.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_d_acc_dis_uav_6.setText("")
         self.mpc_xy_vel_d_acc_dis_uav_6.setIndent(5)
         self.mpc_xy_vel_d_acc_dis_uav_6.setObjectName("mpc_xy_vel_d_acc_dis_uav_6")
         self.verticalLayout_67.addWidget(self.mpc_xy_vel_d_acc_dis_uav_6)
         self.mpc_xy_vel_p_acc_dis_uav_6 = QtWidgets.QLabel(self.param_current_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_dis_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_dis_uav_6.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_dis_uav_6.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_dis_uav_6.setMinimumSize(QtCore.QSize(0, 30))
         self.mpc_xy_vel_p_acc_dis_uav_6.setMaximumSize(QtCore.QSize(100, 30))
-        self.mpc_xy_vel_p_acc_dis_uav_6.setStyleSheet(
-            "background-color: rgb(170, 170, 255);"
-        )
+        self.mpc_xy_vel_p_acc_dis_uav_6.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.mpc_xy_vel_p_acc_dis_uav_6.setText("")
         self.mpc_xy_vel_p_acc_dis_uav_6.setIndent(5)
         self.mpc_xy_vel_p_acc_dis_uav_6.setObjectName("mpc_xy_vel_p_acc_dis_uav_6")
         self.verticalLayout_67.addWidget(self.mpc_xy_vel_p_acc_dis_uav_6)
         self.mc_pitch_p_dis_uav_6 = QtWidgets.QLabel(self.param_current_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_dis_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_dis_uav_6.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_dis_uav_6.setSizePolicy(sizePolicy)
         self.mc_pitch_p_dis_uav_6.setMinimumSize(QtCore.QSize(0, 30))
         self.mc_pitch_p_dis_uav_6.setMaximumSize(QtCore.QSize(100, 30))
@@ -3953,14 +3283,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_dis_uav_6.setObjectName("mc_pitch_p_dis_uav_6")
         self.verticalLayout_67.addWidget(self.mc_pitch_p_dis_uav_6)
         self.mc_roll_p_dis_uav_6 = QtWidgets.QLabel(self.param_current_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_dis_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_dis_uav_6.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_dis_uav_6.setSizePolicy(sizePolicy)
         self.mc_roll_p_dis_uav_6.setMinimumSize(QtCore.QSize(0, 30))
         self.mc_roll_p_dis_uav_6.setMaximumSize(QtCore.QSize(100, 30))
@@ -3970,14 +3296,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_dis_uav_6.setObjectName("mc_roll_p_dis_uav_6")
         self.verticalLayout_67.addWidget(self.mc_roll_p_dis_uav_6)
         self.mc_yaw_p_dis_uav_6 = QtWidgets.QLabel(self.param_current_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_dis_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_dis_uav_6.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_dis_uav_6.setSizePolicy(sizePolicy)
         self.mc_yaw_p_dis_uav_6.setMinimumSize(QtCore.QSize(0, 30))
         self.mc_yaw_p_dis_uav_6.setMaximumSize(QtCore.QSize(100, 30))
@@ -3987,14 +3309,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_dis_uav_6.setObjectName("mc_yaw_p_dis_uav_6")
         self.verticalLayout_67.addWidget(self.mc_yaw_p_dis_uav_6)
         self.btn_param_dis_uav_6 = QtWidgets.QPushButton(self.param_current_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_dis_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_dis_uav_6.sizePolicy().hasHeightForWidth())
         self.btn_param_dis_uav_6.setSizePolicy(sizePolicy)
         self.btn_param_dis_uav_6.setMinimumSize(QtCore.QSize(0, 0))
         self.btn_param_dis_uav_6.setMaximumSize(QtCore.QSize(100, 30))
@@ -4014,94 +3332,66 @@ class Ui_MainWindow(object):
         self.verticalLayout_68.setSpacing(0)
         self.verticalLayout_68.setObjectName("verticalLayout_68")
         self.mis_takeoff_alt_set_uav_6 = QtWidgets.QLineEdit(self.param_set_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mis_takeoff_alt_set_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mis_takeoff_alt_set_uav_6.sizePolicy().hasHeightForWidth())
         self.mis_takeoff_alt_set_uav_6.setSizePolicy(sizePolicy)
         self.mis_takeoff_alt_set_uav_6.setMaximumSize(QtCore.QSize(16777215, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mis_takeoff_alt_set_uav_6.setFont(font)
         self.mis_takeoff_alt_set_uav_6.setAutoFillBackground(False)
-        self.mis_takeoff_alt_set_uav_6.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mis_takeoff_alt_set_uav_6.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mis_takeoff_alt_set_uav_6.setObjectName("mis_takeoff_alt_set_uav_6")
         self.verticalLayout_68.addWidget(self.mis_takeoff_alt_set_uav_6)
         self.com_disarm_land_set_uav_6 = QtWidgets.QLineEdit(self.param_set_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.com_disarm_land_set_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.com_disarm_land_set_uav_6.sizePolicy().hasHeightForWidth())
         self.com_disarm_land_set_uav_6.setSizePolicy(sizePolicy)
         self.com_disarm_land_set_uav_6.setMaximumSize(QtCore.QSize(16777215, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.com_disarm_land_set_uav_6.setFont(font)
         self.com_disarm_land_set_uav_6.setAutoFillBackground(False)
-        self.com_disarm_land_set_uav_6.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.com_disarm_land_set_uav_6.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.com_disarm_land_set_uav_6.setObjectName("com_disarm_land_set_uav_6")
         self.verticalLayout_68.addWidget(self.com_disarm_land_set_uav_6)
         self.mpc_tko_speed_set_uav_6 = QtWidgets.QLineEdit(self.param_set_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_tko_speed_set_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_tko_speed_set_uav_6.sizePolicy().hasHeightForWidth())
         self.mpc_tko_speed_set_uav_6.setSizePolicy(sizePolicy)
         self.mpc_tko_speed_set_uav_6.setMaximumSize(QtCore.QSize(16777215, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_tko_speed_set_uav_6.setFont(font)
         self.mpc_tko_speed_set_uav_6.setAutoFillBackground(False)
-        self.mpc_tko_speed_set_uav_6.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_tko_speed_set_uav_6.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_tko_speed_set_uav_6.setObjectName("mpc_tko_speed_set_uav_6")
         self.verticalLayout_68.addWidget(self.mpc_tko_speed_set_uav_6)
         self.mpc_land_speed_set_uav_6 = QtWidgets.QLineEdit(self.param_set_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_land_speed_set_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_land_speed_set_uav_6.sizePolicy().hasHeightForWidth())
         self.mpc_land_speed_set_uav_6.setSizePolicy(sizePolicy)
         self.mpc_land_speed_set_uav_6.setMaximumSize(QtCore.QSize(16777215, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_land_speed_set_uav_6.setFont(font)
         self.mpc_land_speed_set_uav_6.setAutoFillBackground(False)
-        self.mpc_land_speed_set_uav_6.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_land_speed_set_uav_6.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_land_speed_set_uav_6.setObjectName("mpc_land_speed_set_uav_6")
         self.verticalLayout_68.addWidget(self.mpc_land_speed_set_uav_6)
         self.mpc_xy_p_set_uav_6 = QtWidgets.QLineEdit(self.param_set_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_p_set_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_p_set_uav_6.sizePolicy().hasHeightForWidth())
         self.mpc_xy_p_set_uav_6.setSizePolicy(sizePolicy)
         self.mpc_xy_p_set_uav_6.setMaximumSize(QtCore.QSize(16777215, 30))
         font = QtGui.QFont()
@@ -4112,54 +3402,38 @@ class Ui_MainWindow(object):
         self.mpc_xy_p_set_uav_6.setObjectName("mpc_xy_p_set_uav_6")
         self.verticalLayout_68.addWidget(self.mpc_xy_p_set_uav_6)
         self.mpc_xy_vel_d_acc_set_uav_6 = QtWidgets.QLineEdit(self.param_set_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_d_acc_set_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_d_acc_set_uav_6.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_d_acc_set_uav_6.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_d_acc_set_uav_6.setMaximumSize(QtCore.QSize(16777215, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_d_acc_set_uav_6.setFont(font)
         self.mpc_xy_vel_d_acc_set_uav_6.setAutoFillBackground(False)
-        self.mpc_xy_vel_d_acc_set_uav_6.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_d_acc_set_uav_6.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_d_acc_set_uav_6.setObjectName("mpc_xy_vel_d_acc_set_uav_6")
         self.verticalLayout_68.addWidget(self.mpc_xy_vel_d_acc_set_uav_6)
         self.mpc_xy_vel_p_acc_set_uav_6 = QtWidgets.QLineEdit(self.param_set_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mpc_xy_vel_p_acc_set_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mpc_xy_vel_p_acc_set_uav_6.sizePolicy().hasHeightForWidth())
         self.mpc_xy_vel_p_acc_set_uav_6.setSizePolicy(sizePolicy)
         self.mpc_xy_vel_p_acc_set_uav_6.setMaximumSize(QtCore.QSize(16777215, 30))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.mpc_xy_vel_p_acc_set_uav_6.setFont(font)
         self.mpc_xy_vel_p_acc_set_uav_6.setAutoFillBackground(False)
-        self.mpc_xy_vel_p_acc_set_uav_6.setStyleSheet(
-            "background-color: rgb(238, 238, 236);"
-        )
+        self.mpc_xy_vel_p_acc_set_uav_6.setStyleSheet("background-color: rgb(238, 238, 236);")
         self.mpc_xy_vel_p_acc_set_uav_6.setObjectName("mpc_xy_vel_p_acc_set_uav_6")
         self.verticalLayout_68.addWidget(self.mpc_xy_vel_p_acc_set_uav_6)
         self.mc_pitch_p_set_uav_6 = QtWidgets.QLineEdit(self.param_set_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_pitch_p_set_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_pitch_p_set_uav_6.sizePolicy().hasHeightForWidth())
         self.mc_pitch_p_set_uav_6.setSizePolicy(sizePolicy)
         self.mc_pitch_p_set_uav_6.setMaximumSize(QtCore.QSize(16777215, 30))
         font = QtGui.QFont()
@@ -4170,14 +3444,10 @@ class Ui_MainWindow(object):
         self.mc_pitch_p_set_uav_6.setObjectName("mc_pitch_p_set_uav_6")
         self.verticalLayout_68.addWidget(self.mc_pitch_p_set_uav_6)
         self.mc_roll_p_set_uav_6 = QtWidgets.QLineEdit(self.param_set_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_roll_p_set_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_roll_p_set_uav_6.sizePolicy().hasHeightForWidth())
         self.mc_roll_p_set_uav_6.setSizePolicy(sizePolicy)
         self.mc_roll_p_set_uav_6.setMaximumSize(QtCore.QSize(16777215, 30))
         font = QtGui.QFont()
@@ -4188,14 +3458,10 @@ class Ui_MainWindow(object):
         self.mc_roll_p_set_uav_6.setObjectName("mc_roll_p_set_uav_6")
         self.verticalLayout_68.addWidget(self.mc_roll_p_set_uav_6)
         self.mc_yaw_p_set_uav_6 = QtWidgets.QLineEdit(self.param_set_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mc_yaw_p_set_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.mc_yaw_p_set_uav_6.sizePolicy().hasHeightForWidth())
         self.mc_yaw_p_set_uav_6.setSizePolicy(sizePolicy)
         self.mc_yaw_p_set_uav_6.setMaximumSize(QtCore.QSize(16777215, 30))
         font = QtGui.QFont()
@@ -4206,14 +3472,10 @@ class Ui_MainWindow(object):
         self.mc_yaw_p_set_uav_6.setObjectName("mc_yaw_p_set_uav_6")
         self.verticalLayout_68.addWidget(self.mc_yaw_p_set_uav_6)
         self.btn_param_set_uav_6 = QtWidgets.QPushButton(self.param_set_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_param_set_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_param_set_uav_6.sizePolicy().hasHeightForWidth())
         self.btn_param_set_uav_6.setSizePolicy(sizePolicy)
         self.btn_param_set_uav_6.setMaximumSize(QtCore.QSize(100, 30))
         self.btn_param_set_uav_6.setStyleSheet("background-color: rgb(239, 41, 41);")
@@ -4227,14 +3489,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.information_uav_6 = QtWidgets.QTextBrowser(self.tab_uav_6)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.information_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.information_uav_6.sizePolicy().hasHeightForWidth())
         self.information_uav_6.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("Ubuntu Mono")
@@ -4267,15 +3525,10 @@ class Ui_MainWindow(object):
         self.LayoutV_settings_ports = QtWidgets.QHBoxLayout()
         self.LayoutV_settings_ports.setObjectName("LayoutV_settings_ports")
         self.table_uav_large = QtWidgets.QTableWidget(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.table_uav_large.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.table_uav_large.sizePolicy().hasHeightForWidth())
         self.table_uav_large.setSizePolicy(sizePolicy)
         self.table_uav_large.setMaximumSize(QtCore.QSize(1215, 413))
         font = QtGui.QFont()
@@ -4283,9 +3536,7 @@ class Ui_MainWindow(object):
         self.table_uav_large.setFont(font)
         self.table_uav_large.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.table_uav_large.setLineWidth(10)
-        self.table_uav_large.setSizeAdjustPolicy(
-            QtWidgets.QAbstractScrollArea.AdjustToContentsOnFirstShow
-        )
+        self.table_uav_large.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContentsOnFirstShow)
         self.table_uav_large.setAutoScrollMargin(50)
         self.table_uav_large.setAlternatingRowColors(True)
         self.table_uav_large.setGridStyle(QtCore.Qt.SolidLine)
@@ -4310,9 +3561,7 @@ class Ui_MainWindow(object):
         self.table_uav_large.verticalHeader().setStretchLastSection(False)
         self.LayoutV_settings_ports.addWidget(self.table_uav_large)
         self.line_7 = QtWidgets.QFrame(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.line_7.sizePolicy().hasHeightForWidth())
@@ -4336,14 +3585,10 @@ class Ui_MainWindow(object):
         self.label_15.setObjectName("label_15")
         self.LayoutH_sett_checkBox_active.addWidget(self.label_15)
         self.sett_checkBox_active_uav_1 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_active_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_active_uav_1.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_active_uav_1.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4356,14 +3601,10 @@ class Ui_MainWindow(object):
         self.sett_checkBox_active_uav_1.setObjectName("sett_checkBox_active_uav_1")
         self.LayoutH_sett_checkBox_active.addWidget(self.sett_checkBox_active_uav_1)
         self.sett_checkBox_active_uav_2 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_active_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_active_uav_2.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_active_uav_2.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4374,14 +3615,10 @@ class Ui_MainWindow(object):
         self.sett_checkBox_active_uav_2.setObjectName("sett_checkBox_active_uav_2")
         self.LayoutH_sett_checkBox_active.addWidget(self.sett_checkBox_active_uav_2)
         self.sett_checkBox_active_uav_3 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_active_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_active_uav_3.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_active_uav_3.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4392,14 +3629,10 @@ class Ui_MainWindow(object):
         self.sett_checkBox_active_uav_3.setObjectName("sett_checkBox_active_uav_3")
         self.LayoutH_sett_checkBox_active.addWidget(self.sett_checkBox_active_uav_3)
         self.sett_checkBox_active_uav_4 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_active_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_active_uav_4.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_active_uav_4.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4410,14 +3643,10 @@ class Ui_MainWindow(object):
         self.sett_checkBox_active_uav_4.setObjectName("sett_checkBox_active_uav_4")
         self.LayoutH_sett_checkBox_active.addWidget(self.sett_checkBox_active_uav_4)
         self.sett_checkBox_active_uav_5 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_active_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_active_uav_5.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_active_uav_5.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4428,14 +3657,10 @@ class Ui_MainWindow(object):
         self.sett_checkBox_active_uav_5.setObjectName("sett_checkBox_active_uav_5")
         self.LayoutH_sett_checkBox_active.addWidget(self.sett_checkBox_active_uav_5)
         self.sett_checkBox_active_uav_6 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_active_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_active_uav_6.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_active_uav_6.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4473,14 +3698,10 @@ class Ui_MainWindow(object):
         self.label_4.setObjectName("label_4")
         self.LayoutH_sett_checkBox_detect.addWidget(self.label_4)
         self.sett_checkBox_detect_uav_1 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_detect_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_detect_uav_1.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_detect_uav_1.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4489,14 +3710,10 @@ class Ui_MainWindow(object):
         self.sett_checkBox_detect_uav_1.setObjectName("sett_checkBox_detect_uav_1")
         self.LayoutH_sett_checkBox_detect.addWidget(self.sett_checkBox_detect_uav_1)
         self.sett_checkBox_detect_uav_2 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_detect_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_detect_uav_2.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_detect_uav_2.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4504,14 +3721,10 @@ class Ui_MainWindow(object):
         self.sett_checkBox_detect_uav_2.setObjectName("sett_checkBox_detect_uav_2")
         self.LayoutH_sett_checkBox_detect.addWidget(self.sett_checkBox_detect_uav_2)
         self.sett_checkBox_detect_uav_3 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_detect_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_detect_uav_3.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_detect_uav_3.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4519,14 +3732,10 @@ class Ui_MainWindow(object):
         self.sett_checkBox_detect_uav_3.setObjectName("sett_checkBox_detect_uav_3")
         self.LayoutH_sett_checkBox_detect.addWidget(self.sett_checkBox_detect_uav_3)
         self.sett_checkBox_detect_uav_4 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_detect_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_detect_uav_4.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_detect_uav_4.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4534,14 +3743,10 @@ class Ui_MainWindow(object):
         self.sett_checkBox_detect_uav_4.setObjectName("sett_checkBox_detect_uav_4")
         self.LayoutH_sett_checkBox_detect.addWidget(self.sett_checkBox_detect_uav_4)
         self.sett_checkBox_detect_uav_5 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_detect_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_detect_uav_5.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_detect_uav_5.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4549,14 +3754,10 @@ class Ui_MainWindow(object):
         self.sett_checkBox_detect_uav_5.setObjectName("sett_checkBox_detect_uav_5")
         self.LayoutH_sett_checkBox_detect.addWidget(self.sett_checkBox_detect_uav_5)
         self.sett_checkBox_detect_uav_6 = QtWidgets.QCheckBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sett_checkBox_detect_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sett_checkBox_detect_uav_6.sizePolicy().hasHeightForWidth())
         self.sett_checkBox_detect_uav_6.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -4588,9 +3789,7 @@ class Ui_MainWindow(object):
         self.label_5.setObjectName("label_5")
         self.LayoutH_settings_set_nswarm.addWidget(self.label_5)
         self.nSwarms_sett = QtWidgets.QSpinBox(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.nSwarms_sett.sizePolicy().hasHeightForWidth())
@@ -4604,15 +3803,10 @@ class Ui_MainWindow(object):
         self.nSwarms_sett.setObjectName("nSwarms_sett")
         self.LayoutH_settings_set_nswarm.addWidget(self.nSwarms_sett)
         self.btn_sett_cf_nSwarms = QtWidgets.QPushButton(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_sett_cf_nSwarms.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_sett_cf_nSwarms.sizePolicy().hasHeightForWidth())
         self.btn_sett_cf_nSwarms.setSizePolicy(sizePolicy)
         self.btn_sett_cf_nSwarms.setObjectName("btn_sett_cf_nSwarms")
         self.LayoutH_settings_set_nswarm.addWidget(self.btn_sett_cf_nSwarms)
@@ -4644,14 +3838,10 @@ class Ui_MainWindow(object):
         self.label_6.setObjectName("label_6")
         self.LayoutH_settings_pos.addWidget(self.label_6)
         self.lineEdit_sett_latitude = QtWidgets.QLineEdit(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lineEdit_sett_latitude.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.lineEdit_sett_latitude.sizePolicy().hasHeightForWidth())
         self.lineEdit_sett_latitude.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(48)
@@ -4666,14 +3856,10 @@ class Ui_MainWindow(object):
         self.label_7.setObjectName("label_7")
         self.LayoutH_settings_pos.addWidget(self.label_7)
         self.lineEdit_sett_longitude = QtWidgets.QLineEdit(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lineEdit_sett_longitude.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.lineEdit_sett_longitude.sizePolicy().hasHeightForWidth())
         self.lineEdit_sett_longitude.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(48)
@@ -4697,87 +3883,58 @@ class Ui_MainWindow(object):
         self.label_8.setObjectName("label_8")
         self.LayoutH_settings_gotoXY.addWidget(self.label_8)
         self.btn_sett_goto_uav_1 = QtWidgets.QPushButton(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_sett_goto_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_sett_goto_uav_1.sizePolicy().hasHeightForWidth())
         self.btn_sett_goto_uav_1.setSizePolicy(sizePolicy)
         self.btn_sett_goto_uav_1.setObjectName("btn_sett_goto_uav_1")
         self.LayoutH_settings_gotoXY.addWidget(self.btn_sett_goto_uav_1)
         self.btn_sett_goto_uav_2 = QtWidgets.QPushButton(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_sett_goto_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_sett_goto_uav_2.sizePolicy().hasHeightForWidth())
         self.btn_sett_goto_uav_2.setSizePolicy(sizePolicy)
         self.btn_sett_goto_uav_2.setObjectName("btn_sett_goto_uav_2")
         self.LayoutH_settings_gotoXY.addWidget(self.btn_sett_goto_uav_2)
         self.btn_sett_goto_uav_3 = QtWidgets.QPushButton(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_sett_goto_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_sett_goto_uav_3.sizePolicy().hasHeightForWidth())
         self.btn_sett_goto_uav_3.setSizePolicy(sizePolicy)
         self.btn_sett_goto_uav_3.setObjectName("btn_sett_goto_uav_3")
         self.LayoutH_settings_gotoXY.addWidget(self.btn_sett_goto_uav_3)
         self.btn_sett_goto_uav_4 = QtWidgets.QPushButton(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_sett_goto_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_sett_goto_uav_4.sizePolicy().hasHeightForWidth())
         self.btn_sett_goto_uav_4.setSizePolicy(sizePolicy)
         self.btn_sett_goto_uav_4.setObjectName("btn_sett_goto_uav_4")
         self.LayoutH_settings_gotoXY.addWidget(self.btn_sett_goto_uav_4)
         self.btn_sett_goto_uav_5 = QtWidgets.QPushButton(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_sett_goto_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_sett_goto_uav_5.sizePolicy().hasHeightForWidth())
         self.btn_sett_goto_uav_5.setSizePolicy(sizePolicy)
         self.btn_sett_goto_uav_5.setObjectName("btn_sett_goto_uav_5")
         self.LayoutH_settings_gotoXY.addWidget(self.btn_sett_goto_uav_5)
         self.btn_sett_goto_uav_6 = QtWidgets.QPushButton(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_sett_goto_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_sett_goto_uav_6.sizePolicy().hasHeightForWidth())
         self.btn_sett_goto_uav_6.setSizePolicy(sizePolicy)
         self.btn_sett_goto_uav_6.setObjectName("btn_sett_goto_uav_6")
         self.LayoutH_settings_gotoXY.addWidget(self.btn_sett_goto_uav_6)
         self.btn_sett_goto_uav_all = QtWidgets.QPushButton(self.tab_settings)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_sett_goto_uav_all.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_sett_goto_uav_all.sizePolicy().hasHeightForWidth())
         self.btn_sett_goto_uav_all.setSizePolicy(sizePolicy)
         self.btn_sett_goto_uav_all.setObjectName("btn_sett_goto_uav_all")
         self.LayoutH_settings_gotoXY.addWidget(self.btn_sett_goto_uav_all)
@@ -4812,11 +3969,7 @@ class Ui_MainWindow(object):
         self.Overview_map_view.setTabletTracking(True)
         self.Overview_map_view.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.Overview_map_view.setAutoFillBackground(False)
-        self.Overview_map_view.setUrl(
-            QtCore.QUrl(
-                "file:///media/phuongnam-d/920C22060C21E5C7/Freelancer/UAV/workspace/assets/map.html"
-            )
-        )
+        self.Overview_map_view.setUrl(QtCore.QUrl("file:///media/phuongnam-d/920C22060C21E5C7/Personal/Workspace/UAV/workspace/assets/map.html"))
         self.Overview_map_view.setObjectName("Overview_map_view")
         self.horizontalLayout_27.addWidget(self.Overview_map_view)
         self.line_6 = QtWidgets.QFrame(self.tab_overview)
@@ -4833,63 +3986,87 @@ class Ui_MainWindow(object):
         self.gridLayout_5.setSpacing(10)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.ovv_screen_uav_3 = QtWidgets.QLabel(self.tab_overview)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.ovv_screen_uav_3.sizePolicy().hasHeightForWidth())
+        self.ovv_screen_uav_3.setSizePolicy(sizePolicy)
         self.ovv_screen_uav_3.setMaximumSize(QtCore.QSize(320, 180))
-        self.ovv_screen_uav_3.setFrameShape(QtWidgets.QFrame.WinPanel)
+        self.ovv_screen_uav_3.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.ovv_screen_uav_3.setLineWidth(0)
         self.ovv_screen_uav_3.setText("")
-        self.ovv_screen_uav_3.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.ovv_screen_uav_3.setScaledContents(True)
+        self.ovv_screen_uav_3.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg"))
+        self.ovv_screen_uav_3.setScaledContents(False)
         self.ovv_screen_uav_3.setObjectName("ovv_screen_uav_3")
         self.gridLayout_5.addWidget(self.ovv_screen_uav_3, 0, 2, 1, 1)
         self.ovv_screen_uav_5 = QtWidgets.QLabel(self.tab_overview)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.ovv_screen_uav_5.sizePolicy().hasHeightForWidth())
+        self.ovv_screen_uav_5.setSizePolicy(sizePolicy)
         self.ovv_screen_uav_5.setMaximumSize(QtCore.QSize(320, 180))
-        self.ovv_screen_uav_5.setFrameShape(QtWidgets.QFrame.WinPanel)
+        self.ovv_screen_uav_5.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.ovv_screen_uav_5.setLineWidth(0)
         self.ovv_screen_uav_5.setText("")
-        self.ovv_screen_uav_5.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.ovv_screen_uav_5.setScaledContents(True)
+        self.ovv_screen_uav_5.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg"))
+        self.ovv_screen_uav_5.setScaledContents(False)
         self.ovv_screen_uav_5.setObjectName("ovv_screen_uav_5")
         self.gridLayout_5.addWidget(self.ovv_screen_uav_5, 1, 1, 1, 1)
         self.ovv_screen_uav_1 = QtWidgets.QLabel(self.tab_overview)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.ovv_screen_uav_1.sizePolicy().hasHeightForWidth())
+        self.ovv_screen_uav_1.setSizePolicy(sizePolicy)
         self.ovv_screen_uav_1.setMaximumSize(QtCore.QSize(320, 180))
-        self.ovv_screen_uav_1.setFrameShape(QtWidgets.QFrame.WinPanel)
+        self.ovv_screen_uav_1.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.ovv_screen_uav_1.setLineWidth(0)
         self.ovv_screen_uav_1.setText("")
-        self.ovv_screen_uav_1.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.ovv_screen_uav_1.setScaledContents(True)
+        self.ovv_screen_uav_1.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg"))
+        self.ovv_screen_uav_1.setScaledContents(False)
         self.ovv_screen_uav_1.setObjectName("ovv_screen_uav_1")
         self.gridLayout_5.addWidget(self.ovv_screen_uav_1, 0, 0, 1, 1)
         self.ovv_screen_uav_2 = QtWidgets.QLabel(self.tab_overview)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.ovv_screen_uav_2.sizePolicy().hasHeightForWidth())
+        self.ovv_screen_uav_2.setSizePolicy(sizePolicy)
         self.ovv_screen_uav_2.setMaximumSize(QtCore.QSize(320, 180))
-        self.ovv_screen_uav_2.setFrameShape(QtWidgets.QFrame.WinPanel)
+        self.ovv_screen_uav_2.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.ovv_screen_uav_2.setLineWidth(0)
         self.ovv_screen_uav_2.setText("")
-        self.ovv_screen_uav_2.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.ovv_screen_uav_2.setScaledContents(True)
+        self.ovv_screen_uav_2.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg"))
+        self.ovv_screen_uav_2.setScaledContents(False)
         self.ovv_screen_uav_2.setObjectName("ovv_screen_uav_2")
         self.gridLayout_5.addWidget(self.ovv_screen_uav_2, 0, 1, 1, 1)
         self.ovv_screen_uav_4 = QtWidgets.QLabel(self.tab_overview)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.ovv_screen_uav_4.sizePolicy().hasHeightForWidth())
+        self.ovv_screen_uav_4.setSizePolicy(sizePolicy)
         self.ovv_screen_uav_4.setMaximumSize(QtCore.QSize(320, 180))
-        self.ovv_screen_uav_4.setFrameShape(QtWidgets.QFrame.WinPanel)
+        self.ovv_screen_uav_4.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.ovv_screen_uav_4.setLineWidth(0)
         self.ovv_screen_uav_4.setText("")
-        self.ovv_screen_uav_4.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.ovv_screen_uav_4.setScaledContents(True)
+        self.ovv_screen_uav_4.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg"))
+        self.ovv_screen_uav_4.setScaledContents(False)
         self.ovv_screen_uav_4.setObjectName("ovv_screen_uav_4")
         self.gridLayout_5.addWidget(self.ovv_screen_uav_4, 1, 0, 1, 1)
         self.ovv_screen_uav_6 = QtWidgets.QLabel(self.tab_overview)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.ovv_screen_uav_6.sizePolicy().hasHeightForWidth())
+        self.ovv_screen_uav_6.setSizePolicy(sizePolicy)
         self.ovv_screen_uav_6.setMaximumSize(QtCore.QSize(320, 180))
-        self.ovv_screen_uav_6.setFrameShape(QtWidgets.QFrame.WinPanel)
+        self.ovv_screen_uav_6.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.ovv_screen_uav_6.setLineWidth(0)
         self.ovv_screen_uav_6.setText("")
-        self.ovv_screen_uav_6.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/nosignal.jpg")
-        )
-        self.ovv_screen_uav_6.setScaledContents(True)
+        self.ovv_screen_uav_6.setPixmap(QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg"))
+        self.ovv_screen_uav_6.setScaledContents(False)
         self.ovv_screen_uav_6.setObjectName("ovv_screen_uav_6")
         self.gridLayout_5.addWidget(self.ovv_screen_uav_6, 1, 2, 1, 1)
         self.gridLayout_5.setColumnMinimumWidth(0, 320)
@@ -4913,18 +4090,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_18 = QtWidgets.QVBoxLayout()
         self.verticalLayout_18.setObjectName("verticalLayout_18")
         self.table_uav_small = QtWidgets.QTableWidget(self.tab_overview)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.table_uav_small.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.table_uav_small.sizePolicy().hasHeightForWidth())
         self.table_uav_small.setSizePolicy(sizePolicy)
-        self.table_uav_small.setSizeAdjustPolicy(
-            QtWidgets.QAbstractScrollArea.AdjustToContentsOnFirstShow
-        )
+        self.table_uav_small.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContentsOnFirstShow)
         self.table_uav_small.setRowCount(6)
         self.table_uav_small.setColumnCount(3)
         self.table_uav_small.setObjectName("table_uav_small")
@@ -4972,17 +4143,12 @@ class Ui_MainWindow(object):
         self.line_2.setObjectName("line_2")
         self.horizontalLayout_25.addWidget(self.line_2)
         self.LayoutH_ovv_checkBox_detect = QtWidgets.QVBoxLayout()
-        self.LayoutH_ovv_checkBox_detect.setSizeConstraint(
-            QtWidgets.QLayout.SetDefaultConstraint
-        )
+        self.LayoutH_ovv_checkBox_detect.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.LayoutH_ovv_checkBox_detect.setContentsMargins(5, -1, -1, -1)
         self.LayoutH_ovv_checkBox_detect.setSpacing(10)
         self.LayoutH_ovv_checkBox_detect.setObjectName("LayoutH_ovv_checkBox_detect")
         self.label_35 = QtWidgets.QLabel(self.tab_overview)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_35.sizePolicy().hasHeightForWidth())
@@ -4993,75 +4159,51 @@ class Ui_MainWindow(object):
         self.label_35.setObjectName("label_35")
         self.LayoutH_ovv_checkBox_detect.addWidget(self.label_35)
         self.ovv_checkBox_detect_uav_1 = QtWidgets.QCheckBox(self.tab_overview)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ovv_checkBox_detect_uav_1.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.ovv_checkBox_detect_uav_1.sizePolicy().hasHeightForWidth())
         self.ovv_checkBox_detect_uav_1.setSizePolicy(sizePolicy)
         self.ovv_checkBox_detect_uav_1.setTristate(False)
         self.ovv_checkBox_detect_uav_1.setObjectName("ovv_checkBox_detect_uav_1")
         self.LayoutH_ovv_checkBox_detect.addWidget(self.ovv_checkBox_detect_uav_1)
         self.ovv_checkBox_detect_uav_2 = QtWidgets.QCheckBox(self.tab_overview)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ovv_checkBox_detect_uav_2.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.ovv_checkBox_detect_uav_2.sizePolicy().hasHeightForWidth())
         self.ovv_checkBox_detect_uav_2.setSizePolicy(sizePolicy)
         self.ovv_checkBox_detect_uav_2.setObjectName("ovv_checkBox_detect_uav_2")
         self.LayoutH_ovv_checkBox_detect.addWidget(self.ovv_checkBox_detect_uav_2)
         self.ovv_checkBox_detect_uav_3 = QtWidgets.QCheckBox(self.tab_overview)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ovv_checkBox_detect_uav_3.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.ovv_checkBox_detect_uav_3.sizePolicy().hasHeightForWidth())
         self.ovv_checkBox_detect_uav_3.setSizePolicy(sizePolicy)
         self.ovv_checkBox_detect_uav_3.setObjectName("ovv_checkBox_detect_uav_3")
         self.LayoutH_ovv_checkBox_detect.addWidget(self.ovv_checkBox_detect_uav_3)
         self.ovv_checkBox_detect_uav_4 = QtWidgets.QCheckBox(self.tab_overview)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ovv_checkBox_detect_uav_4.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.ovv_checkBox_detect_uav_4.sizePolicy().hasHeightForWidth())
         self.ovv_checkBox_detect_uav_4.setSizePolicy(sizePolicy)
         self.ovv_checkBox_detect_uav_4.setObjectName("ovv_checkBox_detect_uav_4")
         self.LayoutH_ovv_checkBox_detect.addWidget(self.ovv_checkBox_detect_uav_4)
         self.ovv_checkBox_detect_uav_5 = QtWidgets.QCheckBox(self.tab_overview)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ovv_checkBox_detect_uav_5.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.ovv_checkBox_detect_uav_5.sizePolicy().hasHeightForWidth())
         self.ovv_checkBox_detect_uav_5.setSizePolicy(sizePolicy)
         self.ovv_checkBox_detect_uav_5.setObjectName("ovv_checkBox_detect_uav_5")
         self.LayoutH_ovv_checkBox_detect.addWidget(self.ovv_checkBox_detect_uav_5)
         self.ovv_checkBox_detect_uav_6 = QtWidgets.QCheckBox(self.tab_overview)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ovv_checkBox_detect_uav_6.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.ovv_checkBox_detect_uav_6.sizePolicy().hasHeightForWidth())
         self.ovv_checkBox_detect_uav_6.setSizePolicy(sizePolicy)
         self.ovv_checkBox_detect_uav_6.setChecked(True)
         self.ovv_checkBox_detect_uav_6.setObjectName("ovv_checkBox_detect_uav_6")
@@ -5113,9 +4255,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_20 = QtWidgets.QVBoxLayout()
         self.verticalLayout_20.setObjectName("verticalLayout_20")
         self.label_39 = QtWidgets.QLabel(self.tab_overview)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_39.sizePolicy().hasHeightForWidth())
@@ -5170,9 +4310,7 @@ class Ui_MainWindow(object):
         self.btn_control_grid.setContentsMargins(10, -1, 10, -1)
         self.btn_control_grid.setObjectName("btn_control_grid")
         self.btn_pause = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btn_pause.sizePolicy().hasHeightForWidth())
@@ -5187,16 +4325,12 @@ class Ui_MainWindow(object):
         self.btn_pause.setFont(font)
         self.btn_pause.setMouseTracking(True)
         self.btn_pause.setAutoFillBackground(False)
-        self.btn_pause.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_pause.setStyleSheet("QPushButton{background-color: rgb(243, 243, 243);}\n"
+"QPushButton::pressed{background-color: rgb(255, 0, 0);}")
         self.btn_pause.setObjectName("btn_pause")
         self.btn_control_grid.addWidget(self.btn_pause, 3, 3, 1, 1)
         self.btn_arm = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btn_arm.sizePolicy().hasHeightForWidth())
@@ -5211,16 +4345,12 @@ class Ui_MainWindow(object):
         self.btn_arm.setFont(font)
         self.btn_arm.setMouseTracking(True)
         self.btn_arm.setAutoFillBackground(False)
-        self.btn_arm.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_arm.setStyleSheet("QPushButton{background-color: rgb(243, 243, 243);}\n"
+"QPushButton::pressed{background-color: rgb(255, 0, 0);}")
         self.btn_arm.setObjectName("btn_arm")
         self.btn_control_grid.addWidget(self.btn_arm, 1, 1, 1, 1)
         self.btn_connect = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btn_connect.sizePolicy().hasHeightForWidth())
@@ -5235,16 +4365,12 @@ class Ui_MainWindow(object):
         self.btn_connect.setFont(font)
         self.btn_connect.setMouseTracking(True)
         self.btn_connect.setAutoFillBackground(False)
-        self.btn_connect.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_connect.setStyleSheet("QPushButton{background-color: rgb(243, 243, 243);}\n"
+"QPushButton::pressed{background-color: rgb(255, 0, 0);}")
         self.btn_connect.setObjectName("btn_connect")
         self.btn_control_grid.addWidget(self.btn_connect, 1, 0, 1, 1)
         self.btn_mission = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btn_mission.sizePolicy().hasHeightForWidth())
@@ -5259,21 +4385,15 @@ class Ui_MainWindow(object):
         self.btn_mission.setFont(font)
         self.btn_mission.setMouseTracking(True)
         self.btn_mission.setAutoFillBackground(False)
-        self.btn_mission.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_mission.setStyleSheet("QPushButton{background-color: rgb(243, 243, 243);}\n"
+"QPushButton::pressed{background-color: rgb(255, 0, 0);}")
         self.btn_mission.setObjectName("btn_mission")
         self.btn_control_grid.addWidget(self.btn_mission, 3, 1, 1, 1)
         self.btn_toggle_camera = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_toggle_camera.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_toggle_camera.sizePolicy().hasHeightForWidth())
         self.btn_toggle_camera.setSizePolicy(sizePolicy)
         self.btn_toggle_camera.setMaximumSize(QtCore.QSize(245, 100))
         font = QtGui.QFont()
@@ -5281,16 +4401,12 @@ class Ui_MainWindow(object):
         font.setPointSize(18)
         self.btn_toggle_camera.setFont(font)
         self.btn_toggle_camera.setMouseTracking(True)
-        self.btn_toggle_camera.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_toggle_camera.setStyleSheet("\n"
+"background-color: rgb(238, 238, 236);")
         self.btn_toggle_camera.setObjectName("btn_toggle_camera")
         self.btn_control_grid.addWidget(self.btn_toggle_camera, 3, 0, 1, 1)
         self.btn_return = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btn_return.sizePolicy().hasHeightForWidth())
@@ -5301,16 +4417,12 @@ class Ui_MainWindow(object):
         font.setPointSize(18)
         self.btn_return.setFont(font)
         self.btn_return.setMouseTracking(True)
-        self.btn_return.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_return.setStyleSheet("QPushButton{background-color: rgb(243, 243, 243);}\n"
+"QPushButton::pressed{background-color: rgb(255, 0, 0);}")
         self.btn_return.setObjectName("btn_return")
         self.btn_control_grid.addWidget(self.btn_return, 3, 6, 1, 1)
         self.btn_landing = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btn_landing.sizePolicy().hasHeightForWidth())
@@ -5325,16 +4437,12 @@ class Ui_MainWindow(object):
         self.btn_landing.setFont(font)
         self.btn_landing.setMouseTracking(True)
         self.btn_landing.setAutoFillBackground(False)
-        self.btn_landing.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_landing.setStyleSheet("QPushButton{background-color: rgb(243, 243, 243);}\n"
+"QPushButton::pressed{background-color: rgb(255, 0, 0);}")
         self.btn_landing.setObjectName("btn_landing")
         self.btn_control_grid.addWidget(self.btn_landing, 1, 3, 1, 1)
         self.btn_rtl = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btn_rtl.sizePolicy().hasHeightForWidth())
@@ -5349,16 +4457,12 @@ class Ui_MainWindow(object):
         self.btn_rtl.setFont(font)
         self.btn_rtl.setMouseTracking(True)
         self.btn_rtl.setAutoFillBackground(False)
-        self.btn_rtl.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_rtl.setStyleSheet("QPushButton{background-color: rgb(243, 243, 243);}\n"
+"QPushButton::pressed{background-color: rgb(255, 0, 0);}")
         self.btn_rtl.setObjectName("btn_rtl")
         self.btn_control_grid.addWidget(self.btn_rtl, 3, 4, 1, 1)
         self.btn_takeOff = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btn_takeOff.sizePolicy().hasHeightForWidth())
@@ -5373,21 +4477,15 @@ class Ui_MainWindow(object):
         self.btn_takeOff.setFont(font)
         self.btn_takeOff.setMouseTracking(True)
         self.btn_takeOff.setAutoFillBackground(False)
-        self.btn_takeOff.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_takeOff.setStyleSheet("QPushButton{background-color: rgb(243, 243, 243);}\n"
+"QPushButton::pressed{background-color: rgb(255, 0, 0);}")
         self.btn_takeOff.setObjectName("btn_takeOff")
         self.btn_control_grid.addWidget(self.btn_takeOff, 1, 2, 1, 1)
         self.btn_pushMission = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_pushMission.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_pushMission.sizePolicy().hasHeightForWidth())
         self.btn_pushMission.setSizePolicy(sizePolicy)
         self.btn_pushMission.setMaximumSize(QtCore.QSize(245, 100))
         font = QtGui.QFont()
@@ -5399,16 +4497,12 @@ class Ui_MainWindow(object):
         self.btn_pushMission.setFont(font)
         self.btn_pushMission.setMouseTracking(True)
         self.btn_pushMission.setAutoFillBackground(False)
-        self.btn_pushMission.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_pushMission.setStyleSheet("QPushButton{background-color: rgb(243, 243, 243);}\n"
+"QPushButton::pressed{background-color: rgb(255, 0, 0);}")
         self.btn_pushMission.setObjectName("btn_pushMission")
         self.btn_control_grid.addWidget(self.btn_pushMission, 3, 2, 1, 1)
         self.btn_disarm = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btn_disarm.sizePolicy().hasHeightForWidth())
@@ -5423,21 +4517,15 @@ class Ui_MainWindow(object):
         self.btn_disarm.setFont(font)
         self.btn_disarm.setMouseTracking(True)
         self.btn_disarm.setAutoFillBackground(False)
-        self.btn_disarm.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_disarm.setStyleSheet("QPushButton{background-color: rgb(243, 243, 243);}\n"
+"QPushButton::pressed{background-color: rgb(255, 0, 0);}")
         self.btn_disarm.setObjectName("btn_disarm")
         self.btn_control_grid.addWidget(self.btn_disarm, 1, 4, 1, 1)
         self.btn_open_close = QtWidgets.QPushButton(self.MainScreen)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_open_close.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_open_close.sizePolicy().hasHeightForWidth())
         self.btn_open_close.setSizePolicy(sizePolicy)
         self.btn_open_close.setMaximumSize(QtCore.QSize(245, 100))
         font = QtGui.QFont()
@@ -5449,17 +4537,16 @@ class Ui_MainWindow(object):
         self.btn_open_close.setFont(font)
         self.btn_open_close.setMouseTracking(True)
         self.btn_open_close.setAutoFillBackground(False)
-        self.btn_open_close.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
+        self.btn_open_close.setStyleSheet("QPushButton{background-color: rgb(243, 243, 243);}\n"
+"QPushButton::pressed{background-color: rgb(255, 0, 0);}")
         self.btn_open_close.setObjectName("btn_open_close")
         self.btn_control_grid.addWidget(self.btn_open_close, 1, 6, 1, 1)
         self.footer.addLayout(self.btn_control_grid)
         self.mainTerminal = QtWidgets.QPlainTextEdit(self.MainScreen)
         self.mainTerminal.setMaximumSize(QtCore.QSize(512, 16777215))
         self.mainTerminal.setAutoFillBackground(True)
-        self.mainTerminal.setStyleSheet("\n" "background-color: rgb(136, 138, 133);")
+        self.mainTerminal.setStyleSheet("\n"
+"background-color: rgb(136, 138, 133);")
         self.mainTerminal.setReadOnly(True)
         self.mainTerminal.setCenterOnScroll(True)
         self.mainTerminal.setObjectName("mainTerminal")
@@ -5482,9 +4569,7 @@ class Ui_MainWindow(object):
         self.header_2.setSpacing(60)
         self.header_2.setObjectName("header_2")
         self.page_name_2 = QtWidgets.QLabel(self.RescueMapPage)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.page_name_2.sizePolicy().hasHeightForWidth())
@@ -5498,9 +4583,7 @@ class Ui_MainWindow(object):
         self.page_name_2.setObjectName("page_name_2")
         self.header_2.addWidget(self.page_name_2)
         self.logo2_2 = QtWidgets.QLabel(self.RescueMapPage)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.logo2_2.sizePolicy().hasHeightForWidth())
@@ -5529,7 +4612,8 @@ class Ui_MainWindow(object):
         font.setPointSize(20)
         self.logo1_2.setFont(font)
         self.logo1_2.setAutoFillBackground(False)
-        self.logo1_2.setStyleSheet("\n" "background-color: rgb(114, 159, 207);")
+        self.logo1_2.setStyleSheet("\n"
+"background-color: rgb(114, 159, 207);")
         self.logo1_2.setFrameShape(QtWidgets.QFrame.Box)
         self.logo1_2.setAlignment(QtCore.Qt.AlignCenter)
         self.logo1_2.setWordWrap(True)
@@ -5584,14 +4668,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_12.setSizeConstraint(QtWidgets.QLayout.SetMaximumSize)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
         self.btn_open_filepoint = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_open_filepoint.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_open_filepoint.sizePolicy().hasHeightForWidth())
         self.btn_open_filepoint.setSizePolicy(sizePolicy)
         self.btn_open_filepoint.setAutoFillBackground(False)
         self.btn_open_filepoint.setStyleSheet("background-color: rgb(211, 215, 207);")
@@ -5599,14 +4679,10 @@ class Ui_MainWindow(object):
         self.btn_open_filepoint.setObjectName("btn_open_filepoint")
         self.verticalLayout_12.addWidget(self.btn_open_filepoint)
         self.btn_save_filepoint = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_save_filepoint.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_save_filepoint.sizePolicy().hasHeightForWidth())
         self.btn_save_filepoint.setSizePolicy(sizePolicy)
         self.btn_save_filepoint.setAutoFillBackground(False)
         self.btn_save_filepoint.setStyleSheet("background-color: rgb(211, 215, 207);")
@@ -5614,14 +4690,10 @@ class Ui_MainWindow(object):
         self.btn_save_filepoint.setObjectName("btn_save_filepoint")
         self.verticalLayout_12.addWidget(self.btn_save_filepoint)
         self.btn_remove_points = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_remove_points.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_remove_points.sizePolicy().hasHeightForWidth())
         self.btn_remove_points.setSizePolicy(sizePolicy)
         self.btn_remove_points.setAutoFillBackground(False)
         self.btn_remove_points.setStyleSheet("background-color: rgb(211, 215, 207);")
@@ -5640,14 +4712,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_19.addWidget(self.textEdit)
         self.verticalLayout_12.addLayout(self.horizontalLayout_19)
         self.btn_export_grid = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_export_grid.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_export_grid.sizePolicy().hasHeightForWidth())
         self.btn_export_grid.setSizePolicy(sizePolicy)
         self.btn_export_grid.setAutoFillBackground(False)
         self.btn_export_grid.setStyleSheet("background-color: rgb(211, 215, 207);")
@@ -5655,14 +4723,10 @@ class Ui_MainWindow(object):
         self.btn_export_grid.setObjectName("btn_export_grid")
         self.verticalLayout_12.addWidget(self.btn_export_grid)
         self.btn_on_off_route = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_on_off_route.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_on_off_route.sizePolicy().hasHeightForWidth())
         self.btn_on_off_route.setSizePolicy(sizePolicy)
         self.btn_on_off_route.setAutoFillBackground(False)
         self.btn_on_off_route.setStyleSheet("background-color: rgb(211, 215, 207);")
@@ -5670,14 +4734,10 @@ class Ui_MainWindow(object):
         self.btn_on_off_route.setObjectName("btn_on_off_route")
         self.verticalLayout_12.addWidget(self.btn_on_off_route)
         self.btn_reduce_points = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_reduce_points.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_reduce_points.sizePolicy().hasHeightForWidth())
         self.btn_reduce_points.setSizePolicy(sizePolicy)
         self.btn_reduce_points.setAutoFillBackground(False)
         self.btn_reduce_points.setStyleSheet("background-color: rgb(211, 215, 207);")
@@ -5696,14 +4756,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_20.addWidget(self.textEdit_2)
         self.verticalLayout_12.addLayout(self.horizontalLayout_20)
         self.btn_push_filemission = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_push_filemission.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_push_filemission.sizePolicy().hasHeightForWidth())
         self.btn_push_filemission.setSizePolicy(sizePolicy)
         self.btn_push_filemission.setAutoFillBackground(False)
         self.btn_push_filemission.setStyleSheet("background-color: rgb(211, 215, 207);")
@@ -5711,14 +4767,10 @@ class Ui_MainWindow(object):
         self.btn_push_filemission.setObjectName("btn_push_filemission")
         self.verticalLayout_12.addWidget(self.btn_push_filemission)
         self.btn_push_mission = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btn_push_mission.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btn_push_mission.sizePolicy().hasHeightForWidth())
         self.btn_push_mission.setSizePolicy(sizePolicy)
         self.btn_push_mission.setAutoFillBackground(False)
         self.btn_push_mission.setStyleSheet("background-color: rgb(211, 215, 207);")
@@ -5741,23 +4793,15 @@ class Ui_MainWindow(object):
         self.verticalLayout_22.addLayout(self.verticalLayout_11)
         self.mapDisplay.addLayout(self.verticalLayout_22)
         self.MapWebView = QWebView(self.RescueMapPage)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.MapWebView.sizePolicy().hasHeightForWidth())
         self.MapWebView.setSizePolicy(sizePolicy)
         self.MapWebView.setCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
         self.MapWebView.setAutoFillBackground(False)
-        self.MapWebView.setLocale(
-            QtCore.QLocale(QtCore.QLocale.Vietnamese, QtCore.QLocale.Vietnam)
-        )
-        self.MapWebView.setUrl(
-            QtCore.QUrl(
-                "file:///media/phuongnam-d/920C22060C21E5C7/Freelancer/UAV/workspace/assets/map.html"
-            )
-        )
+        self.MapWebView.setLocale(QtCore.QLocale(QtCore.QLocale.Vietnamese, QtCore.QLocale.Vietnam))
+        self.MapWebView.setUrl(QtCore.QUrl("file:///media/phuongnam-d/920C22060C21E5C7/Personal/Workspace/UAV/workspace/assets/map.html"))
         self.MapWebView.setZoomFactor(1.0)
         self.MapWebView.setObjectName("MapWebView")
         self.mapDisplay.addWidget(self.MapWebView)
@@ -5827,17 +4871,9 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "UAV_Monitoring_App"))
-        self.appTitle.setText(
-            _translate(
-                "MainWindow",
-                "INTELLIGENT MONITORING AND CONTROL SOFTWARE FOR DRONE SWARMS  ",
-            )
-        )
+        self.appTitle.setText(_translate("MainWindow", "INTELLIGENT MONITORING AND CONTROL SOFTWARE FOR DRONE SWARMS  "))
         self.logo1.setText(_translate("MainWindow", "Main Page"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_all_uav_screens),
-            _translate("MainWindow", "All"),
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_all_uav_screens), _translate("MainWindow", "All"))
         self.label_param_uav_1.setText(_translate("MainWindow", "UAV 1 Paramenters"))
         self.param_name_1_uav_1.setText(_translate("MainWindow", "MIS_TAKEOFF_ALT"))
         self.param_name_2_uav_1.setText(_translate("MainWindow", "COM_DISARM_LAND"))
@@ -5849,14 +4885,10 @@ class Ui_MainWindow(object):
         self.param_name_8_uav_1.setText(_translate("MainWindow", "MC_PITCH_P"))
         self.param_name_9_uav_1.setText(_translate("MainWindow", "MC_ROLL_P"))
         self.param_name_10_uav_1.setText(_translate("MainWindow", "MC_YAW_P"))
-        self.param_name_blank.setText(
-            _translate("MainWindow", "--------------------------")
-        )
+        self.param_name_blank.setText(_translate("MainWindow", "--------------------------"))
         self.btn_param_dis_uav_1.setText(_translate("MainWindow", "Get"))
         self.btn_param_set_uav_1.setText(_translate("MainWindow", "Set"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_uav_1), _translate("MainWindow", "1")
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_uav_1), _translate("MainWindow", "1"))
         self.label_param_uav_2.setText(_translate("MainWindow", "UAV 2 Paramenters"))
         self.param_name_1_uav_2.setText(_translate("MainWindow", "MIS_TAKEOFF_ALT"))
         self.param_name_2_uav_2.setText(_translate("MainWindow", "COM_DISARM_LAND"))
@@ -5868,14 +4900,10 @@ class Ui_MainWindow(object):
         self.param_name_8_uav_2.setText(_translate("MainWindow", "MC_PITCH_P"))
         self.param_name_9_uav_2.setText(_translate("MainWindow", "MC_ROLL_P"))
         self.param_name_10_uav_2.setText(_translate("MainWindow", "MC_YAW_P"))
-        self.param_name_blank_2.setText(
-            _translate("MainWindow", "--------------------------")
-        )
+        self.param_name_blank_2.setText(_translate("MainWindow", "--------------------------"))
         self.btn_param_dis_uav_2.setText(_translate("MainWindow", "Get"))
         self.btn_param_set_uav_2.setText(_translate("MainWindow", "Set"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_uav_2), _translate("MainWindow", "2")
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_uav_2), _translate("MainWindow", "2"))
         self.label_param_uav_3.setText(_translate("MainWindow", "UAV 3 Paramenters"))
         self.param_name_1_uav_3.setText(_translate("MainWindow", "MIS_TAKEOFF_ALT"))
         self.param_name_2_uav_3.setText(_translate("MainWindow", "COM_DISARM_LAND"))
@@ -5887,14 +4915,10 @@ class Ui_MainWindow(object):
         self.param_name_8_uav_3.setText(_translate("MainWindow", "MC_PITCH_P"))
         self.param_name_9_uav_3.setText(_translate("MainWindow", "MC_ROLL_P"))
         self.param_name_10_uav_3.setText(_translate("MainWindow", "MC_YAW_P"))
-        self.param_name_blank_3.setText(
-            _translate("MainWindow", "--------------------------")
-        )
+        self.param_name_blank_3.setText(_translate("MainWindow", "--------------------------"))
         self.btn_param_dis_uav_3.setText(_translate("MainWindow", "Get"))
         self.btn_param_set_uav_3.setText(_translate("MainWindow", "Set"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_uav_3), _translate("MainWindow", "3")
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_uav_3), _translate("MainWindow", "3"))
         self.label_param_uav_4.setText(_translate("MainWindow", "UAV 4 Paramenters"))
         self.param_name_1_uav_4.setText(_translate("MainWindow", "MIS_TAKEOFF_ALT"))
         self.param_name_2_uav_4.setText(_translate("MainWindow", "COM_DISARM_LAND"))
@@ -5906,14 +4930,10 @@ class Ui_MainWindow(object):
         self.param_name_8_uav_4.setText(_translate("MainWindow", "MC_PITCH_P"))
         self.param_name_9_uav_4.setText(_translate("MainWindow", "MC_ROLL_P"))
         self.param_name_10_uav_4.setText(_translate("MainWindow", "MC_YAW_P"))
-        self.param_name_blank_4.setText(
-            _translate("MainWindow", "--------------------------")
-        )
+        self.param_name_blank_4.setText(_translate("MainWindow", "--------------------------"))
         self.btn_param_dis_uav_4.setText(_translate("MainWindow", "Get"))
         self.btn_param_set_uav_4.setText(_translate("MainWindow", "Set"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_uav_4), _translate("MainWindow", "4")
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_uav_4), _translate("MainWindow", "4"))
         self.label_param_uav_5.setText(_translate("MainWindow", "UAV 5 Paramenters"))
         self.param_name_1_uav_5.setText(_translate("MainWindow", "MIS_TAKEOFF_ALT"))
         self.param_name_2_uav_5.setText(_translate("MainWindow", "COM_DISARM_LAND"))
@@ -5925,14 +4945,10 @@ class Ui_MainWindow(object):
         self.param_name_8_uav_5.setText(_translate("MainWindow", "MC_PITCH_P"))
         self.param_name_9_uav_5.setText(_translate("MainWindow", "MC_ROLL_P"))
         self.param_name_10_uav_5.setText(_translate("MainWindow", "MC_YAW_P"))
-        self.param_name_blank_5.setText(
-            _translate("MainWindow", "--------------------------")
-        )
+        self.param_name_blank_5.setText(_translate("MainWindow", "--------------------------"))
         self.btn_param_dis_uav_5.setText(_translate("MainWindow", "Get"))
         self.btn_param_set_uav_5.setText(_translate("MainWindow", "Set"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_uav_5), _translate("MainWindow", "5")
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_uav_5), _translate("MainWindow", "5"))
         self.label_param_uav_6.setText(_translate("MainWindow", "UAV 6 Paramenters"))
         self.param_name_1_uav_6.setText(_translate("MainWindow", "MIS_TAKEOFF_ALT"))
         self.param_name_2_uav_6.setText(_translate("MainWindow", "COM_DISARM_LAND"))
@@ -5944,14 +4960,10 @@ class Ui_MainWindow(object):
         self.param_name_8_uav_6.setText(_translate("MainWindow", "MC_PITCH_P"))
         self.param_name_9_uav_6.setText(_translate("MainWindow", "MC_ROLL_P"))
         self.param_name_10_uav_6.setText(_translate("MainWindow", "MC_YAW_P"))
-        self.param_name_blank_6.setText(
-            _translate("MainWindow", "--------------------------")
-        )
+        self.param_name_blank_6.setText(_translate("MainWindow", "--------------------------"))
         self.btn_param_dis_uav_6.setText(_translate("MainWindow", "Get"))
         self.btn_param_set_uav_6.setText(_translate("MainWindow", "Set"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_uav_6), _translate("MainWindow", "6")
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_uav_6), _translate("MainWindow", "6"))
         self.table_uav_large.setSortingEnabled(False)
         item = self.table_uav_large.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "UAV Index"))
@@ -5967,24 +4979,12 @@ class Ui_MainWindow(object):
         self.sett_checkBox_active_uav_5.setText(_translate("MainWindow", "UAV 5"))
         self.sett_checkBox_active_uav_6.setText(_translate("MainWindow", "UAV 6"))
         self.label_4.setText(_translate("MainWindow", "Enable Video Detection"))
-        self.sett_checkBox_detect_uav_1.setText(
-            _translate("MainWindow", "Detection UAV 1")
-        )
-        self.sett_checkBox_detect_uav_2.setText(
-            _translate("MainWindow", "Detection UAV 2")
-        )
-        self.sett_checkBox_detect_uav_3.setText(
-            _translate("MainWindow", "Detection UAV 3")
-        )
-        self.sett_checkBox_detect_uav_4.setText(
-            _translate("MainWindow", "Detection UAV 4")
-        )
-        self.sett_checkBox_detect_uav_5.setText(
-            _translate("MainWindow", "Detection UAV 5")
-        )
-        self.sett_checkBox_detect_uav_6.setText(
-            _translate("MainWindow", "Detection UAV 6")
-        )
+        self.sett_checkBox_detect_uav_1.setText(_translate("MainWindow", "Detection UAV 1"))
+        self.sett_checkBox_detect_uav_2.setText(_translate("MainWindow", "Detection UAV 2"))
+        self.sett_checkBox_detect_uav_3.setText(_translate("MainWindow", "Detection UAV 3"))
+        self.sett_checkBox_detect_uav_4.setText(_translate("MainWindow", "Detection UAV 4"))
+        self.sett_checkBox_detect_uav_5.setText(_translate("MainWindow", "Detection UAV 5"))
+        self.sett_checkBox_detect_uav_6.setText(_translate("MainWindow", "Detection UAV 6"))
         self.label_5.setText(_translate("MainWindow", "Number of Swarms"))
         self.nSwarms_sett.setPrefix(_translate("MainWindow", "N="))
         self.btn_sett_cf_nSwarms.setText(_translate("MainWindow", "Activate"))
@@ -5998,10 +4998,7 @@ class Ui_MainWindow(object):
         self.btn_sett_goto_uav_5.setText(_translate("MainWindow", "UAV5"))
         self.btn_sett_goto_uav_6.setText(_translate("MainWindow", "UAV6"))
         self.btn_sett_goto_uav_all.setText(_translate("MainWindow", "ALL"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_settings),
-            _translate("MainWindow", "Settings"),
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_settings), _translate("MainWindow", "Settings"))
         item = self.table_uav_small.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "UAV Index"))
         item = self.table_uav_small.horizontalHeaderItem(1)
@@ -6012,24 +5009,12 @@ class Ui_MainWindow(object):
         self.nSwarms_ovv.setPrefix(_translate("MainWindow", "N="))
         self.btn_ovv_cf_nSwarms.setText(_translate("MainWindow", "Activate"))
         self.label_35.setText(_translate("MainWindow", "Enable Video Detection"))
-        self.ovv_checkBox_detect_uav_1.setText(
-            _translate("MainWindow", "Detection UAV1")
-        )
-        self.ovv_checkBox_detect_uav_2.setText(
-            _translate("MainWindow", "Detection UAV2")
-        )
-        self.ovv_checkBox_detect_uav_3.setText(
-            _translate("MainWindow", "Detection UAV3")
-        )
-        self.ovv_checkBox_detect_uav_4.setText(
-            _translate("MainWindow", "Detection UAV4")
-        )
-        self.ovv_checkBox_detect_uav_5.setText(
-            _translate("MainWindow", "Detection UAV5")
-        )
-        self.ovv_checkBox_detect_uav_6.setText(
-            _translate("MainWindow", "Detection UAV6")
-        )
+        self.ovv_checkBox_detect_uav_1.setText(_translate("MainWindow", "Detection UAV1"))
+        self.ovv_checkBox_detect_uav_2.setText(_translate("MainWindow", "Detection UAV2"))
+        self.ovv_checkBox_detect_uav_3.setText(_translate("MainWindow", "Detection UAV3"))
+        self.ovv_checkBox_detect_uav_4.setText(_translate("MainWindow", "Detection UAV4"))
+        self.ovv_checkBox_detect_uav_5.setText(_translate("MainWindow", "Detection UAV5"))
+        self.ovv_checkBox_detect_uav_6.setText(_translate("MainWindow", "Detection UAV6"))
         self.label_37.setText(_translate("MainWindow", "Latitude"))
         self.label_38.setText(_translate("MainWindow", "Longtitude"))
         self.label_39.setText(_translate("MainWindow", "Goto"))
@@ -6040,10 +5025,7 @@ class Ui_MainWindow(object):
         self.btn_ovv_goto_uav_1.setText(_translate("MainWindow", "UAV 1"))
         self.btn_ovv_goto_uav_2.setText(_translate("MainWindow", "UAV 2"))
         self.btn_ovv_goto_uav_5.setText(_translate("MainWindow", "UAV 5"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_overview),
-            _translate("MainWindow", "Overview"),
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_overview), _translate("MainWindow", "Overview"))
         self.btn_pause.setText(_translate("MainWindow", "Pause Mission"))
         self.btn_arm.setText(_translate("MainWindow", "Arm"))
         self.btn_connect.setText(_translate("MainWindow", "Connect"))
@@ -6056,12 +5038,7 @@ class Ui_MainWindow(object):
         self.btn_pushMission.setText(_translate("MainWindow", "Push Mission"))
         self.btn_disarm.setText(_translate("MainWindow", "Disarm"))
         self.btn_open_close.setText(_translate("MainWindow", "Open/Close"))
-        self.appTitle_2.setText(
-            _translate(
-                "MainWindow",
-                "INTELLIGENT MONITORING AND CONTROL SOFTWARE FOR DRONE SWARMS  ",
-            )
-        )
+        self.appTitle_2.setText(_translate("MainWindow", "INTELLIGENT MONITORING AND CONTROL SOFTWARE FOR DRONE SWARMS  "))
         self.logo1_2.setText(_translate("MainWindow", "Map page"))
         self.label.setText(_translate("MainWindow", "Area (m2)"))
         self.groupBox.setTitle(_translate("MainWindow", "Control"))
@@ -6069,32 +5046,22 @@ class Ui_MainWindow(object):
         self.btn_save_filepoint.setText(_translate("MainWindow", "Save file point"))
         self.btn_remove_points.setText(_translate("MainWindow", "Remove point"))
         self.label_2.setText(_translate("MainWindow", "Area: "))
-        self.textEdit.setHtml(
-            _translate(
-                "MainWindow",
-                '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n'
-                '<html><head><meta name="qrichtext" content="1" /><style type="text/css">\n'
-                "p, li { white-space: pre-wrap; }\n"
-                "</style></head><body style=\" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-                '<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Enter here</p>\n'
-                '<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><br /></p></body></html>',
-            )
-        )
+        self.textEdit.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Enter here</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.btn_export_grid.setText(_translate("MainWindow", "Export grid"))
         self.btn_on_off_route.setText(_translate("MainWindow", "On/Off Route"))
         self.btn_reduce_points.setText(_translate("MainWindow", "Reduced point"))
         self.label_3.setText(_translate("MainWindow", "Grid:"))
-        self.textEdit_2.setHtml(
-            _translate(
-                "MainWindow",
-                '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n'
-                '<html><head><meta name="qrichtext" content="1" /><style type="text/css">\n'
-                "p, li { white-space: pre-wrap; }\n"
-                "</style></head><body style=\" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-                '<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Enter here</p>\n'
-                '<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><br /></p></body></html>',
-            )
-        )
+        self.textEdit_2.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Enter here</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.btn_push_filemission.setText(_translate("MainWindow", "Push file mission"))
         self.btn_push_mission.setText(_translate("MainWindow", "Push mission"))
         self.menuView.setTitle(_translate("MainWindow", "Page view"))
@@ -6109,3 +5076,4 @@ class Ui_MainWindow(object):
         self.actionUAV_4_view.setText(_translate("MainWindow", "UAV 4 view"))
         self.actionUAV_5_view.setText(_translate("MainWindow", "UAV 5 view"))
         self.actionUAV_6_view.setText(_translate("MainWindow", "UAV 6 view"))
+
