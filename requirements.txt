@@ -6,14 +6,6 @@ autopep8
 cerberus
 customtkinter
 easydict
-empy
-flake8-blind-except
-flake8-builtins
-flake8-class-newline
-flake8-comprehensions
-flake8-deprecated
-flake8-import-order
-flake8-quotes
 geocoder
 gpxpy
 grpcio-tools
@@ -24,10 +16,7 @@ kconfiglib
 kornia
 mavsdk
 numpydoc
-nunavut
 opencv-contrib-python
-opencv-python
-orange3
 pip-chill
 pkgconfig
 protoc-gen-mavsdk

@@ -178,3 +178,4 @@ dependencies/*.AppImage
 build/*.
 cache/*.
 assets/videos/*
+dependencies/PX4-Autopilot/

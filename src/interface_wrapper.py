@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 from threading import Thread
 
-import acapture
+# import acapture
 import cv2
 import numpy as np
 from asyncqt import QEventLoop, asyncSlot
@@ -682,7 +682,7 @@ class App(QMainWindow):
         Toggles the camera view for a specified UAV index.
 
         Args:
-            None
+            None`
 
         Returns:
             None
@@ -691,6 +691,9 @@ class App(QMainWindow):
             for uav_index in range(1, MAX_UAV_COUNT + 1):
                 if UAVs[uav_index]["streaming_enable"]:
                     self.uav_stream_threads[uav_index - 1].start()
+                    self.uav_stream_threads[
+                        uav_index - 1
+                    ].join()  # add this for join the thread queue
                     print(f"UAV-{uav_index} streaming thread started.")
         except Exception as e:
             print(f"Error: {repr(e)}")

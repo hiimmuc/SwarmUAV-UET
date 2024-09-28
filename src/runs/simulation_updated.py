@@ -15,6 +15,7 @@ def run_commands():
 
     commands = [
         "dependencies/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_multiple_run.sh -n 6 -m iris",
+        # " mavlink-routerd -t 5761 /dev/ttyACM0:57600 -e 127.0.0.1:14541 -e 127.0.0.1:14551",
         f"python3 src/mavsdk_server_shell.py {PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 0} -p {DEFAULT_PORT + 0}",
         f"python3 src/mavsdk_server_shell.py {PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 1} -p {DEFAULT_PORT + 1}",
         f"python3 src/mavsdk_server_shell.py {PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 2} -p {DEFAULT_PORT + 2}",
@@ -27,7 +28,7 @@ def run_commands():
         "watch -n 0.5 netstat -lunp",
     ]
 
-    for command in commands[:]:
+    for i, command in enumerate(commands[:]):
         try:
             s = subprocess.check_call(
                 f"gnome-terminal -- /bin/bash -c  'sleep 1; {command}; exec /bin/bash' &",
