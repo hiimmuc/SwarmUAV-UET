@@ -26,9 +26,7 @@ def convert_cv2qt(cv_img, size=(360, 640)) -> QPixmap:
     """
     screen_width, screen_height = size
 
-    cv_img = imutils.resize(
-        imutils.resize(cv_img, width=screen_width), height=screen_height
-    )
+    cv_img = imutils.resize(imutils.resize(cv_img, width=screen_width), height=screen_height)
 
     rgb_image = cv2.cvtColor(
         cv_img,
@@ -121,9 +119,9 @@ def calculate_distance(lat1, lon1, lat2, lon2) -> float:
     R = 6378000  # bán kính Trái Đất (đơn vị: m)
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
-    a = math.sin(dlat / 2) * math.sin(dlat / 2) + math.cos(
-        math.radians(lat1)
-    ) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) * math.sin(dlon / 2)
+    a = math.sin(dlat / 2) * math.sin(dlat / 2) + math.cos(math.radians(lat1)) * math.cos(
+        math.radians(lat2)
+    ) * math.sin(dlon / 2) * math.sin(dlon / 2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = R * c
     return distance

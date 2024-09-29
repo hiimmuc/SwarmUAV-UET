@@ -12,10 +12,8 @@ class Runner:
         self.app = QtWidgets.QApplication(sys.argv)
         self.loop = QEventLoop(self.app)
         asyncio.set_event_loop(self.loop)
-        self.window = App()
-        self.window.setWindowIcon(
-            QtGui.QIcon(f"{parent_dir.parent}/assets/icons/app.png")
-        )
+        self.window = App(model_path=f"{parent_dir}/model/checkpoints/yolov10n.pt")
+        self.window.setWindowIcon(QtGui.QIcon(f"{parent_dir.parent}/assets/icons/app.png"))
 
     def run(self):
         self.window.show()
