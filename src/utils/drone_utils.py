@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 
 async def print_mission_progress(drone):
@@ -26,3 +27,12 @@ async def observe_is_in_air(drone, running_tasks):
             await asyncio.get_event_loop().shutdown_asyncgens()
 
             return
+
+
+def convert_pointsFile_to_missionPlan(pointsFile):
+    # convert ./src/logs/points/points1.txt to ./src/data/mission plan
+
+    with open(pointsFile, "r") as f:
+        points = f.readlines()
+
+    pass

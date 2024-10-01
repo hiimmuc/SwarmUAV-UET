@@ -1,12 +1,9 @@
 import asyncio
 import os
 import sys
-from datetime import datetime
-from multiprocessing import Process
 from threading import Thread
 
 import cv2
-import torch
 from asyncqt import QEventLoop, asyncSlot
 from mavsdk import System
 from mavsdk.mission import MissionItem, MissionPlan
@@ -16,31 +13,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 from ultralytics import YOLO
 
+from config import *
 from UI.interface_uav import *
 from utils.drone_utils import *
 from utils.map_utils import *
 from utils.mavsdk_server_utils import *
 from utils.model_utils import *
 from utils.qt_utils import *
-
-parent_dir = Path(__file__).parent
-
-NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-DEFAULT_STREAM_SIZE = (640, 360)
-
-MAX_UAV_COUNT = 6
-
-PROTO = "udp"
-SERVER_HOST = ""
-DEFAULT_PORT = 50060
-DEFAULT_BIND_PORT = 14541
-
-screen_sizes = {
-    "general_screen": (592, 333),
-    "stream_screen": (1280, 720),
-    "ovv_screen": (320, 180),
-}
 
 stackedWidget_indexes = {"main page": 0, "map page": 1}
 
@@ -56,8 +35,7 @@ tabWidget_indexes = {
     "overview": 8,
 }
 
-connection_allows = [True, True, True, True, True, True]
-streaming_enables = [True, False, False, False, False, False]
+
 # UAVs object
 UAVs = {
     uav_index: {
@@ -70,7 +48,7 @@ UAVs = {
         ),
         "system": System(mavsdk_server_address="localhost", port=DEFAULT_PORT + uav_index - 1),
         "system_address": f"{PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + uav_index- 1}",
-        "streaming_address": f"{parent_dir.parent}/assets/videos/cam{uav_index}.mp4",
+        "streaming_address": DEFAULT_STREAM_VIDEO_PATHS[uav_index - 1],
         "connection_allow": connection_allows[uav_index - 1],
         "streaming_enable": streaming_enables[uav_index - 1],
     }
@@ -271,42 +249,33 @@ class App(QMainWindow):
         Returns:
             None
         """
-        # reset path for assets and videos
-        basePath = Path(__file__)
-        basePath = basePath.resolve().parents[0].parents[0]
 
         # set logo
-        self.ui.page_name.setPixmap(QtGui.QPixmap(f"{basePath}/assets/icons/logo1.png"))
+        self.ui.page_name.setPixmap(QtGui.QPixmap(logo1_path))
         self.ui.page_name.setScaledContents(True)
-        self.ui.page_name_2.setPixmap(QtGui.QPixmap(f"{basePath}/assets/icons/logo1.png"))
+        self.ui.page_name_2.setPixmap(QtGui.QPixmap(logo1_path))
         self.ui.page_name_2.setScaledContents(True)
-        self.ui.logo2_2.setPixmap(QtGui.QPixmap(f"{basePath}/assets/icons/logoUET.png"))
+        self.ui.logo2_2.setPixmap(QtGui.QPixmap(logo2_path))
         self.ui.logo2_2.setScaledContents(True)
-        self.ui.logo2.setPixmap(QtGui.QPixmap(f"{basePath}/assets/icons/logoUET.png"))
+        self.ui.logo2.setPixmap(QtGui.QPixmap(logo2_path))
         self.ui.logo2.setScaledContents(True)
 
         # screen view default image
         for screen in self.uav_general_screen_views:
-            screen.setPixmap(
-                QtGui.QPixmap(f"{basePath}/assets/pictures/resized/nosignal_333x592.jpg")
-            )
+            screen.setPixmap(QtGui.QPixmap(noSignal_img_paths["general_screen"]))
             screen.setScaledContents(False)
         for screen in self.uav_stream_screen_views:
-            screen.setPixmap(
-                QtGui.QPixmap(f"{basePath}/assets/pictures/resized/no_signal2_720x1280.jpg")
-            )
+            screen.setPixmap(QtGui.QPixmap(noSignal_img_paths["stream_screen"]))
             screen.setScaledContents(False)
         for screen in self.uav_ovv_screen_views:
-            screen.setPixmap(
-                QtGui.QPixmap(f"{basePath}/assets/pictures/resized/nosignal_180x320.jpg")
-            )
+            screen.setPixmap(QtGui.QPixmap(noSignal_img_paths["ovv_screen"]))
             screen.setScaledContents(False)
 
         # map URL
 
-        self.ui.MapWebView.setUrl(QtCore.QUrl(f"file://{basePath}/assets/map.html"))
+        self.ui.MapWebView.setUrl(QtCore.QUrl(map_html_path))
 
-        self.ui.Overview_map_view.setUrl(QtCore.QUrl(f"file://{basePath}/assets/map.html"))
+        self.ui.Overview_map_view.setUrl(QtCore.QUrl(map_html_path))
 
         # set default tab and stack index
         self.ui.stackedWidget.setCurrentIndex(self.active_stack_index)
@@ -581,7 +550,7 @@ class App(QMainWindow):
                     UAVs[uav_index]["streaming_enable"] and UAVs[uav_index]["connection_allow"]
                 ):
                     return
-                
+
                 self.uav_stream_threads[uav_index - 1] = Thread(
                     target=self.stream_on_uav_screen,
                     args=(uav_index,),
@@ -593,7 +562,7 @@ class App(QMainWindow):
                 )
 
                 self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
-                    filename=f"{parent_dir}/logs/videos/stream_log_{NOW}_uav_{uav_index}.avi",
+                    filename=DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
                     fourcc=cv2.VideoWriter_fourcc(*"mp4v"),
                     fps=20.0,
                     frameSize=DEFAULT_STREAM_SIZE,
@@ -1126,7 +1095,7 @@ class App(QMainWindow):
             self.popup_msg(f"Return error: {repr(e)}", src_msg="uav_fn_return", type_msg="error")
 
     async def uav_fn_mission(self, uav_index) -> None:
-        """
+        """NOTE: convert file points to .plan file as in ./data/mission.plan
         Executes a mission for a specified UAV or all UAVs if uav_index is 0.
 
         Args:
@@ -1173,7 +1142,7 @@ class App(QMainWindow):
                 # Assign hight for mission
                 height = UAVs[uav_index]["uav_information"]["init_height"]
                 # read mission points from file
-                with open(f"{parent_dir}/logs/points/points{uav_index}.txt", "r") as file:
+                with open(f"{SRC_DIR}/logs/points/points{uav_index}.txt", "r") as file:
                     for line in file:
                         latitude, longitude = map(float, line.strip().split(", "))
                         mission_items.append(
@@ -1232,7 +1201,7 @@ class App(QMainWindow):
             self.popup_msg(f"Mission error: {repr(e)}", src_msg="uav_fn_mission", type_msg="error")
 
     async def uav_fn_pushMission(self, uav_index) -> None:
-        """
+        """NOTE: convert file points to .plan file as in ./data/mission.plan
         Pushes a mission to a specified UAV or all UAVs if uav_index is 0.
 
         Args:
@@ -1262,7 +1231,7 @@ class App(QMainWindow):
                 fpath = QFileDialog.getOpenFileName(
                     self,
                     "Open file",
-                    f"{parent_dir}/logs/points/",
+                    plans_log_dir,
                     "Files (*.TXT *.txt)",
                 )[0]
 
@@ -1566,7 +1535,7 @@ class App(QMainWindow):
         await UAVs[uav_index]["system"].action.goto_location(latitude, longitude, height, 0)
 
     async def uav_fn_goTo_UAVs(self, uav_indexes, *args) -> None:
-        """
+        """NOTE: Not used
         Asynchronously directs a UAV to a specified location based on coordinates read from a file.
 
         Args:
@@ -1578,7 +1547,7 @@ class App(QMainWindow):
 
         Behavior:
             - Checks if the UAV at the given index has an active connection.
-            - Reads target latitude and longitude from a file located at '{parent_dir}/logs/detect/detect.txt'.
+            - Reads target latitude and longitude from a file located at '{SRC_DIR}/logs/detect/detect.txt'.
             - Continuously checks the UAV's current position.
             - Commands the UAV to move to the target location if it is not already there.
             - Logs a message when the UAV reaches the target location.
@@ -1587,7 +1556,7 @@ class App(QMainWindow):
         if len(uav_indexes) == 1:
             uav_index = uav_indexes[0]
             if uav_index in range(1, MAX_UAV_COUNT + 1):
-                folder_path = f"{parent_dir}/logs/detect"
+                folder_path = f"{SRC_DIR}/logs/detect"
                 txt_file_path = os.path.join(folder_path, "detect.txt")
                 with open(txt_file_path, "r") as file:
                     content = file.read()
@@ -1644,7 +1613,7 @@ class App(QMainWindow):
             UAVs[uav_index]["information_view"].setText(
                 self.template_information(uav_index, **UAVs[uav_index]["uav_information"])
             )
-            with open(f"{parent_dir}/logs/gps/gps_data{uav_index}.txt", "w") as f:
+            with open(gps_log_paths[uav_index - 1], "w") as f:
                 f.write(str(latitude) + ", " + str(longitude))
 
     async def uav_fn_get_mode(self, uav_index) -> None:
@@ -1908,7 +1877,7 @@ class App(QMainWindow):
         # Get the list of parameters
         # all_params = await UAVs[uav_index]["system"].param.get_all_params()
 
-        # with open(f"{parent_dir}/logs/params/params{uav_index}.txt", "w") as f:
+        # with open(f"{SRC_DIR}/logs/params/params{uav_index}.txt", "w") as f:
 
         #     for param in all_params.int_params:
         #         f.write(f"{param.name}: {param.value}\n")
@@ -1958,7 +1927,7 @@ class App(QMainWindow):
 
     # //-/////////////////////////////////////////////////////////////
     async def compareDistance(self, num_UAVs, *args) -> None:
-        """
+        """NOTE: This function is not used now, modify later if needed.
         Compares the distance of multiple UAVs to a detected location and directs the closest ones to move.
 
         Args:
@@ -1974,7 +1943,7 @@ class App(QMainWindow):
         if num_UAVs <= 0:
             return
 
-        folder_path = f"{parent_dir}/logs/detect"
+        folder_path = f"{SRC_DIR}/logs/detect"
         txt_file_path = os.path.join(folder_path, "detect.txt")
         with open(txt_file_path, "r") as file:
             content = file.read()
@@ -2029,7 +1998,9 @@ class App(QMainWindow):
                     results = self.predictor(frame, device=DEVICE, stream=True, verbose=False)
                     frame = draw_frame(frame, results)
 
-                    self.update_uav_screen_view(uav_index, frame, screen_name="general_screen")
+                    self.update_uav_screen_view(
+                        uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN
+                    )
 
                     self.uav_stream_writers[uav_index - 1].write(frame)
                 else:
@@ -2042,8 +2013,8 @@ class App(QMainWindow):
             self.uav_stream_writers[uav_index - 1].release()
 
             # reset the screen to the pause screen
-            pause_frame = cv2.imread(f"{parent_dir.parent}/assets/pictures/pause_screen.jpg")
-            self.update_uav_screen_view(uav_index, pause_frame, screen_name="general_screen")
+            pause_frame = cv2.imread(pause_img_paths[DEFAULT_STREAM_SCREEN])
+            self.update_uav_screen_view(uav_index, pause_frame, screen_name=DEFAULT_STREAM_SCREEN)
 
         except Exception as e:
             self.popup_msg(
@@ -2249,8 +2220,8 @@ def run():
     app = QtWidgets.QApplication(sys.argv)
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
-    MainWindow = App(model_path=f"{parent_dir}/model/checkpoints/yolov8n.pt")
-    MainWindow.setWindowIcon(QtGui.QIcon(f"{parent_dir.parent}/assets/icons/app.png"))
+    MainWindow = App(model_path=model_path)
+    MainWindow.setWindowIcon(QtGui.QIcon(app_icon_path))
     MainWindow.show()
 
     with loop:
