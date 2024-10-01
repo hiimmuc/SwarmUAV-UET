@@ -4,7 +4,7 @@ import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from interface_wrapper import *
+from backup.interface_wrapper_qt import *
 
 
 class Runner:

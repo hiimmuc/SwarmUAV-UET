@@ -27,25 +27,25 @@ class Server:
 
     def start(self):
         try:
-            s = subprocess.check_call(
+            self.process = subprocess.check_call(
                 self.shell,
                 shell=True,
             )
-            if s != 0:
-                print(f"Command {self.command} failed with status {s}")
+            if self.process != 0:
+                print(f"Command {self.command} failed with status {self.process}")
         except Exception as e:
             print(f"Exception {repr(e)} was thrown at command {self.command}")
 
     def restart(self):
         try:
-            s = subprocess.run(
+            self.process = subprocess.run(
                 self.shell,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 check=True,
             )
-            if s != 0:
-                print(f"Command {self.command} failed with status {s}")
+            if self.process != 0:
+                print(f"Command {self.command} failed with status {self.process}")
         except Exception as e:
             print(f"Exception {repr(e)} was thrown at command {self.command}")
 

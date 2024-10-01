@@ -229,6 +229,8 @@
 
 ## Notes
 
+QtThreads for more efficiency, start stop and maybe consume less resource
+
 ## Collaborators:
 
 1. [Nguyen Quang Nha](nhanq@vnu.edu.vn), VNU-UET

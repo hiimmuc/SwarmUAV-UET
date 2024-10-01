@@ -26,7 +26,7 @@ from utils.qt_utils import *
 parent_dir = Path(__file__).parent
 
 NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DEFAULT_STREAM_SIZE = (640, 360)
 
 MAX_UAV_COUNT = 6
@@ -302,6 +302,7 @@ class App(QMainWindow):
             )
             screen.setScaledContents(False)
 
+        #
         # map URL
 
         self.ui.MapWebView.setUrl(QtCore.QUrl(f"file://{basePath}/assets/map.html"))
@@ -581,24 +582,32 @@ class App(QMainWindow):
                     UAVs[uav_index]["streaming_enable"] and UAVs[uav_index]["connection_allow"]
                 ):
                     return
-                
-                self.uav_stream_threads[uav_index - 1] = Thread(
-                    target=self.stream_on_uav_screen,
-                    args=(uav_index,),
-                    name=f"UAV-{uav_index}-thread",
-                )
+
+                # self.uav_stream_threads[uav_index - 1] = Thread(
+                #     target=self.stream_on_uav_screen,
+                #     args=(uav_index,),
+                #     name=f"UAV-{uav_index}-thread",
+                # )
 
                 self.uav_stream_captures[uav_index - 1] = cv2.VideoCapture(
-                    UAVs[uav_index]["streaming_address"]
+                    filename=UAVs[uav_index]["streaming_address"]
+                )
+                # self.uav_stream_captures[uav_index - 1].set(3, DEFAULT_STREAM_SIZE[0])
+                # self.uav_stream_captures[uav_index - 1].set(4, DEFAULT_STREAM_SIZE[1])
+
+                self.uav_stream_threads[uav_index - 1] = QtThread(
+                    cap=self.uav_stream_captures[uav_index - 1], uav_index=uav_index
+                )
+                self.uav_stream_threads[uav_index - 1].change_image_signal.connect(
+                    self.stream_on_uav_screen
                 )
 
-                self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
-                    filename=f"{parent_dir}/logs/videos/stream_log_{NOW}_uav_{uav_index}.avi",
-                    fourcc=cv2.VideoWriter_fourcc(*"mp4v"),
-                    fps=20.0,
-                    frameSize=DEFAULT_STREAM_SIZE,
-                )
-
+                # self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
+                #     filename=f"{parent_dir}/logs/videos/stream_log_{NOW}_uav_{uav_index}.mp4",
+                #     fourcc=cv2.VideoWriter_fourcc(*"mp4v"),
+                #     fps=20.0,
+                #     frameSize=DEFAULT_STREAM_SIZE,
+                # )
                 print(f"UAV-{uav_index} streaming thread created.")
         except Exception as e:
             print(f"Error: {repr(e)}")
@@ -869,7 +878,7 @@ class App(QMainWindow):
                     self.template_information(uav_index, **UAVs[uav_index]["uav_information"])
                 )
 
-                await self.uav_fn_check_connection(uav_index)
+                await self.uav_fn_verify_connection(uav_index)
 
                 # await self.uav_fn_get_status(uav_index)
 
@@ -1407,16 +1416,26 @@ class App(QMainWindow):
                     return
 
                 if not UAVs[uav_index]["uav_information"]["streaming_status"]:
-                    if not self.uav_stream_threads[uav_index - 1].is_alive():
-                        self._create_streaming_threads(uav_indexes=[uav_index])
+                    # if self.uav_stream_threads[uav_index - 1].is_alive():
+                    #     self.uav_stream_threads[uav_index - 1].join()
+
+                    # if not self.uav_stream_threads[uav_index - 1].is_alive():
+                    #     self._create_streaming_threads(uav_indexes=[uav_index])
+                    #     self.uav_stream_threads[uav_index - 1].start()
+                    if not self.uav_stream_threads[uav_index - 1].isRunning:
                         self.uav_stream_threads[uav_index - 1].start()
 
                     UAVs[uav_index]["uav_information"]["streaming_status"] = True
                     print(f"UAV-{uav_index} streaming thread started.")
                 else:
-                    # self.uav_stream_threads[uav_index - 1].terminate()
+                    # if self.uav_stream_threads[uav_index - 1].is_alive():
+                    #     self.uav_stream_threads[uav_index - 1].join()
+                    if self.uav_stream_threads[uav_index - 1].isRunning:
+                        self.uav_stream_threads[uav_index - 1].stop()
+
                     UAVs[uav_index]["uav_information"]["streaming_status"] = False
                     print(f"UAV-{uav_index} streaming thread stopped.")
+
             else:
                 for uav_index in range(1, MAX_UAV_COUNT + 1):
                     self.uav_fn_toggle_camera(uav_index)
@@ -1860,7 +1879,7 @@ class App(QMainWindow):
                 type_msg="error",
             )
 
-    async def uav_fn_check_connection(self, uav_index) -> None:
+    async def uav_fn_verify_connection(self, uav_index) -> None:
         """
         Asynchronously checks the connection status of a UAV and performs setup tasks.
 
@@ -2002,8 +2021,8 @@ class App(QMainWindow):
         await self.uav_fn_goTo_UAVs(UAVs_to_control)
 
     # -----------------------------< UAVs streaming functions >-----------------------------
-
-    def stream_on_uav_screen(self, uav_index, **kwargs) -> None:
+    @pyqtSlot(np.ndarray, int)
+    def stream_on_uav_screen(self, frame, uav_index) -> None:
         """
         Updates the UAV screen view with the specified UAV's information.
 
@@ -2019,31 +2038,42 @@ class App(QMainWindow):
             if not (UAVs[uav_index]["connection_allow"] and UAVs[uav_index]["streaming_enable"]):
                 return
 
-            is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
+            # is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
 
-            while is_opened:
-                ret, frame = self.uav_stream_captures[uav_index - 1].read()
+            # while is_opened:
+            #     ret, frame = self.uav_stream_captures[uav_index - 1].read()
 
-                if ret:
-                    # detect objects in the frame
-                    results = self.predictor(frame, device=DEVICE, stream=True, verbose=False)
-                    frame = draw_frame(frame, results)
+            #     if ret:
+            #         # detect objects in the frame
+            #         results = self.predictor(frame, device=DEVICE, stream=True, verbose=False)
+            #         frame = draw_frame(frame, results)
 
-                    self.update_uav_screen_view(uav_index, frame, screen_name="general_screen")
+            #         self.update_uav_screen_view(uav_index, frame, screen_name="general_screen")
 
-                    self.uav_stream_writers[uav_index - 1].write(frame)
-                else:
-                    self.uav_stream_captures[uav_index - 1].set(cv2.CAP_PROP_POS_FRAMES, 0)
+            #         self.uav_stream_writers[uav_index - 1].write(cv2.resize(frame, (480, 270)))
+            #     else:
+            #         self.uav_stream_captures[uav_index - 1].set(cv2.CAP_PROP_POS_FRAMES, 0)
 
-                if not UAVs[uav_index]["uav_information"]["streaming_status"]:
-                    break
+            #     if not UAVs[uav_index]["uav_information"]["streaming_status"]:
+            #         break
 
-            self.uav_stream_captures[uav_index - 1].release()
-            self.uav_stream_writers[uav_index - 1].release()
+            # self.uav_stream_captures[uav_index - 1].release()
+            # self.uav_stream_writers[uav_index - 1].release()
+            if not UAVs[uav_index]["uav_information"]["streaming_status"]:
+                # reset the screen to the pause screen
+                pause_frame = cv2.imread(f"{parent_dir.parent}/assets/pictures/pause_screen.jpg")
+                self.update_uav_screen_view(
+                    uav_index=uav_index, frame=pause_frame, screen_name="general_screen"
+                )
 
-            # reset the screen to the pause screen
-            pause_frame = cv2.imread(f"{parent_dir.parent}/assets/pictures/pause_screen.jpg")
-            self.update_uav_screen_view(uav_index, pause_frame, screen_name="general_screen")
+            # detect objects in the frame
+            print("Receive frame:", frame.shape)
+            # results = self.predictor(frame, device=DEVICE, stream=True, verbose=False)
+            # frame = draw_frame(frame, results)
+            # print("Detect frame: ", frame.shape)
+            self.update_uav_screen_view(
+                uav_index=uav_index, frame=frame, screen_name="general_screen"
+            )
 
         except Exception as e:
             self.popup_msg(
@@ -2163,7 +2193,7 @@ class App(QMainWindow):
             uav_index (int): The index of the UAV to set the default information display for.
 
         Returns:
-            None
+            Nones
         """
         global UAVs
         # default is not connected
@@ -2249,7 +2279,7 @@ def run():
     app = QtWidgets.QApplication(sys.argv)
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
-    MainWindow = App(model_path=f"{parent_dir}/model/checkpoints/yolov8n.pt")
+    MainWindow = App(model_path=f"{parent_dir}/model/checkpoints/yolov10n.pt")
     MainWindow.setWindowIcon(QtGui.QIcon(f"{parent_dir.parent}/assets/icons/app.png"))
     MainWindow.show()
 
@@ -2257,8 +2287,9 @@ def run():
         pending = asyncio.all_tasks(loop=loop)
         for task in pending:
             task.cancel()
-
         sys.exit(loop.run_forever())
+
+    sys.exit(app.exec_())
 
 
 if __name__ == "__main__":
