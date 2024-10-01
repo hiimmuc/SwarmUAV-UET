@@ -48,7 +48,7 @@ pause_img_paths = {
     k: f"{ROOT_DIR}/assets/pictures/resized/pause_screen_{h}x{w}.jpg"
     for k, (w, h) in screen_sizes.items()
 }
-pause_img_paths["all"] = f"{ROOT_DIR}/assets/pictures/resized/pause_screen_720x1280.jpg"
+pause_img_paths["all"] = f"{ROOT_DIR}/assets/pictures/pause_screen.jpg"
 
 map_html_path = f"file://{ROOT_DIR}/assets/map.html"
 model_path = f"{SRC_DIR}/model/checkpoints/yolov8n.pt"
