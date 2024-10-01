@@ -39,6 +39,7 @@ DEFAULT_STREAM_VIDEO_LOG_PATHS = [
 logo1_path = f"{ROOT_DIR}/assets/icons/logo1.png"
 logo2_path = f"{ROOT_DIR}/assets/icons/logoUET.png"
 app_icon_path = f"{ROOT_DIR}/assets/icons/app.png"
+
 noSignal_img_paths = {
     k: f"{ROOT_DIR}/assets/pictures/resized/nosignal_{h}x{w}.jpg"
     for k, (w, h) in screen_sizes.items()
@@ -47,6 +48,8 @@ pause_img_paths = {
     k: f"{ROOT_DIR}/assets/pictures/resized/pause_screen_{h}x{w}.jpg"
     for k, (w, h) in screen_sizes.items()
 }
+pause_img_paths["all"] = f"{ROOT_DIR}/assets/pictures/resized/pause_screen_720x1280.jpg"
+
 map_html_path = f"file://{ROOT_DIR}/assets/map.html"
 model_path = f"{SRC_DIR}/model/checkpoints/yolov8n.pt"
 gps_log_paths = [
