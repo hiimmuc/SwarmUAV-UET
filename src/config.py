@@ -8,25 +8,45 @@ ROOT_DIR = SRC_DIR.parent
 
 NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-DEFAULT_STREAM_SIZE = (640, 360)
-DEFAULT_STREAM_SCREEN = "general_screen"
 
 # UAV settings
 MAX_UAV_COUNT = 6
 
-PROTO = "udp"
+"""Set connection as follows:
+- Serial: serial:///path/to/serial/dev[:baudrate]
+    Example: serial:///dev/ttyUSB0:57600
+    - PROTOCOL: serial
+    - SERVER_HOST: /dev/ttyUSB0
+    - DEFAULT_BIND_PORT: 57600
+- UDP: udp://[bind_host][:bind_port]
+    Example: udp://:14541
+    - PROTOCOL: udp
+    - SERVER_HOST: 
+    - DEFAULT_BIND_PORT: 14541
+- TCP: tcp://[server_host][:server_port]
+    Example: tcp://localhost:5760
+    - PROTOCOL: tcp
+    - SERVER_HOST: localhost
+    - DEFAULT_BIND_PORT: 5760
+"""
+
+PROTOCOL = "udp"
 SERVER_HOST = ""
-DEFAULT_PORT = 50060
-DEFAULT_BIND_PORT = 14541
+DEFAULT_SERVER_PORT = 14541
+DEFAULT_CLIENT_PORT = 50060
 
 connection_allows = [True, True, True, True, True, True]
 streaming_enables = [True, False, False, False, False, False]
+detection_enables = [True, False, False, False, False, False]
 
 screen_sizes = {
     "general_screen": (592, 333),
     "stream_screen": (1280, 720),
     "ovv_screen": (320, 180),
 }
+
+DEFAULT_STREAM_SIZE = (640, 360)
+DEFAULT_STREAM_SCREEN = "general_screen"
 
 # Path settings
 DEFAULT_STREAM_VIDEO_PATHS = [
@@ -51,6 +71,7 @@ pause_img_paths = {
 pause_img_paths["all"] = f"{ROOT_DIR}/assets/pictures/pause_screen.jpg"
 
 map_html_path = f"file://{ROOT_DIR}/assets/map.html"
+
 model_path = f"{SRC_DIR}/model/checkpoints/yolov8n.pt"
 gps_log_paths = [
     f"{SRC_DIR}/logs/gps/gps_log_uav_{i}_{NOW}.txt" for i in range(1, MAX_UAV_COUNT + 1)

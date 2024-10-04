@@ -35,22 +35,24 @@ tabWidget_indexes = {
     "overview": 8,
 }
 
-
 # UAVs object
 UAVs = {
     uav_index: {
         "server": Server(
             id=uav_index,
-            proto=PROTO,
+            proto=PROTOCOL,
             server_host=SERVER_HOST,
-            port=DEFAULT_PORT + uav_index - 1,
-            bind_port=DEFAULT_BIND_PORT + uav_index - 1,
+            port=DEFAULT_CLIENT_PORT + uav_index - 1,
+            bind_port=DEFAULT_SERVER_PORT + uav_index - 1,
         ),
-        "system": System(mavsdk_server_address="localhost", port=DEFAULT_PORT + uav_index - 1),
-        "system_address": f"{PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + uav_index- 1}",
+        "system": System(
+            mavsdk_server_address="localhost", port=DEFAULT_CLIENT_PORT + uav_index - 1
+        ),
+        "system_address": f"{PROTOCOL}://{SERVER_HOST}:{DEFAULT_SERVER_PORT + uav_index- 1}",
         "streaming_address": DEFAULT_STREAM_VIDEO_PATHS[uav_index - 1],
         "connection_allow": connection_allows[uav_index - 1],
         "streaming_enable": streaming_enables[uav_index - 1],
+        "detection_enable": detection_enables[uav_index - 1],
     }
     for uav_index in range(1, MAX_UAV_COUNT + 1)
 }
@@ -295,10 +297,8 @@ class App(QMainWindow):
         # set emit signal
         self._create_streaming_threads()
 
-        # init tables
-        self._modify_tables(mode="init")
-        # init checkboxes
-        self._handling_checkBoxes(mode="init")
+        # handling settings
+        self._handling_settings(mode="init")
 
         # init map
         self.map = MapEngine(self.ui.MapWebView)
@@ -495,8 +495,12 @@ class App(QMainWindow):
             )
 
         # all is update table
-        self.ui.btn_sett_cf_nSwarms.clicked.connect(lambda: self._modify_tables(mode="settings"))
-        self.ui.btn_ovv_cf_nSwarms.clicked.connect(lambda: self._modify_tables(mode="overview"))
+        self.ui.btn_sett_cf_nSwarms.clicked.connect(
+            lambda: self._handling_settings(mode="settings")
+        )
+        self.ui.btn_ovv_cf_nSwarms.clicked.connect(
+            lambda: self._handling_settings(mode="overview")
+        )
 
         # go to buttons
         for i, buttons in enumerate(zip(self.uav_sett_goTo_buttons, self.uav_ovv_goTo_buttons)):
@@ -543,11 +547,15 @@ class App(QMainWindow):
         """
         global UAVs
         try:
-            if uav_indexes is None:
-                uav_indexes = range(1, MAX_UAV_COUNT + 1)
+            uav_indexes = range(1, MAX_UAV_COUNT + 1) if uav_indexes is None else uav_indexes
+
             for uav_index in uav_indexes:
                 if not (
-                    UAVs[uav_index]["streaming_enable"] and UAVs[uav_index]["connection_allow"]
+                    UAVs[uav_index]["streaming_enable"]
+                    and (
+                        UAVs[uav_index]["connection_allow"]
+                        or UAVs[uav_index]["uav_information"]["connection_status"]
+                    )
                 ):
                     return
 
@@ -558,13 +566,14 @@ class App(QMainWindow):
                 )
 
                 self.uav_stream_captures[uav_index - 1] = cv2.VideoCapture(
-                    UAVs[uav_index]["streaming_address"]
+                    UAVs[uav_index]["streaming_address"],
+                    cv2.CAP_FFMPEG,
                 )
 
                 self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
                     filename=DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
                     fourcc=cv2.VideoWriter_fourcc(*"mp4v"),
-                    fps=20.0,
+                    fps=30.0,
                     frameSize=DEFAULT_STREAM_SIZE,
                 )
 
@@ -605,7 +614,13 @@ class App(QMainWindow):
         self.active_tab_index = self.ui.tabWidget.currentIndex()
         self.active_stack_index = self.ui.stackedWidget.currentIndex()
 
-    def _handling_checkBoxes(self, mode="init") -> list:
+    def _handling_settings(self, mode="init") -> None:
+        # init checkboxes
+        self._handling_checkBoxes(mode=mode)
+        # init tables
+        self._handling_tables(mode=mode)
+
+    def _handling_checkBoxes(self, mode="init") -> None:
         """
         Handle the state of checkboxes and update UAV detection settings.
 
@@ -616,27 +631,33 @@ class App(QMainWindow):
             list: A list of indices of checked checkboxes.
         """
         if mode == "init":
+            # set default UI values based on the configuration
             for i, widget in enumerate(self.sett_checkBox_detect_lists):
-                widget.setChecked(UAVs[i + 1]["streaming_enable"])
+                widget.setChecked(UAVs[i + 1]["detection_enable"])
             for i, widget in enumerate(self.ovv_checkBox_detect_lists):
-                widget.setChecked(UAVs[i + 1]["streaming_enable"])
+                widget.setChecked(UAVs[i + 1]["detection_enable"])
             for i, widget in enumerate(self.sett_checkBox_active_lists):
-                widget.setChecked(UAVs[i + 1]["connection_allow"])
+                widget.setChecked(UAVs[i + 1]["streaming_enable"])
+
         elif mode == "settings":
+            # get the values from the table in setting page
             for i, widget in enumerate(self.sett_checkBox_detect_lists):
+                UAVs[i + 1]["detection_enable"] = widget.isChecked()
+            # sync the values to the overview page
+            for i, widget in enumerate(self.ovv_checkBox_detect_lists):
+                widget.setChecked(UAVs[i + 1]["detection_enable"])
+            # sync the values to the setting page
+            for i, widget in enumerate(self.sett_checkBox_active_lists):
                 UAVs[i + 1]["streaming_enable"] = widget.isChecked()
         elif mode == "overview":
+            # get the values from the table in overview page
             for i, widget in enumerate(self.ovv_checkBox_detect_lists):
-                UAVs[i + 1]["streaming_enable"] = widget.isChecked()
+                UAVs[i + 1]["detection_enable"] = widget.isChecked()
+            # sync the values to the setting page
+            for i, widget in enumerate(self.sett_checkBox_detect_lists):
+                widget.setChecked(UAVs[i + 1]["detection_enable"])
 
-        boxes_checked = []
-        for i, widget in enumerate(self.sett_checkBox_active_lists):
-            UAVs[i + 1]["connection_allow"] = widget.isChecked()
-            if widget.isChecked():
-                boxes_checked.append(i + 1)
-        return boxes_checked
-
-    def _modify_tables(self, mode="init") -> None:
+    def _handling_tables(self, mode="init") -> None:
         """
         Update settings based on the checked checkboxes and table values.
 
@@ -648,54 +669,52 @@ class App(QMainWindow):
         """
         try:
             headers = ["id", "connection_address", "streaming_address"]
+            connection_allow_indexes = [
+                index + 1 for index in range(MAX_UAV_COUNT) if UAVs[index + 1]["connection_allow"]
+            ]
+            streaming_enabled_indexes = [
+                index + 1 for index in range(MAX_UAV_COUNT) if UAVs[index + 1]["streaming_enable"]
+            ]
+
             if mode != "init":  # get the values from the table in runtime
-                checked_uav_indexes = self._handling_checkBoxes(mode=mode)
+
                 # get values from the table
                 if mode == "settings":
-                    nSwarms = min(int(self.ui.nSwarms_sett.value()), len(checked_uav_indexes))
+                    nSwarms = min(int(self.ui.nSwarms_sett.value()), len(connection_allow_indexes))
                     dataFrame_widget = get_values_from_table(
                         self.ui.table_uav_large, headers=headers
                     )
                 else:
-                    nSwarms = min(int(self.ui.nSwarms_ovv.value()), len(checked_uav_indexes))
+                    nSwarms = min(int(self.ui.nSwarms_ovv.value()), len(connection_allow_indexes))
                     dataFrame_widget = get_values_from_table(
                         self.ui.table_uav_small, headers=headers
                     )
 
-                # get data from address columns
+                # update data from address columns to UAVs
                 for i in range(1, MAX_UAV_COUNT + 1):
-                    if i in checked_uav_indexes:
+                    if i in connection_allow_indexes:
                         UAVs[i]["system_address"], port = dataFrame_widget["connection_address"][
                             i - 1
                         ].split("-p")
                         UAVs[i]["system"]._port = int(port)
-                        # get streaming address
-                        if "VIDEO: " in dataFrame_widget["streaming_address"][i - 1]:
-                            UAVs[i]["streaming_address"] = str(
-                                dataFrame_widget["streaming_address"][i - 1].replace("VIDEO: ", "")
-                            )
-                        elif "LOCAL: " in dataFrame_widget["streaming_address"][i - 1]:
-                            UAVs[i]["streaming_address"] = int(
-                                dataFrame_widget["streaming_address"][i - 1]
-                                .replace("LOCAL: ", "")
-                                .strip()
-                            )
-                        else:
-                            UAVs[i]["streaming_address"] = str(
-                                dataFrame_widget["streaming_address"][i - 1].replace(
-                                    "STREAM: ", ""
-                                )
-                            )
+
+                        UAVs[i]["streaming_address"] = dataFrame_widget["streaming_address"][
+                            i - 1
+                        ].strip()
 
                 # update the table
                 self._update_tables(
                     data=dataFrame_widget,
-                    indexes=checked_uav_indexes,
+                    connection_allow_indexes=connection_allow_indexes,
+                    streaming_enabled_indexes=streaming_enabled_indexes,
                     nSwarms=nSwarms,
                     headers=headers,
                 )
                 print("[INFO] Updated UAVs values according to the table")
                 # re-create streaming threads
+                for uav_index in range(1, MAX_UAV_COUNT + 1):
+                    UAVs[uav_index]["uav_information"]["connection_status"] = False  # reset
+                    UAVs[uav_index]["uav_information"]["streaming_status"] = False  # reset
                 self._create_streaming_threads()
             else:
                 data = {
@@ -705,24 +724,24 @@ class App(QMainWindow):
                         for i in range(1, MAX_UAV_COUNT + 1)
                     ],
                     headers[2]: [
-                        f"VIDEO: {UAVs[i]['streaming_address']}"
-                        for i in range(1, MAX_UAV_COUNT + 1)
+                        f"{UAVs[i]['streaming_address']}" for i in range(1, MAX_UAV_COUNT + 1)
                     ],
                 }
-                indexes = [
-                    uav_index
-                    for uav_index in range(1, MAX_UAV_COUNT + 1)
-                    if UAVs[uav_index]["connection_allow"]
-                ]
 
                 self._update_tables(
-                    data=data, indexes=indexes, nSwarms=len(indexes), headers=headers
+                    data=data,
+                    connection_allow_indexes=connection_allow_indexes,
+                    streaming_enabled_indexes=streaming_enabled_indexes,
+                    nSwarms=len(connection_allow_indexes),
+                    headers=headers,
                 )
 
         except Exception as e:
-            self.popup_msg(msg=f"Error: {repr(e)}", src_msg="_modify_tables", type_msg="Error")
+            self.popup_msg(msg=f"Error: {repr(e)}", src_msg="_handling_tables", type_msg="Error")
 
-    def _update_tables(self, data, indexes, nSwarms, headers) -> None:
+    def _update_tables(
+        self, data, connection_allow_indexes, streaming_enabled_indexes, nSwarms, headers
+    ) -> None:
         """
         Updates the table with the given data and headers.
 
@@ -742,13 +761,15 @@ class App(QMainWindow):
         draw_table(
             self.ui.table_uav_large,
             data=pd.DataFrame.from_dict(data),
-            indexes=indexes[:nSwarms],
+            connection_allow_indexes=connection_allow_indexes[:nSwarms],
+            streaming_enabled_indexes=streaming_enabled_indexes,
             headers=headers,
         )
         draw_table(
             self.ui.table_uav_small,
             data=pd.DataFrame.from_dict(data),
-            indexes=indexes[:nSwarms],
+            connection_allow_indexes=connection_allow_indexes[:nSwarms],
+            streaming_enabled_indexes=streaming_enabled_indexes,
             headers=headers,
         )
 
@@ -1371,7 +1392,11 @@ class App(QMainWindow):
         try:
             if uav_index in range(1, MAX_UAV_COUNT + 1):
                 if not (
-                    UAVs[uav_index]["connection_allow"] and UAVs[uav_index]["streaming_enable"]
+                    (
+                        UAVs[uav_index]["connection_allow"]
+                        or UAVs[uav_index]["uav_information"]["connection_status"]
+                    )
+                    and UAVs[uav_index]["streaming_enable"]
                 ):
                     return
 
@@ -1855,9 +1880,6 @@ class App(QMainWindow):
                 print(f"-- Connected to drone {uav_index}!")
                 self.update_terminal(f"[INFO] Received CONNECT signal from UAV {uav_index}")
                 UAVs[uav_index]["label_param"].setStyleSheet("background-color: green")
-                self.sett_checkBox_active_lists[uav_index - 1].setChecked(True)
-                set_row_color(self.ui.table_uav_large, uav_index - 1, QtGui.QColor(144, 238, 144))
-                set_row_color(self.ui.table_uav_small, uav_index - 1, QtGui.QColor(144, 238, 144))
             break
 
         # Checking if Global Position Estimate is ok
@@ -1875,15 +1897,15 @@ class App(QMainWindow):
         await UAVs[uav_index]["system"].action.set_maximum_speed(1.0)
 
         # Get the list of parameters
-        # all_params = await UAVs[uav_index]["system"].param.get_all_params()
+        all_params = await UAVs[uav_index]["system"].param.get_all_params()
 
-        # with open(f"{SRC_DIR}/logs/params/params{uav_index}.txt", "w") as f:
+        with open(f"{SRC_DIR}/logs/params/params{uav_index}.txt", "w") as f:
 
-        #     for param in all_params.int_params:
-        #         f.write(f"{param.name}: {param.value}\n")
+            for param in all_params.int_params:
+                f.write(f"{param.name}: {param.value}\n")
 
-        #     for param in all_params.float_params:
-        #         f.write(f"{param.name}: {param.value}\n")
+            for param in all_params.float_params:
+                f.write(f"{param.name}: {param.value}\n")
 
         await self.uav_fn_get_status(uav_index)
 
@@ -1984,8 +2006,13 @@ class App(QMainWindow):
         """
         try:
             global UAVs
-            # change to connection states later UAVs[uav_index]["uav_information"]["connection_status"]
-            if not (UAVs[uav_index]["connection_allow"] and UAVs[uav_index]["streaming_enable"]):
+            if not (
+                (
+                    UAVs[uav_index]["connection_allow"]
+                    or UAVs[uav_index]["uav_information"]["connection_status"]
+                )
+                and UAVs[uav_index]["streaming_enable"]
+            ):
                 return
 
             is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
@@ -1994,9 +2021,9 @@ class App(QMainWindow):
                 ret, frame = self.uav_stream_captures[uav_index - 1].read()
 
                 if ret:
-                    # detect objects in the frame
-                    results = self.predictor(frame, device=DEVICE, stream=True, verbose=False)
-                    frame = draw_frame(frame, results)
+                    if UAVs[uav_index]["detection_enable"]:
+                        results = self.predictor(frame, device=DEVICE, stream=True, verbose=False)
+                        frame = draw_frame(frame, results)
 
                     self.update_uav_screen_view(
                         uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN
@@ -2140,17 +2167,6 @@ class App(QMainWindow):
         # default is not connected
         UAVs[uav_index]["uav_information"]["connection_status"] = False
         UAVs[uav_index]["label_param"].setStyleSheet("background-color: red")
-        self.sett_checkBox_active_lists[uav_index - 1].setChecked(False)
-        set_row_color(
-            self.ui.table_uav_large,
-            uav_index - 1,
-            QtGui.QColor(255, 160, 122),
-        )
-        set_row_color(
-            self.ui.table_uav_small,
-            uav_index - 1,
-            QtGui.QColor(255, 160, 122),
-        )
         UAVs[uav_index]["information_view"].setText(
             self.template_information(uav_index, **UAVs[uav_index]["uav_information"])
         )
@@ -2218,6 +2234,7 @@ class App(QMainWindow):
 # -----------------------------< Main Application Class >-----------------------------
 def run():
     app = QtWidgets.QApplication(sys.argv)
+    # app.setStyle("Oxygen")  # ['Breeze', 'Oxygen', 'QtCurve', 'Windows', 'Fusion']
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
     MainWindow = App(model_path=model_path)

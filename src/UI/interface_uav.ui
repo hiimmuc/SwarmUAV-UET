@@ -230,7 +230,7 @@ background-color: rgb(252, 175, 62);</string>
              <enum>QTabWidget::East</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>8</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -253,6 +253,12 @@ background-color: rgb(252, 175, 62);</string>
                   <width>592</width>
                   <height>333</height>
                  </size>
+                </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(0, 0, 0);</string>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
@@ -288,6 +294,12 @@ background-color: rgb(252, 175, 62);</string>
                   <height>333</height>
                  </size>
                 </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(0, 0, 0);</string>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
                 </property>
@@ -321,6 +333,12 @@ background-color: rgb(252, 175, 62);</string>
                   <width>592</width>
                   <height>333</height>
                  </size>
+                </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(0, 0, 0);</string>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
@@ -356,6 +374,12 @@ background-color: rgb(252, 175, 62);</string>
                   <height>333</height>
                  </size>
                 </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(0, 0, 0);</string>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
                 </property>
@@ -390,6 +414,12 @@ background-color: rgb(252, 175, 62);</string>
                   <height>333</height>
                  </size>
                 </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(0, 0, 0);</string>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
                 </property>
@@ -423,6 +453,12 @@ background-color: rgb(252, 175, 62);</string>
                   <width>592</width>
                   <height>333</height>
                  </size>
+                </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(0, 0, 0);</string>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
@@ -493,6 +529,9 @@ background-color: rgb(252, 175, 62);</string>
                   </property>
                   <property name="pixmap">
                    <pixmap>../../assets/pictures/resized/no_signal2_720x1280.jpg</pixmap>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -1789,6 +1828,9 @@ background-color: rgb(252, 175, 62);</string>
                   <property name="pixmap">
                    <pixmap>../../assets/pictures/resized/no_signal2_720x1280.jpg</pixmap>
                   </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -3070,13 +3112,16 @@ background-color: rgb(252, 175, 62);</string>
                    </size>
                   </property>
                   <property name="frameShape">
-                   <enum>QFrame::Box</enum>
+                   <enum>QFrame::NoFrame</enum>
                   </property>
                   <property name="text">
                    <string/>
                   </property>
                   <property name="pixmap">
                    <pixmap>../../assets/pictures/no_signal2.jpg</pixmap>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -4368,13 +4413,16 @@ background-color: rgb(252, 175, 62);</string>
                    </size>
                   </property>
                   <property name="frameShape">
-                   <enum>QFrame::Box</enum>
+                   <enum>QFrame::NoFrame</enum>
                   </property>
                   <property name="text">
                    <string/>
                   </property>
                   <property name="pixmap">
                    <pixmap>../../assets/pictures/no_signal2.jpg</pixmap>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -5657,13 +5705,16 @@ background-color: rgb(252, 175, 62);</string>
                    </size>
                   </property>
                   <property name="frameShape">
-                   <enum>QFrame::Box</enum>
+                   <enum>QFrame::NoFrame</enum>
                   </property>
                   <property name="text">
                    <string/>
                   </property>
                   <property name="pixmap">
                    <pixmap>../../assets/pictures/no_signal2.jpg</pixmap>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -6953,6 +7004,9 @@ background-color: rgb(252, 175, 62);</string>
                   </property>
                   <property name="pixmap">
                    <pixmap>../../assets/pictures/resized/no_signal2_720x1280.jpg</pixmap>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -8359,7 +8413,7 @@ background-color: rgb(252, 175, 62);</string>
                      <enum>QFrame::Box</enum>
                     </property>
                     <property name="text">
-                     <string>Enable UAV</string>
+                     <string>Enable Camera</string>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -8592,7 +8646,7 @@ background-color: rgb(252, 175, 62);</string>
                      <enum>QFrame::Panel</enum>
                     </property>
                     <property name="text">
-                     <string>Enable Video Detection</string>
+                     <string>Enable Detection</string>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -9068,7 +9122,7 @@ background-color: rgb(252, 175, 62);</string>
                  </widget>
                 </item>
                 <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_21" stretch="2,0,1">
+                 <layout class="QVBoxLayout" name="verticalLayout_21" stretch="2,1,2">
                   <property name="spacing">
                    <number>5</number>
                   </property>
@@ -9076,7 +9130,7 @@ background-color: rgb(252, 175, 62);</string>
                    <number>10</number>
                   </property>
                   <item>
-                   <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,1" columnstretch="1,1,1" rowminimumheight="240,240" columnminimumwidth="320,320,320">
+                   <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,1" columnstretch="1,1,1" rowminimumheight="200,200" columnminimumwidth="320,320,320">
                     <property name="leftMargin">
                      <number>10</number>
                     </property>
@@ -9103,6 +9157,12 @@ background-color: rgb(252, 175, 62);</string>
                         <height>180</height>
                        </size>
                       </property>
+                      <property name="autoFillBackground">
+                       <bool>false</bool>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background-color: rgb(0, 0, 0);</string>
+                      </property>
                       <property name="frameShape">
                        <enum>QFrame::NoFrame</enum>
                       </property>
@@ -9117,6 +9177,9 @@ background-color: rgb(252, 175, 62);</string>
                       </property>
                       <property name="scaledContents">
                        <bool>false</bool>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
@@ -9134,6 +9197,12 @@ background-color: rgb(252, 175, 62);</string>
                         <height>180</height>
                        </size>
                       </property>
+                      <property name="autoFillBackground">
+                       <bool>false</bool>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background-color: rgb(0, 0, 0);</string>
+                      </property>
                       <property name="frameShape">
                        <enum>QFrame::NoFrame</enum>
                       </property>
@@ -9148,6 +9217,9 @@ background-color: rgb(252, 175, 62);</string>
                       </property>
                       <property name="scaledContents">
                        <bool>false</bool>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
@@ -9165,6 +9237,12 @@ background-color: rgb(252, 175, 62);</string>
                         <height>180</height>
                        </size>
                       </property>
+                      <property name="autoFillBackground">
+                       <bool>false</bool>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background-color: rgb(0, 0, 0);</string>
+                      </property>
                       <property name="frameShape">
                        <enum>QFrame::NoFrame</enum>
                       </property>
@@ -9179,6 +9257,9 @@ background-color: rgb(252, 175, 62);</string>
                       </property>
                       <property name="scaledContents">
                        <bool>false</bool>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
@@ -9196,6 +9277,12 @@ background-color: rgb(252, 175, 62);</string>
                         <height>180</height>
                        </size>
                       </property>
+                      <property name="autoFillBackground">
+                       <bool>false</bool>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background-color: rgb(0, 0, 0);</string>
+                      </property>
                       <property name="frameShape">
                        <enum>QFrame::NoFrame</enum>
                       </property>
@@ -9210,6 +9297,9 @@ background-color: rgb(252, 175, 62);</string>
                       </property>
                       <property name="scaledContents">
                        <bool>false</bool>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
@@ -9227,6 +9317,12 @@ background-color: rgb(252, 175, 62);</string>
                         <height>180</height>
                        </size>
                       </property>
+                      <property name="autoFillBackground">
+                       <bool>false</bool>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background-color: rgb(0, 0, 0);</string>
+                      </property>
                       <property name="frameShape">
                        <enum>QFrame::NoFrame</enum>
                       </property>
@@ -9241,6 +9337,9 @@ background-color: rgb(252, 175, 62);</string>
                       </property>
                       <property name="scaledContents">
                        <bool>false</bool>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
@@ -9258,6 +9357,12 @@ background-color: rgb(252, 175, 62);</string>
                         <height>180</height>
                        </size>
                       </property>
+                      <property name="autoFillBackground">
+                       <bool>false</bool>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background-color: rgb(0, 0, 0);</string>
+                      </property>
                       <property name="frameShape">
                        <enum>QFrame::NoFrame</enum>
                       </property>
@@ -9273,6 +9378,9 @@ background-color: rgb(252, 175, 62);</string>
                       <property name="scaledContents">
                        <bool>false</bool>
                       </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
                      </widget>
                     </item>
                    </layout>
@@ -9287,7 +9395,7 @@ background-color: rgb(252, 175, 62);</string>
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_25" stretch="3,0,1,0,1">
                     <item>
-                     <layout class="QVBoxLayout" name="verticalLayout_18" stretch="3,0,1">
+                     <layout class="QVBoxLayout" name="verticalLayout_18" stretch="5,1,2">
                       <item>
                        <widget class="QTableWidget" name="table_uav_small">
                         <property name="sizePolicy">
@@ -9360,9 +9468,20 @@ background-color: rgb(252, 175, 62);</string>
                        </widget>
                       </item>
                       <item>
-                       <layout class="QVBoxLayout" name="verticalLayout_17">
+                       <layout class="QVBoxLayout" name="verticalLayout_17" stretch="1,1">
                         <item>
                          <widget class="QLabel" name="label_36">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="font">
+                           <font>
+                            <pointsize>14</pointsize>
+                           </font>
+                          </property>
                           <property name="text">
                            <string>Number of Swarms</string>
                           </property>
@@ -9372,24 +9491,45 @@ background-color: rgb(252, 175, 62);</string>
                          </widget>
                         </item>
                         <item>
-                         <widget class="QSpinBox" name="nSwarms_ovv">
-                          <property name="prefix">
-                           <string>N=</string>
-                          </property>
-                          <property name="maximum">
-                           <number>6</number>
-                          </property>
-                          <property name="value">
-                           <number>6</number>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="btn_ovv_cf_nSwarms">
-                          <property name="text">
-                           <string>Activate</string>
-                          </property>
-                         </widget>
+                         <layout class="QHBoxLayout" name="horizontalLayout">
+                          <item>
+                           <widget class="QSpinBox" name="nSwarms_ovv">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <pointsize>13</pointsize>
+                             </font>
+                            </property>
+                            <property name="prefix">
+                             <string>N=</string>
+                            </property>
+                            <property name="maximum">
+                             <number>6</number>
+                            </property>
+                            <property name="value">
+                             <number>6</number>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btn_ovv_cf_nSwarms">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="text">
+                             <string>Activate</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
                         </item>
                        </layout>
                       </item>
@@ -9421,6 +9561,11 @@ background-color: rgb(252, 175, 62);</string>
                           <verstretch>0</verstretch>
                          </sizepolicy>
                         </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>14</pointsize>
+                         </font>
+                        </property>
                         <property name="frameShape">
                          <enum>QFrame::Box</enum>
                         </property>
@@ -9428,7 +9573,7 @@ background-color: rgb(252, 175, 62);</string>
                          <enum>QFrame::Plain</enum>
                         </property>
                         <property name="text">
-                         <string>Enable Video Detection</string>
+                         <string>Enable Detection</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignCenter</set>
@@ -9531,9 +9676,14 @@ background-color: rgb(252, 175, 62);</string>
                     <item>
                      <layout class="QVBoxLayout" name="verticalLayout_19">
                       <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_24" stretch="1,2">
+                       <layout class="QHBoxLayout" name="horizontalLayout_24" stretch="1,1">
                         <item>
                          <widget class="QLabel" name="label_37">
+                          <property name="font">
+                           <font>
+                            <pointsize>14</pointsize>
+                           </font>
+                          </property>
                           <property name="text">
                            <string>Latitude</string>
                           </property>
@@ -9548,9 +9698,14 @@ background-color: rgb(252, 175, 62);</string>
                        </layout>
                       </item>
                       <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_26" stretch="1,2">
+                       <layout class="QHBoxLayout" name="horizontalLayout_26" stretch="1,1">
                         <item>
                          <widget class="QLabel" name="label_38">
+                          <property name="font">
+                           <font>
+                            <pointsize>14</pointsize>
+                           </font>
+                          </property>
                           <property name="text">
                            <string>Longtitude</string>
                           </property>
@@ -9859,8 +10014,8 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
                <bool>true</bool>
               </property>
               <property name="styleSheet">
-               <string notr="true">
-background-color: rgb(238, 238, 236);</string>
+               <string notr="true">QPushButton{background-color: rgb(243, 243, 243);}
+QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               </property>
               <property name="text">
                <string>Toggle Camera</string>

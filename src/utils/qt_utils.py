@@ -76,7 +76,7 @@ def get_values_from_table(table, headers=[]) -> pd.DataFrame:
     return df
 
 
-def draw_table(table, data=None, indexes=None, headers=[]) -> None:
+def draw_table(table, data=None, connection_allow_indexes=None, streaming_enabled_indexes = None, headers=[]) -> None:
     """
     Draw tables with UAV data and highlight rows based on indexes.
 
@@ -93,17 +93,20 @@ def draw_table(table, data=None, indexes=None, headers=[]) -> None:
         for colID, header in enumerate(headers):
             table.setItem(i, colID, QtWidgets.QTableWidgetItem(str(data[header][i])))
 
-        if int(data[headers[0]][i]) in indexes:
-            set_row_color(table, i, QtGui.QColor(144, 238, 144))
+        if int(data[headers[0]][i]) in connection_allow_indexes:
+            table.item(i, 0).setBackground(QtGui.QColor(144, 238, 144))
+            table.item(i, 1).setBackground(QtGui.QColor(144, 238, 144))
         else:
-            set_row_color(table, i, QtGui.QColor(255, 160, 122))
+            table.item(i, 0).setBackground(QtGui.QColor(255, 160, 122))
+            table.item(i, 1).setBackground(QtGui.QColor(255, 160, 122))
+        
+        if int(data[headers[0]][i]) in streaming_enabled_indexes:
+            table.item(i, 2).setBackground(QtGui.QColor(144, 238, 144))
+        else:
+            table.item(i, 2).setBackground(QtGui.QColor(255, 160, 122))
 
     refine_table(table)
 
-
-def set_row_color(table, row, color) -> None:
-    for col in range(table.columnCount()):
-        table.item(row, col).setBackground(color)
 
 
 def refine_table(table) -> None:
