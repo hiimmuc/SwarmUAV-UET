@@ -179,3 +179,4 @@ cache/*.
 assets/videos/*
 dependencies/PX4-Autopilot/
 src/logs/videos/*
+src/logs/gps/*.txt

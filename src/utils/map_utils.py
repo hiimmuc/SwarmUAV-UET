@@ -7,15 +7,7 @@ from PyQt5.QtCore import QFile, QUrl, pyqtSlot
 from PyQt5.QtNetwork import QNetworkDiskCache
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWebEngineWidgets import QWebEngineProfile, QWebEngineScript, QWebEngineView
-from PyQt5.QtWidgets import (
-    QApplication,
-    QFormLayout,
-    QGroupBox,
-    QLabel,
-    QLineEdit,
-    QPushButton,
-    QVBoxLayout,
-)
+from PyQt5.QtWidgets import QApplication
 
 QtCore.qInstallMessageHandler(lambda *args: None)
 
@@ -119,9 +111,7 @@ class MapEngine(QWebEngineView):
         )
 
     def mapMoveMarker(self, key, latitude, longitude):
-        self.runScript(
-            f"moveMarkerJs(key={key}, latitude={latitude}, longitude={longitude})"
-        )
+        self.runScript(f"moveMarkerJs(key={key}, latitude={latitude}, longitude={longitude})")
 
     def positionMarker(self, key):
         return tuple(self.runScript("posMarker(key={!r});".format(key)))

@@ -1,6 +1,7 @@
 import asyncio
 import os
 import sys
+from functools import partial
 from threading import Thread
 
 import cv2
@@ -16,6 +17,7 @@ from ultralytics import YOLO
 from config import *
 from UI.interface_uav import *
 from utils.drone_utils import *
+from utils.logger import *
 from utils.map_utils import *
 from utils.mavsdk_server_utils import *
 from utils.model_utils import *
@@ -39,17 +41,16 @@ tabWidget_indexes = {
 try:
     UAVs = {
         uav_index: {
+            "ID": uav_index,
             "server": Server(
                 id=uav_index,
-                proto=PROTOCOL,
-                server_host=SERVER_HOST,
-                port=DEFAULT_CLIENT_PORT + uav_index - 1,
-                bind_port=DEFAULT_SERVER_PORT + uav_index - 1,
+                proto=PROTOCOLS[uav_index - 1],
+                server_host=SERVER_HOSTS[uav_index - 1],
+                port=CLIENT_PORTS[uav_index - 1],
+                bind_port=SERVER_PORTS[uav_index - 1],
             ),
-            "system": System(
-                mavsdk_server_address="localhost", port=DEFAULT_CLIENT_PORT + uav_index - 1
-            ),
-            "system_address": f"{PROTOCOL}://{SERVER_HOST}:{DEFAULT_SERVER_PORT + uav_index- 1}",
+            "system": System(mavsdk_server_address="localhost", port=CLIENT_PORTS[uav_index - 1]),
+            "system_address": SYSTEMS_ADDRESSES[uav_index - 1],
             "streaming_address": DEFAULT_STREAM_VIDEO_PATHS[uav_index - 1],
             "connection_allow": connection_allows[uav_index - 1],
             "streaming_enable": streaming_enables[uav_index - 1],
@@ -58,8 +59,10 @@ try:
         for uav_index in range(1, MAX_UAV_COUNT + 1)
     }
 except Exception as e:
-    print(f"Error: {repr(e)}")
+    print(f"[Error]: {repr(e)}")
     sys.exit(1)
+
+logger = Logger()
 
 
 class App(QMainWindow):
@@ -237,12 +240,12 @@ class App(QMainWindow):
         ]  # detect checkboxes on page overview
 
         #
-        print(f"Application starting at {NOW}")
+        logger.log(f"Application initializing...", level="info")
         self.init_application()
-        print("Application initialized successfully")
+        logger.log("Application initialized successfully", level="info")
 
         self.predictor = YOLO(model_path).to(DEVICE)
-        print(f"Model loaded successfully on {DEVICE}")
+        logger.log(f"Model loaded successfully on {DEVICE}", level="info")
 
         # ---------------------------------------------------------
 
@@ -486,18 +489,44 @@ class App(QMainWindow):
         self.ui.btn_toggle_camera.clicked.connect(
             lambda: self.uav_fn_toggle_camera(self.active_tab_index)
         )
+        # set/get flight info NOTE: uav_index = 1, 2, 3, 4, 5, 6 need to shorten
+        self.uav_set_param_buttons[0].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_set_flight_info(1))
+        )
+        self.uav_set_param_buttons[1].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_set_flight_info(2))
+        )
+        self.uav_set_param_buttons[2].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_set_flight_info(3))
+        )
+        self.uav_set_param_buttons[3].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_set_flight_info(4))
+        )
+        self.uav_set_param_buttons[4].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_set_flight_info(5))
+        )
+        self.uav_set_param_buttons[5].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_set_flight_info(6))
+        )
 
-        for i, btn in enumerate(self.uav_set_param_buttons):
-            btn.clicked.connect(
-                lambda i=i: asyncio.create_task(self.uav_fn_set_flight_info(i + 1))
-            )
-
-        for i, btn in enumerate(self.uav_get_param_buttons):
-            btn.clicked.connect(
-                lambda i=i: asyncio.create_task(
-                    self.uav_fn_get_flight_info(uav_index=i + 1, copy=True)
-                )
-            )
+        self.uav_get_param_buttons[0].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_get_flight_info(1, True))
+        )
+        self.uav_get_param_buttons[1].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_get_flight_info(2, True))
+        )
+        self.uav_get_param_buttons[2].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_get_flight_info(3, True))
+        )
+        self.uav_get_param_buttons[3].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_get_flight_info(4, True))
+        )
+        self.uav_get_param_buttons[4].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_get_flight_info(5, True))
+        )
+        self.uav_get_param_buttons[5].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_get_flight_info(6, True))
+        )
 
         # all is update table
         self.ui.btn_sett_cf_nSwarms.clicked.connect(
@@ -507,14 +536,49 @@ class App(QMainWindow):
             lambda: self._handling_settings(mode="overview")
         )
 
-        # go to buttons
-        for i, buttons in enumerate(zip(self.uav_sett_goTo_buttons, self.uav_ovv_goTo_buttons)):
-            buttons[0].clicked.connect(
-                lambda uav_index=i: asyncio.create_task(self.uav_fn_goTo(uav_index, "settings"))
-            )
-            buttons[1].clicked.connect(
-                lambda uav_index=i: asyncio.create_task(self.uav_fn_goTo(uav_index, "overview"))
-            )
+        # go to buttons NOTE: uav_index = 0, 1, 2, 3, 4, 5, 6 need to shorten
+        self.uav_sett_goTo_buttons[0].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=0, page="settings"))
+        )
+        self.uav_ovv_goTo_buttons[0].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=0, page="overview"))
+        )
+        self.uav_sett_goTo_buttons[1].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=1, page="settings"))
+        )
+        self.uav_ovv_goTo_buttons[1].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=1, page="overview"))
+        )
+        self.uav_sett_goTo_buttons[2].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=2, page="settings"))
+        )
+        self.uav_ovv_goTo_buttons[2].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=2, page="overview"))
+        )
+        self.uav_sett_goTo_buttons[3].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=3, page="settings"))
+        )
+        self.uav_ovv_goTo_buttons[3].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=3, page="overview"))
+        )
+        self.uav_sett_goTo_buttons[4].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=4, page="settings"))
+        )
+        self.uav_ovv_goTo_buttons[4].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=4, page="overview"))
+        )
+        self.uav_sett_goTo_buttons[5].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=5, page="settings"))
+        )
+        self.uav_ovv_goTo_buttons[5].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=5, page="overview"))
+        )
+        self.uav_sett_goTo_buttons[6].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=6, page="settings"))
+        )
+        self.uav_ovv_goTo_buttons[6].clicked.connect(
+            lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=6, page="overview"))
+        )
 
     def _line_edit_event(self) -> None:
         """
@@ -582,9 +646,9 @@ class App(QMainWindow):
                     frameSize=DEFAULT_STREAM_SIZE,
                 )
 
-                print(f"UAV-{uav_index} streaming thread created!")
+                logger.log(f"UAV-{uav_index} streaming thread created!", level="info")
         except Exception as e:
-            print(f"Error: {repr(e)}")
+            logger.log(repr(e), level="error")
             self.popup_msg(type_msg="Error", msg=repr(e), src_msg="_create_streaming_threads()")
 
     # //-/////////////////////////////////////////////////////////////
@@ -715,7 +779,7 @@ class App(QMainWindow):
                     nSwarms=nSwarms,
                     headers=headers,
                 )
-                print("[INFO] Updated UAVs values according to the table")
+                logger.log("Updated UAVs values according to the table", level="info")
                 # re-create streaming threads
                 for uav_index in range(1, MAX_UAV_COUNT + 1):
                     UAVs[uav_index]["uav_information"]["connection_status"] = False  # reset
@@ -815,7 +879,7 @@ class App(QMainWindow):
                 command, value = str(text).split("=")
                 command = command.strip().lower()
                 value = value.strip().lower()
-                print(f"Command: {command}, Value: {value}")
+                # print(f"Command: {command}, Value: {value}")
                 if command in ["forward", "backward", "left", "right", "up", "down"]:
                     distance = float(value)
                     await self.uav_fn_goTo_distance(self.active_tab_index, command, distance)
@@ -858,15 +922,22 @@ class App(QMainWindow):
                     system_address=UAVs[uav_index]["system_address"]
                 )
 
-                UAVs[uav_index]["uav_information"]["connection_status"] = True
+                logger.log(f"Waiting for drone {uav_index} to connect...", level="info")
+                async for state in UAVs[uav_index]["system"].core.connection_state():
+                    if state.is_connected:
+                        logger.log(f"UAV-{uav_index} -- Connected", level="info")
+                        self.update_terminal(
+                            f"[INFO] Received CONNECT signal from UAV {uav_index}"
+                        )
+                        UAVs[uav_index]["label_param"].setStyleSheet("background-color: green")
+                        UAVs[uav_index]["uav_information"]["connection_status"] = True
+                    break
+                await UAVs[uav_index]["system"].action.set_maximum_speed(1.0)
 
                 UAVs[uav_index]["information_view"].setText(
                     self.template_information(uav_index, **UAVs[uav_index]["uav_information"])
                 )
-
-                await self.uav_fn_check_connection(uav_index)
-
-                # await self.uav_fn_get_status(uav_index)
+                await self.uav_fn_get_status(uav_index)
 
             else:
                 connect_all_UAVs = [self.uav_fn_connect(i) for i in range(1, MAX_UAV_COUNT + 1)]
@@ -1155,11 +1226,11 @@ class App(QMainWindow):
 
                 # create tasks for monitoring mission progress and observing if the UAV is in the air
                 print_mission_progress_task = asyncio.ensure_future(
-                    print_mission_progress(UAVs[uav_index]["system"])
+                    print_mission_progress(UAVs[uav_index])
                 )
                 running_tasks = [print_mission_progress_task]
                 termination_task = asyncio.ensure_future(
-                    observe_is_in_air(UAVs[uav_index]["system"], running_tasks)
+                    observe_is_in_air(UAVs[uav_index], running_tasks)
                 )
 
                 # NOTE: 1. push mission
@@ -1176,8 +1247,8 @@ class App(QMainWindow):
                                 latitude_deg=latitude,
                                 longitude_deg=longitude,
                                 relative_altitude_m=height,
-                                speed_m_s=float("nan"),
-                                is_fly_through=False,
+                                speed_m_s=1.0,  # Speed to use after this mission item (in metres/second)
+                                is_fly_through=False,  # True for fly through, False for reach
                                 gimbal_pitch_deg=float("nan"),
                                 gimbal_yaw_deg=float("nan"),
                                 loiter_time_s=10,
@@ -1195,6 +1266,8 @@ class App(QMainWindow):
                 # set return to launch after mission
                 await UAVs[uav_index]["system"].mission.set_return_to_launch_after_mission(True)
                 # upload mission
+                self.update_terminal("Uploading mission...", uav_index=uav_index)
+
                 await UAVs[uav_index]["system"].mission.upload_mission(mission_plan)
 
                 # Health check before mission
@@ -1203,12 +1276,16 @@ class App(QMainWindow):
                 )
                 async for health in UAVs[uav_index]["system"].telemetry.health():
                     if health.is_global_position_ok and health.is_home_position_ok:
-                        print("-- Global position estimate OK")
+                        logger.log(
+                            f"UAV-{uav_index} -- Global position for estimate OK", level="info"
+                        )
                         break
 
                 # NOTE: 2. Perform mission
-
+                self.update_terminal("Arming...", uav_index=uav_index)
                 await UAVs[uav_index]["system"].action.arm()
+
+                self.update_terminal("Starting mission...", uav_index=uav_index)
                 await UAVs[uav_index]["system"].mission.start_mission()
 
                 UAVs[uav_index]["uav_information"]["mode_status"] = "Mission"
@@ -1263,7 +1340,7 @@ class App(QMainWindow):
 
                 with open(fpath, "r") as f:
                     file_content = f.read()
-                    print("File content:", file_content)
+                    # print("File content:", file_content)
 
                 mission_items = []
                 # Assign hight for mission
@@ -1277,8 +1354,8 @@ class App(QMainWindow):
                                 latitude_deg=latitude,
                                 longitude_deg=longitude,
                                 relative_altitude_m=height,
-                                speed_m_s=float("nan"),
-                                is_fly_through=False,
+                                speed_m_s=1.0,  # Speed to use after this mission item (in metres/second)
+                                is_fly_through=False,  # True for fly through, False for reach
                                 gimbal_pitch_deg=float("nan"),
                                 gimbal_yaw_deg=float("nan"),
                                 loiter_time_s=10,
@@ -1413,16 +1490,16 @@ class App(QMainWindow):
                         self.uav_stream_threads[uav_index - 1].start()
 
                     UAVs[uav_index]["uav_information"]["streaming_status"] = True
-                    print(f"UAV-{uav_index} streaming thread started!")
+                    logger.log(f"UAV-{uav_index} streaming thread started!", level="info")
                 else:
                     # self.uav_stream_threads[uav_index - 1].terminate()
                     UAVs[uav_index]["uav_information"]["streaming_status"] = False
-                    print(f"UAV-{uav_index} streaming thread stopped!")
+                    logger.log(f"UAV-{uav_index} streaming thread stopped!", level="info")
             else:
                 for uav_index in range(1, MAX_UAV_COUNT + 1):
                     self.uav_fn_toggle_camera(uav_index)
         except Exception as e:
-            print(f"Error: {repr(e)}")
+            logger.log(repr(e), level="error")
             self.popup_msg(type_msg="Error", msg=repr(e), src_msg="uav_fn_toggle_camera")
 
     async def uav_fn_goTo(self, uav_index, page="settings", *args) -> None:
@@ -1562,7 +1639,7 @@ class App(QMainWindow):
             - Does nothing if the UAV's connection status is inactive.
         """
         global UAVs
-        if not height:
+        if height is None:
             height = UAVs[uav_index]["uav_information"]["init_height"]
         await UAVs[uav_index]["system"].action.goto_location(latitude, longitude, height, 0)
 
@@ -1604,10 +1681,11 @@ class App(QMainWindow):
                     height = position.absolute_altitude_m
                     await self.uav_fn_goTo_location(uav_index, lat_detect, lon_detect, height)
             elif uav_index == 0:
-                goto_all_UAVs = [self.uav_fn_goTo_UAV(i) for i in range(1, MAX_UAV_COUNT + 1)]
-                await asyncio.gather(*goto_all_UAVs)
+                goTo_all_UAVs = [self.uav_fn_goTo_UAV(i) for i in range(1, MAX_UAV_COUNT + 1)]
+                await asyncio.gather(*goTo_all_UAVs)
         else:
-            await asyncio.gather(*[self.uav_fn_goTo_UAV(uav_index) for uav_index in uav_indexes])
+            goTo_some_UAVs = [self.uav_fn_goTo_UAV(uav_index) for uav_index in uav_indexes]
+            await asyncio.gather(*goTo_some_UAVs)
 
     # --------------------------<UAVs get status functions>-----------------------------
     async def uav_fn_get_altitude(self, uav_index) -> None:
@@ -1861,76 +1939,20 @@ class App(QMainWindow):
                 type_msg="error",
             )
 
-    async def uav_fn_check_connection(self, uav_index) -> None:
-        """
-        Asynchronously checks the connection status of a UAV and performs setup tasks.
-
-        Args:
-            uav_index (int): The index of the UAV to check.
-
-        Returns:
-            None
-
-        Steps:
-        1. Waits for the UAV to connect and updates the terminal and UI.
-        2. Checks if the global position estimate is good for flying.
-        3. Sets the maximum speed, retrieves parameters, and writes them to a log file.
-        4. Gathers telemetry data like altitude, mode, battery, arm status, GPS, and flight info.
-
-        Note:
-            Assumes the UAVs dictionary and update_terminal method are defined elsewhere.
-        """
-        global UAVs
-        print(f"Waiting for drone {uav_index} to connect...")
-        async for state in UAVs[uav_index]["system"].core.connection_state():
-            if state.is_connected:
-                print(f"-- Connected to drone {uav_index}!")
-                self.update_terminal(f"[INFO] Received CONNECT signal from UAV {uav_index}")
-                UAVs[uav_index]["label_param"].setStyleSheet("background-color: green")
-            break
-
-        # Checking if Global Position Estimate is ok
-        async for health in UAVs[uav_index]["system"].telemetry.health():
-            if health.is_global_position_ok and health.is_home_position_ok:
-                print("-- Global position state is good enough for flying.")
-                break
-        #
-        if not (
-            UAVs[uav_index]["uav_information"]["connection_status"]
-            and UAVs[uav_index]["connection_allow"]
-        ):
-            return
-
-        await UAVs[uav_index]["system"].action.set_maximum_speed(1.0)
-
-        # Get the list of parameters
-        all_params = await UAVs[uav_index]["system"].param.get_all_params()
-
-        with open(f"{SRC_DIR}/logs/params/params{uav_index}.txt", "w") as f:
-
-            for param in all_params.int_params:
-                f.write(f"{param.name}: {param.value}\n")
-
-            for param in all_params.float_params:
-                f.write(f"{param.name}: {param.value}\n")
-
-        await self.uav_fn_get_status(uav_index)
-
     async def uav_fn_get_status(self, uav_index) -> None:
         if uav_index in range(1, MAX_UAV_COUNT + 1):
             await asyncio.gather(
-                self.uav_fn_printStatus(uav_index),
                 self.uav_fn_get_altitude(uav_index),
                 self.uav_fn_get_mode(uav_index),
                 self.uav_fn_get_battery(uav_index),
                 self.uav_fn_get_arm_status(uav_index),
                 self.uav_fn_get_gps(uav_index),
+                self.uav_fn_printStatus(uav_index),
                 self.uav_fn_get_flight_info(uav_index, copy=False),
             )
-        elif uav_index == 0:
-            await asyncio.gather(*[self.uav_fn_get_status(i) for i in range(1, MAX_UAV_COUNT + 1)])
         else:
-            pass
+            get_status_all_UAVs = [self.uav_fn_get_status(i) for i in range(1, MAX_UAV_COUNT + 1)]
+            await asyncio.gather(*get_status_all_UAVs)
 
     async def uav_fn_printStatus(self, uav_index) -> None:
         """
@@ -2081,7 +2103,7 @@ class App(QMainWindow):
                 )
 
         except Exception as e:
-            print(f"Error in update_uav_screen_view: {repr(e)}")
+            logger.log(repr(e), level="error")
 
     # -----------------------------< UI display utility functions >-----------------------------
 
@@ -2201,7 +2223,7 @@ class App(QMainWindow):
             self.popup.setStandardButtons(QMessageBox.Ok)
             self.popup.exec_()
 
-            print(f"[{type_msg.upper()}]: {repr(msg)} from {src_msg}")
+            logger.log(f"From: {src_msg}\n[!] Details: {msg}", level=type_msg.lower())
 
         except Exception as e:
             print("-> From: popup_msg", e)

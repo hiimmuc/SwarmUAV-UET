@@ -3,8 +3,12 @@ import json
 
 
 async def print_mission_progress(drone):
-    async for mission_progress in drone.mission.mission_progress():
-        print(f"Mission progress: " f"{mission_progress.current}/" f"{mission_progress.total}")
+    async for mission_progress in drone["system"].mission.mission_progress():
+        print(
+            f"Mission UAV-{drone['ID']} progress: "
+            f"{mission_progress.current}/"
+            f"{mission_progress.total}"
+        )
 
 
 async def observe_is_in_air(drone, running_tasks):
@@ -13,7 +17,7 @@ async def observe_is_in_air(drone, running_tasks):
 
     was_in_air = False
 
-    async for is_in_air in drone.telemetry.in_air():
+    async for is_in_air in drone["system"].telemetry.in_air():
         if is_in_air:
             was_in_air = is_in_air
 

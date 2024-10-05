@@ -17,23 +17,38 @@ MAX_UAV_COUNT = 6
     Example: serial:///dev/ttyUSB0:57600
     - PROTOCOL: serial
     - SERVER_HOST: /dev/ttyUSB0
-    - DEFAULT_BIND_PORT: 57600
+    - DEFAULT_SERVER_PORT: 57600
 - UDP: udp://[bind_host][:bind_port]
     Example: udp://:14541
     - PROTOCOL: udp
     - SERVER_HOST: 
-    - DEFAULT_BIND_PORT: 14541
+    - DEFAULT_SERVER_PORT: 14541
 - TCP: tcp://[server_host][:server_port]
     Example: tcp://localhost:5760
     - PROTOCOL: tcp
     - SERVER_HOST: localhost
-    - DEFAULT_BIND_PORT: 5760
+    - DEFAULT_SERVER_PORT: 5760
 """
 
-PROTOCOL = "udp"
-SERVER_HOST = ""
+DEFAULT_PROTOCOL = "udp"
+DEFAULT_SERVER_HOST = ""
 DEFAULT_SERVER_PORT = 14541
 DEFAULT_CLIENT_PORT = 50060
+
+PROTOCOLS = [DEFAULT_PROTOCOL] * MAX_UAV_COUNT
+SERVER_HOSTS = [DEFAULT_SERVER_HOST] * MAX_UAV_COUNT
+SERVER_PORTS = [DEFAULT_SERVER_PORT + i for i in range(MAX_UAV_COUNT)]
+CLIENT_PORTS = [DEFAULT_CLIENT_PORT + i for i in range(MAX_UAV_COUNT)]
+
+# PROTOCOLS = ["serial"] + [DEFAULT_PROTOCOL] * (MAX_UAV_COUNT - 1)
+# SERVER_HOSTS = ["/dev/ttyACM0"] + [DEFAULT_SERVER_HOST] * (MAX_UAV_COUNT - 1)
+# SERVER_PORTS = [57600] + [DEFAULT_SERVER_PORT + i for i in range(1, MAX_UAV_COUNT)]
+# CLIENT_PORTS = [50060] + [DEFAULT_CLIENT_PORT + i for i in range(1, MAX_UAV_COUNT)]
+
+SYSTEMS_ADDRESSES = [
+    f"{proto}://{server_host}:{server_port}"
+    for (proto, server_host, server_port) in zip(PROTOCOLS, SERVER_HOSTS, SERVER_PORTS)
+]
 
 connection_allows = [True, True, True, True, True, True]
 streaming_enables = [True, False, False, False, False, False]
@@ -45,7 +60,7 @@ screen_sizes = {
     "ovv_screen": (320, 180),
 }
 
-DEFAULT_STREAM_SIZE = (640, 360)
+DEFAULT_STREAM_SIZE = (480, 270)
 DEFAULT_STREAM_SCREEN = "general_screen"
 
 # Path settings
@@ -56,9 +71,25 @@ DEFAULT_STREAM_VIDEO_LOG_PATHS = [
     f"{SRC_DIR}/logs/videos/stream_log_uav_{i}_{NOW}.mp4" for i in range(1, MAX_UAV_COUNT + 1)
 ]
 
+INIT_LON = 8.545594
+INIT_LAT = 47.397823
+
 logo1_path = f"{ROOT_DIR}/assets/icons/logo1.png"
 logo2_path = f"{ROOT_DIR}/assets/icons/logoUET.png"
 app_icon_path = f"{ROOT_DIR}/assets/icons/app.png"
+
+# connect_icon_path = f"{SRC_DIR}/UI/icons/connect.png"
+# arm_icon_path = f"{SRC_DIR}/UI/icons/arm.png"
+# disarm_icon_path = f"{SRC_DIR}/UI/icons/disarm.png"
+# takeoff_icon_path = f"{SRC_DIR}/UI/icons/takeOff.png"
+# landing_icon_path = f"{SRC_DIR}/UI/icons/landing.png"
+# mission_icon_path = f"{SRC_DIR}/UI/icons/mission.png"
+# pause_icon_path = f"{SRC_DIR}/UI/icons/pauseMission.png"
+# push_icon_path = f"{SRC_DIR}/UI/icons/pushMission.png"
+# return_icon_path = f"{SRC_DIR}/UI/icons/return.png"
+# rtl_icon_path = f"{SRC_DIR}/UI/icons/rtl.png"
+# toggle_icon_path = f"{SRC_DIR}/UI/icons/toggle_camera.png"
+# open_icon_path = f"{SRC_DIR}/UI/icons/toggle_open.png"
 
 noSignal_img_paths = {
     k: f"{ROOT_DIR}/assets/pictures/resized/nosignal_{h}x{w}.jpg"

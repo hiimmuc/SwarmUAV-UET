@@ -66,7 +66,7 @@
        <enum>QFrame::WinPanel</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="MainScreen">
        <property name="minimumSize">
@@ -163,6 +163,17 @@
           </item>
           <item>
            <widget class="QLabel" name="appTitle">
+            <property name="maximumSize">
+             <size>
+              <width>1420</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>21</pointsize>
+             </font>
+            </property>
             <property name="autoFillBackground">
              <bool>false</bool>
             </property>
@@ -230,7 +241,7 @@ background-color: rgb(252, 175, 62);</string>
              <enum>QTabWidget::East</enum>
             </property>
             <property name="currentIndex">
-             <number>8</number>
+             <number>1</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -9874,6 +9885,17 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               <property name="text">
                <string>Pause Mission</string>
               </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/pauseMission.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
              </widget>
             </item>
             <item row="1" column="1">
@@ -9911,6 +9933,17 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               </property>
               <property name="text">
                <string>Arm</string>
+              </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/arm.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
               </property>
              </widget>
             </item>
@@ -9950,6 +9983,17 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               <property name="text">
                <string>Connect</string>
               </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/connect.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
              </widget>
             </item>
             <item row="3" column="1">
@@ -9988,6 +10032,17 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               <property name="text">
                <string>Mission</string>
               </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/mission.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
              </widget>
             </item>
             <item row="3" column="0">
@@ -10020,6 +10075,17 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               <property name="text">
                <string>Toggle Camera</string>
               </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/toggle_camear.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
              </widget>
             </item>
             <item row="3" column="6">
@@ -10051,6 +10117,17 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               </property>
               <property name="text">
                <string>Return</string>
+              </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/return.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
               </property>
              </widget>
             </item>
@@ -10090,6 +10167,17 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               <property name="text">
                <string>Landing</string>
               </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/landing.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
              </widget>
             </item>
             <item row="3" column="4">
@@ -10126,7 +10214,18 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
 QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               </property>
               <property name="text">
-               <string>Return to Launch</string>
+               <string>RTL</string>
+              </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/trl.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
               </property>
              </widget>
             </item>
@@ -10166,6 +10265,17 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               <property name="text">
                <string>Take off</string>
               </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/takeOff.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
              </widget>
             </item>
             <item row="3" column="2">
@@ -10203,6 +10313,17 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               </property>
               <property name="text">
                <string>Push Mission</string>
+              </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/pushMission.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
               </property>
              </widget>
             </item>
@@ -10242,6 +10363,17 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               <property name="text">
                <string>Disarm</string>
               </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/disarm.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
              </widget>
             </item>
             <item row="1" column="6">
@@ -10279,6 +10411,17 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               </property>
               <property name="text">
                <string>Open/Close</string>
+              </property>
+              <property name="icon">
+               <iconset>
+                <selectedon>icons/toggleOpen.png</selectedon>
+               </iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
               </property>
              </widget>
             </item>
