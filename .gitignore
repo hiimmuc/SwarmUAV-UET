@@ -166,8 +166,7 @@ __pycache__/
 venv/
 .venv/
 .idea/
-src/model/checkpoints/*
-# src/logs/*
+src/model/checkpoints/YOLO/*.pt
 map/*.db
 *.zip
 *.db

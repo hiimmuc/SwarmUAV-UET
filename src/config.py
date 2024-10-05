@@ -72,7 +72,7 @@ pause_img_paths["all"] = f"{ROOT_DIR}/assets/pictures/pause_screen.jpg"
 
 map_html_path = f"file://{ROOT_DIR}/assets/map.html"
 
-model_path = f"{SRC_DIR}/model/checkpoints/yolov8n.pt"
+model_path = f"{SRC_DIR}/model/checkpoints/YOLO/yolov9t.pt"
 gps_log_paths = [
     f"{SRC_DIR}/logs/gps/gps_log_uav_{i}_{NOW}.txt" for i in range(1, MAX_UAV_COUNT + 1)
 ]

@@ -36,26 +36,30 @@ tabWidget_indexes = {
 }
 
 # UAVs object
-UAVs = {
-    uav_index: {
-        "server": Server(
-            id=uav_index,
-            proto=PROTOCOL,
-            server_host=SERVER_HOST,
-            port=DEFAULT_CLIENT_PORT + uav_index - 1,
-            bind_port=DEFAULT_SERVER_PORT + uav_index - 1,
-        ),
-        "system": System(
-            mavsdk_server_address="localhost", port=DEFAULT_CLIENT_PORT + uav_index - 1
-        ),
-        "system_address": f"{PROTOCOL}://{SERVER_HOST}:{DEFAULT_SERVER_PORT + uav_index- 1}",
-        "streaming_address": DEFAULT_STREAM_VIDEO_PATHS[uav_index - 1],
-        "connection_allow": connection_allows[uav_index - 1],
-        "streaming_enable": streaming_enables[uav_index - 1],
-        "detection_enable": detection_enables[uav_index - 1],
+try:
+    UAVs = {
+        uav_index: {
+            "server": Server(
+                id=uav_index,
+                proto=PROTOCOL,
+                server_host=SERVER_HOST,
+                port=DEFAULT_CLIENT_PORT + uav_index - 1,
+                bind_port=DEFAULT_SERVER_PORT + uav_index - 1,
+            ),
+            "system": System(
+                mavsdk_server_address="localhost", port=DEFAULT_CLIENT_PORT + uav_index - 1
+            ),
+            "system_address": f"{PROTOCOL}://{SERVER_HOST}:{DEFAULT_SERVER_PORT + uav_index- 1}",
+            "streaming_address": DEFAULT_STREAM_VIDEO_PATHS[uav_index - 1],
+            "connection_allow": connection_allows[uav_index - 1],
+            "streaming_enable": streaming_enables[uav_index - 1],
+            "detection_enable": detection_enables[uav_index - 1],
+        }
+        for uav_index in range(1, MAX_UAV_COUNT + 1)
     }
-    for uav_index in range(1, MAX_UAV_COUNT + 1)
-}
+except Exception as e:
+    print(f"Error: {repr(e)}")
+    sys.exit(1)
 
 
 class App(QMainWindow):
@@ -2231,10 +2235,10 @@ class App(QMainWindow):
         print("Polygon Drawn", json)
 
 
-# -----------------------------< Main Application Class >-----------------------------
+# ------------------------------------< Main Application Class >-----------------------------
 def run():
     app = QtWidgets.QApplication(sys.argv)
-    # app.setStyle("Oxygen")  # ['Breeze', 'Oxygen', 'QtCurve', 'Windows', 'Fusion']
+    app.setStyle("Oxygen")  # ['Breeze', 'Oxygen', 'QtCurve', 'Windows', 'Fusion']
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
     MainWindow = App(model_path=model_path)
