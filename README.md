@@ -2,13 +2,15 @@
 
 ## Hardware requirements:
 
-1. Ubuntu 22.04 with minimum 16GB RAM and 60GB available ROM, and external GPU
+Ubuntu 20.04 with minimum 16GB RAM and 60GB available ROM, and external GPU
+
+ROS-Noetic
 
 ## Setups:
 
-1. ### Gazebo ROS:
+### 1. Gazebo ROS:
 
-   Follow this instruction to install ROS: [Install ROS](https://wiki.ros.org/noetic/Installation/Ubuntu). `</br>`
+   Follow this instruction to install ROS: [Install ROS](https://wiki.ros.org/noetic/Installation/Ubuntu). </br>
    Then, to install [Gazebo 9](https://classic.gazebosim.org/tutorials?cat=install&tut=install_ubuntu&ver=9.0)
 
 
@@ -31,7 +33,7 @@
    ```
    gazebo
    ```
-2. ### PX4-Autopilot
+### 2. [PX4-Autopilot](https://github.com/PX4/PX4-Autopilot.git)
 
 
    ```
@@ -61,7 +63,7 @@
    ```
    ./Tools/simulation/gazebo-classic/sitl_multiple_run.sh -n 6 -m iris
    ```
-3. ### MAVSDK-Python [Install MAVSDK-Python](https://github.com/mavlink/MAVSDK-Python.git)
+### 3. [MAVSDK-Python](https://github.com/mavlink/MAVSDK-Python.git)
 
 
    ```Pipy
@@ -69,7 +71,7 @@
    pip3 install mavsdk
    pip3 install asyncio
    ```
-4. ### mavlink-router
+### 4. mavlink-router
 
 
    ```
@@ -82,7 +84,7 @@
     ninja -C build
     sudo ninja -C build install
    ```
-5. ### QT5
+### 5. QT5
 
 
    ```
@@ -90,8 +92,8 @@
    sudo apt-get install qttools5-dev-tools
    sudo apt-get install qttools5-dev
    ```
-6. ### [QGroundControl Ground Control Station](https://github.com/mavlink/qgroundcontrol/releases)
-7. ### [Miniconda](https://docs.anaconda.com/free/miniconda/miniconda-install/)
+### 6. [QGroundControl Ground Control Station](https://github.com/mavlink/qgroundcontrol/releases) (Optional)
+### 7. [Miniconda](https://docs.anaconda.com/free/miniconda/miniconda-install/)
 
    Install miniconda:
 
@@ -111,7 +113,7 @@
    ~/miniconda3/bin/conda init zsh
 
    ```
-8. ### Install Python requirements
+### 8. Install Python requirements
 
 
    ```
@@ -124,16 +126,20 @@
 
 ## Run program
 
-1. Run all:
+### 1. Run all:
 
    ```
-   python runs/simulation.py
+   python runs/simulation_updated.py
    ```
 
    or
 
    ```
    python runs/real.py
+   ```
+### 2. Run only UI
+   ```
+   python src/runner.py
    ```
 
 ## Debug
@@ -167,13 +173,10 @@
   - [ ] auto-scaling windows
   - [ ] auto and manual mode (with background for auto and black for manual)
 - [X] Multi-threading video stream with obj detection model
-  - [ ] Save video and handling realtime
+  - [x] Save video and handling realtime
   - [ ] Locate obj in real env
   - [ ] Fine tune on custom data
 
-## Notes
-
-QtThreads for more efficiency, start stop and maybe consume less resource
 
 ## Collaborators:
 

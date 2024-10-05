@@ -4,7 +4,7 @@ import sys
 from threading import Thread
 
 import cv2
-from asyncqt import QEventLoop, asyncSlot
+from asyncqt import QEventLoop
 from mavsdk import System
 from mavsdk.mission import MissionItem, MissionPlan
 
@@ -88,7 +88,7 @@ class App(QMainWindow):
             self.ui.actionUAV_4_view,
             self.ui.actionUAV_5_view,
             self.ui.actionUAV_6_view,
-        ]
+        ]  # tabs in stacked widget
 
         self.uav_stream_screen_views = [
             self.ui.stream_screen_1,
@@ -97,7 +97,7 @@ class App(QMainWindow):
             self.ui.stream_screen_4,
             self.ui.stream_screen_5,
             self.ui.stream_screen_6,
-        ]
+        ]  # stream screen views on page 1-6
 
         self.uav_general_screen_views = [
             self.ui.general_screen_uav_1,
@@ -106,7 +106,7 @@ class App(QMainWindow):
             self.ui.general_screen_uav_4,
             self.ui.general_screen_uav_5,
             self.ui.general_screen_uav_6,
-        ]
+        ]  # general screen views on the general page
 
         self.uav_ovv_screen_views = [
             self.ui.ovv_screen_uav_1,
@@ -115,7 +115,7 @@ class App(QMainWindow):
             self.ui.ovv_screen_uav_4,
             self.ui.ovv_screen_uav_5,
             self.ui.ovv_screen_uav_6,
-        ]
+        ]  # ovv screen views on the overview page
 
         self.uav_information_views = [
             self.ui.information_uav_1,
@@ -124,7 +124,7 @@ class App(QMainWindow):
             self.ui.information_uav_4,
             self.ui.information_uav_5,
             self.ui.information_uav_6,
-        ]
+        ]  # information views page 1-6
 
         self.uav_status_views = [
             self.ui.status_uav_1,
@@ -133,7 +133,7 @@ class App(QMainWindow):
             self.ui.status_uav_4,
             self.ui.status_uav_5,
             self.ui.status_uav_6,
-        ]
+        ]  # status views page 1-6
 
         self.uav_update_commands = [
             self.ui.cmdLine_uav_1,
@@ -142,7 +142,7 @@ class App(QMainWindow):
             self.ui.cmdLine_uav_4,
             self.ui.cmdLine_uav_5,
             self.ui.cmdLine_uav_6,
-        ]
+        ]  # command line page 1-6 to enter commands
 
         self.uav_label_params = [
             self.ui.label_param_uav_1,
@@ -151,7 +151,7 @@ class App(QMainWindow):
             self.ui.label_param_uav_4,
             self.ui.label_param_uav_5,
             self.ui.label_param_uav_6,
-        ]
+        ]  # label params page 1-6
 
         self.uav_param_displays = [
             self.ui.param_current_uav_1,
@@ -160,7 +160,7 @@ class App(QMainWindow):
             self.ui.param_current_uav_4,
             self.ui.param_current_uav_5,
             self.ui.param_current_uav_6,
-        ]
+        ]  # param display page 1-6
 
         self.uav_param_sets = [
             self.ui.param_set_uav_1,
@@ -169,7 +169,7 @@ class App(QMainWindow):
             self.ui.param_set_uav_4,
             self.ui.param_set_uav_5,
             self.ui.param_set_uav_6,
-        ]
+        ]  # param set page 1-6
 
         self.uav_set_param_buttons = [
             self.ui.btn_param_set_uav_1,
@@ -178,7 +178,7 @@ class App(QMainWindow):
             self.ui.btn_param_set_uav_4,
             self.ui.btn_param_set_uav_5,
             self.ui.btn_param_set_uav_6,
-        ]
+        ]  # set param buttons page 1-6
 
         self.uav_get_param_buttons = [
             self.ui.btn_param_dis_uav_1,
@@ -187,7 +187,7 @@ class App(QMainWindow):
             self.ui.btn_param_dis_uav_4,
             self.ui.btn_param_dis_uav_5,
             self.ui.btn_param_dis_uav_6,
-        ]
+        ]  # get param buttons page 1-6
 
         self.uav_sett_goTo_buttons = [
             self.ui.btn_sett_goto_uav_all,
@@ -197,7 +197,7 @@ class App(QMainWindow):
             self.ui.btn_sett_goto_uav_4,
             self.ui.btn_sett_goto_uav_5,
             self.ui.btn_sett_goto_uav_6,
-        ]
+        ]  # go to buttons on page settings
 
         self.uav_ovv_goTo_buttons = [
             self.ui.btn_ovv_goto_uav_all,
@@ -207,7 +207,7 @@ class App(QMainWindow):
             self.ui.btn_ovv_goto_uav_4,
             self.ui.btn_ovv_goto_uav_5,
             self.ui.btn_ovv_goto_uav_6,
-        ]
+        ]  # go to buttons on page overview
 
         self.sett_checkBox_active_lists = [
             self.ui.sett_checkBox_active_uav_1,
@@ -216,7 +216,7 @@ class App(QMainWindow):
             self.ui.sett_checkBox_active_uav_4,
             self.ui.sett_checkBox_active_uav_5,
             self.ui.sett_checkBox_active_uav_6,
-        ]
+        ]  # active checkboxes on page settings
 
         self.sett_checkBox_detect_lists = [
             self.ui.sett_checkBox_detect_uav_1,
@@ -225,7 +225,7 @@ class App(QMainWindow):
             self.ui.sett_checkBox_detect_uav_4,
             self.ui.sett_checkBox_detect_uav_5,
             self.ui.sett_checkBox_detect_uav_6,
-        ]
+        ]  # detect checkboxes on page settings
 
         self.ovv_checkBox_detect_lists = [
             self.ui.ovv_checkBox_detect_uav_1,
@@ -234,14 +234,15 @@ class App(QMainWindow):
             self.ui.ovv_checkBox_detect_uav_4,
             self.ui.ovv_checkBox_detect_uav_5,
             self.ui.ovv_checkBox_detect_uav_6,
-        ]
+        ]  # detect checkboxes on page overview
 
         #
+        print(f"Application starting at {NOW}")
         self.init_application()
-        print(f"Application initialized at {NOW}")
+        print("Application initialized successfully")
 
         self.predictor = YOLO(model_path).to(DEVICE)
-        print("Model loaded successfully")
+        print(f"Model loaded successfully on {DEVICE}")
 
         # ---------------------------------------------------------
 
@@ -302,7 +303,7 @@ class App(QMainWindow):
         self._create_streaming_threads()
 
         # handling settings
-        self._handling_settings(mode="init")
+        self._handling_settings()
 
         # init map
         self.map = MapEngine(self.ui.MapWebView)
@@ -581,7 +582,7 @@ class App(QMainWindow):
                     frameSize=DEFAULT_STREAM_SIZE,
                 )
 
-                print(f"UAV-{uav_index} streaming thread created.")
+                print(f"UAV-{uav_index} streaming thread created!")
         except Exception as e:
             print(f"Error: {repr(e)}")
             self.popup_msg(type_msg="Error", msg=repr(e), src_msg="_create_streaming_threads()")
@@ -1405,16 +1406,18 @@ class App(QMainWindow):
                     return
 
                 if not UAVs[uav_index]["uav_information"]["streaming_status"]:
-                    if not self.uav_stream_threads[uav_index - 1].is_alive():
+                    if (self.uav_stream_threads[uav_index - 1] is not None) and (
+                        not self.uav_stream_threads[uav_index - 1].is_alive()
+                    ):
                         self._create_streaming_threads(uav_indexes=[uav_index])
                         self.uav_stream_threads[uav_index - 1].start()
 
                     UAVs[uav_index]["uav_information"]["streaming_status"] = True
-                    print(f"UAV-{uav_index} streaming thread started.")
+                    print(f"UAV-{uav_index} streaming thread started!")
                 else:
                     # self.uav_stream_threads[uav_index - 1].terminate()
                     UAVs[uav_index]["uav_information"]["streaming_status"] = False
-                    print(f"UAV-{uav_index} streaming thread stopped.")
+                    print(f"UAV-{uav_index} streaming thread stopped!")
             else:
                 for uav_index in range(1, MAX_UAV_COUNT + 1):
                     self.uav_fn_toggle_camera(uav_index)
