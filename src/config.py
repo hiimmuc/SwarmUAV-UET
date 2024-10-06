@@ -9,6 +9,8 @@ ROOT_DIR = SRC_DIR.parent
 NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+MODE = "simulation"  # "simulation" or "real"
+
 # UAV settings
 MAX_UAV_COUNT = 6
 
@@ -35,22 +37,23 @@ DEFAULT_SERVER_HOST = ""
 DEFAULT_SERVER_PORT = 14541
 DEFAULT_CLIENT_PORT = 50060
 
-PROTOCOLS = [DEFAULT_PROTOCOL] * MAX_UAV_COUNT
-SERVER_HOSTS = [DEFAULT_SERVER_HOST] * MAX_UAV_COUNT
-SERVER_PORTS = [DEFAULT_SERVER_PORT + i for i in range(MAX_UAV_COUNT)]
-CLIENT_PORTS = [DEFAULT_CLIENT_PORT + i for i in range(MAX_UAV_COUNT)]
-
-# PROTOCOLS = ["serial"] + [DEFAULT_PROTOCOL] * (MAX_UAV_COUNT - 1)
-# SERVER_HOSTS = ["/dev/ttyACM0"] + [DEFAULT_SERVER_HOST] * (MAX_UAV_COUNT - 1)
-# SERVER_PORTS = [57600] + [DEFAULT_SERVER_PORT + i for i in range(1, MAX_UAV_COUNT)]
-# CLIENT_PORTS = [50060] + [DEFAULT_CLIENT_PORT + i for i in range(1, MAX_UAV_COUNT)]
+if MODE == "simulation":
+    PROTOCOLS = [DEFAULT_PROTOCOL] * MAX_UAV_COUNT
+    SERVER_HOSTS = [DEFAULT_SERVER_HOST] * MAX_UAV_COUNT
+    SERVER_PORTS = [DEFAULT_SERVER_PORT + i for i in range(MAX_UAV_COUNT)]
+    CLIENT_PORTS = [DEFAULT_CLIENT_PORT + i for i in range(MAX_UAV_COUNT)]
+else:
+    PROTOCOLS = ["serial"] + [DEFAULT_PROTOCOL] * (MAX_UAV_COUNT - 1)
+    SERVER_HOSTS = ["/dev/ttyACM0"] + [DEFAULT_SERVER_HOST] * (MAX_UAV_COUNT - 1)
+    SERVER_PORTS = [57600] + [DEFAULT_SERVER_PORT + i for i in range(1, MAX_UAV_COUNT)]
+    CLIENT_PORTS = [50060] + [DEFAULT_CLIENT_PORT + i for i in range(1, MAX_UAV_COUNT)]
 
 SYSTEMS_ADDRESSES = [
     f"{proto}://{server_host}:{server_port}"
     for (proto, server_host, server_port) in zip(PROTOCOLS, SERVER_HOSTS, SERVER_PORTS)
 ]
 
-connection_allows = [True, True, True, True, True, True]
+connection_allows = [True, False, False, False, False, False]
 streaming_enables = [True, False, False, False, False, False]
 detection_enables = [True, False, False, False, False, False]
 

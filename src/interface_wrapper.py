@@ -620,13 +620,13 @@ class App(QMainWindow):
 
             for uav_index in uav_indexes:
                 if not (
-                    UAVs[uav_index]["streaming_enable"]
-                    and (
+                    (
                         UAVs[uav_index]["connection_allow"]
                         or UAVs[uav_index]["uav_information"]["connection_status"]
                     )
+                    and UAVs[uav_index]["streaming_enable"]
                 ):
-                    return
+                    continue
 
                 self.uav_stream_threads[uav_index - 1] = Thread(
                     target=self.stream_on_uav_screen,
@@ -699,6 +699,7 @@ class App(QMainWindow):
         Returns:
             list: A list of indices of checked checkboxes.
         """
+        global UAVs
         if mode == "init":
             # set default UI values based on the configuration
             for i, widget in enumerate(self.sett_checkBox_detect_lists):
@@ -717,7 +718,7 @@ class App(QMainWindow):
                 widget.setChecked(UAVs[i + 1]["detection_enable"])
             # sync the values to the setting page
             for i, widget in enumerate(self.sett_checkBox_active_lists):
-                UAVs[i + 1]["streaming_enable"] = widget.isChecked()
+                UAVs[i + 1]["streaming_enable"] = bool(widget.isChecked())
         elif mode == "overview":
             # get the values from the table in overview page
             for i, widget in enumerate(self.ovv_checkBox_detect_lists):
@@ -736,6 +737,7 @@ class App(QMainWindow):
         Returns:
             None
         """
+        global UAVs
         try:
             headers = ["id", "connection_address", "streaming_address"]
             connection_allow_indexes = [
@@ -746,7 +748,6 @@ class App(QMainWindow):
             ]
 
             if mode != "init":  # get the values from the table in runtime
-
                 # get values from the table
                 if mode == "settings":
                     nSwarms = min(int(self.ui.nSwarms_sett.value()), len(connection_allow_indexes))
@@ -779,7 +780,7 @@ class App(QMainWindow):
                     nSwarms=nSwarms,
                     headers=headers,
                 )
-                logger.log("Updated UAVs values according to the table", level="info")
+                logger.log("Updated UAVs confirguration", level="info")
                 # re-create streaming threads
                 for uav_index in range(1, MAX_UAV_COUNT + 1):
                     UAVs[uav_index]["uav_information"]["connection_status"] = False  # reset
@@ -1141,16 +1142,13 @@ class App(QMainWindow):
                 ):
                     return
                 # if return to launch, which means the UAV will return to the initial position and land
+                init_latitude = UAVs[uav_index]["uav_information"]["init_latitude"]
+                init_longitude = UAVs[uav_index]["uav_information"]["init_longitude"]
+                current_latitude = UAVs[uav_index]["uav_information"]["position_status"][0]
+                current_longitude = UAVs[uav_index]["uav_information"]["position_status"][1]
                 if rtl:
                     self.update_terminal(f"[INFO] Sent RTL command to UAV {uav_index}")
-
-                    init_longitude = UAVs[uav_index]["uav_information"]["init_longitude"]
-                    init_latitude = UAVs[uav_index]["uav_information"]["init_latitude"]
-                    current_longitude = UAVs[uav_index]["uav_information"]["position_status"][1]
-                    current_latitude = UAVs[uav_index]["uav_information"]["position_status"][0]
-                    if (init_longitude == current_longitude) and (
-                        init_latitude == current_latitude
-                    ):
+                    if (init_latitude, init_longitude) == (current_latitude, current_longitude):
                         self.update_terminal(
                             f"[INFO] UAV {uav_index} is already at the initial position, landing..."
                         )
@@ -1168,17 +1166,17 @@ class App(QMainWindow):
                 else:  # return to initial position
                     self.update_terminal(
                         f"[INFO] Sent RETURN command to UAV {uav_index} \
-                            to lat: {UAVs[uav_index]['uav_information']['init_latitude']} \
-                                long: {UAVs[uav_index]['uav_information']['init_longitude']}"
+                            to lat: {init_latitude} \
+                                long: {init_longitude}"
                     )
 
                     await self.uav_fn_goTo_location(
                         uav_index,
-                        latitude=UAVs[uav_index]["uav_information"]["init_latitude"],
-                        longitude=UAVs[uav_index]["uav_information"]["init_longitude"],
+                        latitude=init_latitude,
+                        longitude=init_longitude,
                     )
 
-                    UAVs[uav_index]["uav_information"]["mode_status"] = "Return"
+                    UAVs[uav_index]["uav_information"]["mode_status"] = "RETURN"
                     UAVs[uav_index]["information_view"].setText(
                         self.template_information(uav_index, **UAVs[uav_index]["uav_information"])
                     )
@@ -1471,6 +1469,7 @@ class App(QMainWindow):
         Returns:
             None
         """
+        global UAVs
         try:
             if uav_index in range(1, MAX_UAV_COUNT + 1):
                 if not (
@@ -1519,6 +1518,7 @@ class App(QMainWindow):
             - The coordinates are updated in the UI fields for both 'settings' and 'overview' pages.
             - If uav_index is 0, all UAVs will navigate to the specified point concurrently.
         """
+        global UAVs
         try:
             default_longitude = (
                 UAVs[uav_index]["uav_information"]["init_longitude"] + uav_index * 0.0001
@@ -2033,8 +2033,8 @@ class App(QMainWindow):
         Returns:
             None
         """
+        global UAVs
         try:
-            global UAVs
             if not (
                 (
                     UAVs[uav_index]["connection_allow"]
@@ -2046,6 +2046,7 @@ class App(QMainWindow):
 
             is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
 
+            logger.log(f"UAV-{uav_index} stream opened: {is_opened}", level="info")
             while is_opened:
                 ret, frame = self.uav_stream_captures[uav_index - 1].read()
 
@@ -2089,18 +2090,22 @@ class App(QMainWindow):
         Returns:
             None
         """
+        global UAVs
         try:
-            global UAVs
             if screen_name == "all":
                 for screen in screen_sizes.keys():
-                    UAVs[uav_index][screen].setPixmap(
-                        convert_cv2qt(frame, size=screen_sizes[screen])
+                    width, height = (
+                        UAVs[uav_index][screen].geometry().width(),
+                        UAVs[uav_index][screen].geometry().height(),
                     )
+                    UAVs[uav_index][screen].setPixmap(convert_cv2qt(frame, size=(width, height)))
 
             else:
-                UAVs[uav_index][screen_name].setPixmap(
-                    convert_cv2qt(frame, size=screen_sizes[screen_name])
+                width, height = (
+                    UAVs[uav_index][screen_name].geometry().width(),
+                    UAVs[uav_index][screen_name].geometry().height(),
                 )
+                UAVs[uav_index][screen_name].setPixmap(convert_cv2qt(frame, size=(width, height)))
 
         except Exception as e:
             logger.log(repr(e), level="error")
