@@ -269,6 +269,21 @@ class App(QMainWindow):
         self.ui.logo2_2.setScaledContents(True)
         self.ui.logo2.setPixmap(QtGui.QPixmap(logo2_path))
         self.ui.logo2.setScaledContents(True)
+        # set app icon
+        self.setWindowIcon(QtGui.QIcon(QtGui.QPixmap(app_icon_path)))
+        # set button icons
+        self.ui.btn_arm.setIcon(QtGui.QIcon(QtGui.QPixmap(arm_icon_path)))
+        self.ui.btn_disarm.setIcon(QtGui.QIcon(QtGui.QPixmap(disarm_icon_path)))
+        self.ui.btn_open_close.setIcon(QtGui.QIcon(QtGui.QPixmap(open_close_icon_path)))
+        self.ui.btn_landing.setIcon(QtGui.QIcon(QtGui.QPixmap(landing_icon_path)))
+        self.ui.btn_takeOff.setIcon(QtGui.QIcon(QtGui.QPixmap(takeoff_icon_path)))
+        self.ui.btn_pause.setIcon(QtGui.QIcon(QtGui.QPixmap(pause_icon_path)))
+        self.ui.btn_connect.setIcon(QtGui.QIcon(QtGui.QPixmap(connect_icon_path)))
+        self.ui.btn_rtl.setIcon(QtGui.QIcon(QtGui.QPixmap(rtl_icon_path)))
+        self.ui.btn_return.setIcon(QtGui.QIcon(QtGui.QPixmap(return_icon_path)))
+        self.ui.btn_mission.setIcon(QtGui.QIcon(QtGui.QPixmap(mission_icon_path)))
+        self.ui.btn_pushMission.setIcon(QtGui.QIcon(QtGui.QPixmap(push_mission_icon_path)))
+        self.ui.btn_toggle_camera.setIcon(QtGui.QIcon(QtGui.QPixmap(toggle_icon_path)))
 
         # screen view default image
         for screen in self.uav_general_screen_views:
@@ -280,12 +295,6 @@ class App(QMainWindow):
         for screen in self.uav_ovv_screen_views:
             screen.setPixmap(QtGui.QPixmap(noSignal_img_paths["ovv_screen"]))
             screen.setScaledContents(False)
-
-        # map URL
-
-        self.ui.MapWebView.setUrl(QtCore.QUrl(map_html_path))
-
-        self.ui.Overview_map_view.setUrl(QtCore.QUrl(map_html_path))
 
         # set default tab and stack index
         self.ui.stackedWidget.setCurrentIndex(self.active_stack_index)
@@ -308,7 +317,11 @@ class App(QMainWindow):
         # handling settings
         self._handling_settings()
 
-        # init map
+        # *init map
+        # map URL
+        self.ui.MapWebView.setUrl(QtCore.QUrl(map_html_path))
+        self.ui.Overview_map_view.setUrl(QtCore.QUrl(map_html_path))
+        # map engine
         self.map = MapEngine(self.ui.MapWebView)
 
         self.map.mapMovedCallback = self.onMapMoved
@@ -352,8 +365,8 @@ class App(QMainWindow):
             UAVs[index]["label_param"] = self.uav_label_params[i]
             UAVs[index]["uav_information"] = {
                 "init_height": float(5 + i),
-                "init_longitude": 8.545594,
-                "init_latitude": 47.397823,
+                "init_longitude": INIT_LON,
+                "init_latitude": INIT_LAT,
                 "connection_status": False,
                 "streaming_status": False,
                 "arming_status": "No information",
@@ -490,6 +503,7 @@ class App(QMainWindow):
             lambda: self.uav_fn_toggle_camera(self.active_tab_index)
         )
         # set/get flight info NOTE: uav_index = 1, 2, 3, 4, 5, 6 need to shorten
+
         self.uav_set_param_buttons[0].clicked.connect(
             lambda: asyncio.create_task(self.uav_fn_set_flight_info(1))
         )
@@ -537,6 +551,7 @@ class App(QMainWindow):
         )
 
         # go to buttons NOTE: uav_index = 0, 1, 2, 3, 4, 5, 6 need to shorten
+
         self.uav_sett_goTo_buttons[0].clicked.connect(
             lambda: asyncio.create_task(self.uav_fn_goTo(uav_index=0, page="settings"))
         )
@@ -634,19 +649,13 @@ class App(QMainWindow):
                     name=f"UAV-{uav_index}-thread",
                 )
 
-                self.uav_stream_captures[uav_index - 1] = cv2.VideoCapture(
-                    UAVs[uav_index]["streaming_address"],
-                    cv2.CAP_FFMPEG,
+                logger.log(
+                    f"UAV-{uav_index} streaming thread created! \n\
+                        -- Init video capture from {UAVs[uav_index]['streaming_address']} \n\
+                        -- Init video writer to {DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1]}",
+                    level="info",
                 )
 
-                self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
-                    filename=DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
-                    fourcc=cv2.VideoWriter_fourcc(*"mp4v"),
-                    fps=30.0,
-                    frameSize=DEFAULT_STREAM_SIZE,
-                )
-
-                logger.log(f"UAV-{uav_index} streaming thread created!", level="info")
         except Exception as e:
             logger.log(repr(e), level="error")
             self.popup_msg(type_msg="Error", msg=repr(e), src_msg="_create_streaming_threads()")
@@ -761,16 +770,17 @@ class App(QMainWindow):
                     )
 
                 # update data from address columns to UAVs
-                for i in range(1, MAX_UAV_COUNT + 1):
-                    if i in connection_allow_indexes:
-                        UAVs[i]["system_address"], port = dataFrame_widget["connection_address"][
-                            i - 1
-                        ].split("-p")
-                        UAVs[i]["system"]._port = int(port)
+                for index in range(MAX_UAV_COUNT):
+                    uav_index = index + 1
+                    if uav_index in connection_allow_indexes:
+                        UAVs[uav_index]["system_address"], port = dataFrame_widget[
+                            "connection_address"
+                        ][index].split("-p")
+                        UAVs[uav_index]["system"]._port = int(port)
 
-                        UAVs[i]["streaming_address"] = dataFrame_widget["streaming_address"][
-                            i - 1
-                        ].strip()
+                        UAVs[uav_index]["streaming_address"] = dataFrame_widget[
+                            "streaming_address"
+                        ][index].strip()
 
                 # update the table
                 self._update_tables(
@@ -783,9 +793,13 @@ class App(QMainWindow):
                 logger.log("Updated UAVs confirguration", level="info")
                 # re-create streaming threads
                 for uav_index in range(1, MAX_UAV_COUNT + 1):
-                    UAVs[uav_index]["uav_information"]["connection_status"] = False  # reset
+                    UAVs[uav_index]["uav_information"][
+                        "connection_status"
+                    ] = False  # reset connection status, need to re-open the terminal
                     UAVs[uav_index]["uav_information"]["streaming_status"] = False  # reset
+
                 self._create_streaming_threads()
+
             else:
                 data = {
                     headers[0]: [i for i in range(1, MAX_UAV_COUNT + 1)],
@@ -1673,13 +1687,15 @@ class App(QMainWindow):
 
                 async for position in UAVs[uav_index]["system"].telemetry.position():
                     if (
-                        abs(position.latitude_deg - lat_detect) < 0.00001
-                        and abs(position.longitude_deg - lon_detect) < 0.00001
+                        abs(position.latitude_deg - lat_detect) < 0.000001
+                        and abs(position.longitude_deg - lon_detect) < 0.000001
                     ):
                         self.update_terminal(f"[INFO] UAV {uav_index} is at the target location")
                         break
+
                     height = position.absolute_altitude_m
                     await self.uav_fn_goTo_location(uav_index, lat_detect, lon_detect, height)
+
             elif uav_index == 0:
                 goTo_all_UAVs = [self.uav_fn_goTo_UAV(i) for i in range(1, MAX_UAV_COUNT + 1)]
                 await asyncio.gather(*goTo_all_UAVs)
@@ -1811,6 +1827,7 @@ class App(QMainWindow):
             - Displays a warning if the UAV is not connected.
         """
         global UAVs
+        print(uav_index)
         try:
             parameters = {}
             parameters["MIS_TAKEOFF_ALT"] = await UAVs[uav_index]["system"].param.get_param_float(
@@ -1874,6 +1891,7 @@ class App(QMainWindow):
             - Requires the UAV to be connected.
         """
         global UAVs
+        print(uav_index)
         try:
             parameters = {}
             parameter_list = [
@@ -2043,6 +2061,17 @@ class App(QMainWindow):
                 and UAVs[uav_index]["streaming_enable"]
             ):
                 return
+
+            self.uav_stream_captures[uav_index - 1] = cv2.VideoCapture(
+                UAVs[uav_index]["streaming_address"],
+            )
+
+            self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
+                filename=DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
+                fourcc=cv2.VideoWriter_fourcc(*"MJPG"),
+                fps=30.0,
+                frameSize=DEFAULT_STREAM_SIZE,
+            )
 
             is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
 
@@ -2272,7 +2301,6 @@ def run():
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
     MainWindow = App(model_path=model_path)
-    MainWindow.setWindowIcon(QtGui.QIcon(app_icon_path))
     MainWindow.show()
 
     with loop:

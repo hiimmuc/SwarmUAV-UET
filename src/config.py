@@ -67,11 +67,17 @@ DEFAULT_STREAM_SIZE = (480, 270)
 DEFAULT_STREAM_SCREEN = "general_screen"
 
 # Path settings
+"""
+Stream source paths:
+- video: path to video file (e.g. "path/to/video.mp4")
+- rtsp: rtsp://username:password@ip:port
+- webcam: /dev/video0, /dev/video1, ...
+"""
 DEFAULT_STREAM_VIDEO_PATHS = [
     f"{ROOT_DIR}/assets/videos/cam{i}.mp4" for i in range(1, MAX_UAV_COUNT + 1)
 ]
 DEFAULT_STREAM_VIDEO_LOG_PATHS = [
-    f"{SRC_DIR}/logs/videos/stream_log_uav_{i}_{NOW}.mp4" for i in range(1, MAX_UAV_COUNT + 1)
+    f"{SRC_DIR}/logs/videos/stream_log_uav_{i}_{NOW}.avi" for i in range(1, MAX_UAV_COUNT + 1)
 ]
 
 INIT_LON = 8.545594
@@ -81,18 +87,18 @@ logo1_path = f"{ROOT_DIR}/assets/icons/logo1.png"
 logo2_path = f"{ROOT_DIR}/assets/icons/logoUET.png"
 app_icon_path = f"{ROOT_DIR}/assets/icons/app.png"
 
-# connect_icon_path = f"{SRC_DIR}/UI/icons/connect.png"
-# arm_icon_path = f"{SRC_DIR}/UI/icons/arm.png"
-# disarm_icon_path = f"{SRC_DIR}/UI/icons/disarm.png"
-# takeoff_icon_path = f"{SRC_DIR}/UI/icons/takeOff.png"
-# landing_icon_path = f"{SRC_DIR}/UI/icons/landing.png"
-# mission_icon_path = f"{SRC_DIR}/UI/icons/mission.png"
-# pause_icon_path = f"{SRC_DIR}/UI/icons/pauseMission.png"
-# push_icon_path = f"{SRC_DIR}/UI/icons/pushMission.png"
-# return_icon_path = f"{SRC_DIR}/UI/icons/return.png"
-# rtl_icon_path = f"{SRC_DIR}/UI/icons/rtl.png"
-# toggle_icon_path = f"{SRC_DIR}/UI/icons/toggle_camera.png"
-# open_icon_path = f"{SRC_DIR}/UI/icons/toggle_open.png"
+connect_icon_path = f"{SRC_DIR}/UI/icons/connect.png"
+arm_icon_path = f"{SRC_DIR}/UI/icons/arm.png"
+disarm_icon_path = f"{SRC_DIR}/UI/icons/disarm.png"
+takeoff_icon_path = f"{SRC_DIR}/UI/icons/takeOff.png"
+landing_icon_path = f"{SRC_DIR}/UI/icons/landing.png"
+mission_icon_path = f"{SRC_DIR}/UI/icons/mission.png"
+pause_icon_path = f"{SRC_DIR}/UI/icons/pauseMission.png"
+push_mission_icon_path = f"{SRC_DIR}/UI/icons/pushMission.png"
+return_icon_path = f"{SRC_DIR}/UI/icons/return.png"
+rtl_icon_path = f"{SRC_DIR}/UI/icons/rtl.png"
+toggle_icon_path = f"{SRC_DIR}/UI/icons/toggle_camera.png"
+open_close_icon_path = f"{SRC_DIR}/UI/icons/toggle_open.png"
 
 noSignal_img_paths = {
     k: f"{ROOT_DIR}/assets/pictures/resized/nosignal_{h}x{w}.jpg"

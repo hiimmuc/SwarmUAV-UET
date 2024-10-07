@@ -15,7 +15,6 @@ class Runner:
         self.loop = QEventLoop(self.app)
         asyncio.set_event_loop(self.loop)
         self.window = App(model_path=model_path)
-        self.window.setWindowIcon(QtGui.QIcon(app_icon_path))
 
     def run(self):
         self.window.show()
