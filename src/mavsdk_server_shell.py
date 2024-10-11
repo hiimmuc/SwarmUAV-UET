@@ -7,11 +7,10 @@ import sys
 from mavsdk import System
 
 
-async def run(system_address, port, id):
+async def run(system_address, port, id, health_check=False):
     drone = System(port=port)
     await drone.connect(system_address=system_address)
 
-    # status_text_task = asyncio.ensure_future(print_status_text(drone))
     asyncio.ensure_future(observe_shell(drone))
 
     print(f"Waiting for drone {id} to connect...")
@@ -20,49 +19,15 @@ async def run(system_address, port, id):
             print(f"-- Connected to drone {id} !")
             break
 
-    print(f"Waiting for drone {id} to have a global position estimate...")
-    async for health in drone.telemetry.health():
-        if health.is_global_position_ok and health.is_home_position_ok:
-            print("-- Global position estimate OK")
-            break
+    if health_check:
+        print(f"Waiting for drone {id} to have a global position estimate...")
+        async for health in drone.telemetry.health():
+            if health.is_global_position_ok and health.is_home_position_ok:
+                print("-- Global position estimate OK")
+                break
 
     asyncio.get_event_loop().add_reader(sys.stdin, got_stdin_data, drone)
     print("nsh> ", end="", flush=True)
-
-    # entries = await get_entries(drone)
-    # for entry in entries:
-    #     await download_log(drone, entry)
-
-    # status_text_task.cancel()
-
-
-async def download_log(drone, entry):
-    date_without_colon = entry.date.replace(":", "-")
-    filename = f"./log-{date_without_colon}.ulog"
-    print(f"Downloading: log {entry.id} from {entry.date} to {filename}")
-    previous_progress = -1
-    async for progress in drone.log_files.download_log_file(entry, filename):
-        new_progress = round(progress.progress * 100)
-        if new_progress != previous_progress:
-            sys.stdout.write(f"\r{new_progress} %")
-            sys.stdout.flush()
-            previous_progress = new_progress
-    print()
-
-
-async def get_entries(drone):
-    entries = await drone.log_files.get_entries()
-    for entry in entries:
-        print(f"Log {entry.id} from {entry.date}")
-    return entries
-
-
-async def print_status_text(drone):
-    try:
-        async for status_text in drone.telemetry.status_text():
-            print(f"Status: {status_text.type}: {status_text.text}")
-    except asyncio.CancelledError:
-        return
 
 
 async def observe_shell(drone):
@@ -76,6 +41,11 @@ def got_stdin_data(drone):
 
 async def send(drone, command):
     await drone.shell.send(command)
+
+
+async def receive(drone):
+    async for output in drone.shell.receive():
+        print(f"\n{output} ", end="", flush=True)
 
 
 parser = argparse.ArgumentParser(description="MAV SDK server")
@@ -95,9 +65,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    asyncio.ensure_future(
-        run(system_address=args.system_address, port=args.port, id=args.id)
-    )
+    asyncio.ensure_future(run(system_address=args.system_address, port=args.port, id=args.id))
 
     try:
         asyncio.get_event_loop().run_forever()

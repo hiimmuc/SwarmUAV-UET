@@ -9,7 +9,7 @@ ROOT_DIR = SRC_DIR.parent
 NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-MODE = "simulation"  # "simulation" or "real"
+MODE = "real"  # "simulation" or "real"
 
 # UAV settings
 MAX_UAV_COUNT = 6
@@ -53,7 +53,7 @@ SYSTEMS_ADDRESSES = [
     for (proto, server_host, server_port) in zip(PROTOCOLS, SERVER_HOSTS, SERVER_PORTS)
 ]
 
-connection_allows = [True, False, False, False, False, False]
+connection_allows = [True, True, False, False, False, False]
 streaming_enables = [True, False, False, False, False, False]
 detection_enables = [True, False, False, False, False, False]
 

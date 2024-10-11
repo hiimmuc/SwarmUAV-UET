@@ -1,7 +1,6 @@
 import asyncio
 import os
 import sys
-from functools import partial
 from threading import Thread
 
 import cv2
@@ -14,6 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 from ultralytics import YOLO
 
+# user-defined modules
 from config import *
 from UI.interface_uav import *
 from utils.drone_utils import *
@@ -42,13 +42,16 @@ try:
     UAVs = {
         uav_index: {
             "ID": uav_index,
-            "server": Server(
-                id=uav_index,
-                proto=PROTOCOLS[uav_index - 1],
-                server_host=SERVER_HOSTS[uav_index - 1],
-                port=CLIENT_PORTS[uav_index - 1],
-                bind_port=SERVER_PORTS[uav_index - 1],
-            ),
+            "server": {
+                "shell": Server(
+                    id=uav_index,
+                    proto=PROTOCOLS[uav_index - 1],
+                    server_host=SERVER_HOSTS[uav_index - 1],
+                    port=CLIENT_PORTS[uav_index - 1],
+                    bind_port=SERVER_PORTS[uav_index - 1],
+                ),
+                "start": False,
+            },
             "system": System(mavsdk_server_address="localhost", port=CLIENT_PORTS[uav_index - 1]),
             "system_address": SYSTEMS_ADDRESSES[uav_index - 1],
             "streaming_address": DEFAULT_STREAM_VIDEO_PATHS[uav_index - 1],
@@ -773,11 +776,21 @@ class App(QMainWindow):
                 for index in range(MAX_UAV_COUNT):
                     uav_index = index + 1
                     if uav_index in connection_allow_indexes:
-                        UAVs[uav_index]["system_address"], port = dataFrame_widget[
-                            "connection_address"
-                        ][index].split("-p")
-                        UAVs[uav_index]["system"]._port = int(port)
-
+                        # NOTE: update server and system address
+                        address, client_port = dataFrame_widget["connection_address"][index].split(
+                            "-p"
+                        )
+                        proto, server_host, bind_port = address.split(":")
+                        UAVs[uav_index]["server"]["shell"] = Server(
+                            id=uav_index,
+                            proto=proto,
+                            server_host=server_host.replace("//", ""),
+                            port=int(client_port),
+                            bind_port=int(bind_port),
+                        )
+                        UAVs[uav_index]["system_address"] = f"{proto}:{server_host}:{bind_port}"
+                        UAVs[uav_index]["system"]._port = int(client_port)
+                        # NOTE: update streaming address
                         UAVs[uav_index]["streaming_address"] = dataFrame_widget[
                             "streaming_address"
                         ][index].strip()
@@ -929,7 +942,13 @@ class App(QMainWindow):
                 # set default information
                 self.set_default_uav_information_display(uav_index)
                 # init server
-                UAVs[uav_index]["server"].start()
+                if UAVs[uav_index]["server"]["start"]:
+                    UAVs[uav_index]["server"]["shell"].stop()
+                    UAVs[uav_index]["server"]["start"] = False
+                    await asyncio.sleep(1)
+
+                UAVs[uav_index]["server"]["shell"].start()
+                UAVs[uav_index]["server"]["start"] = True
 
                 await asyncio.sleep(5)
 
@@ -946,7 +965,13 @@ class App(QMainWindow):
                         )
                         UAVs[uav_index]["label_param"].setStyleSheet("background-color: green")
                         UAVs[uav_index]["uav_information"]["connection_status"] = True
+                    else:
+                        logger.log(f"UAV-{uav_index} -- Disconnected", level="info")
+                        self.update_terminal(
+                            f"[INFO] Cannot receive CONNECT signal from UAV {uav_index}"
+                        )
                     break
+
                 await UAVs[uav_index]["system"].action.set_maximum_speed(1.0)
 
                 UAVs[uav_index]["information_view"].setText(
@@ -1827,7 +1852,6 @@ class App(QMainWindow):
             - Displays a warning if the UAV is not connected.
         """
         global UAVs
-        print(uav_index)
         try:
             parameters = {}
             parameters["MIS_TAKEOFF_ALT"] = await UAVs[uav_index]["system"].param.get_param_float(
@@ -1891,7 +1915,6 @@ class App(QMainWindow):
             - Requires the UAV to be connected.
         """
         global UAVs
-        print(uav_index)
         try:
             parameters = {}
             parameter_list = [
