@@ -1,7 +1,13 @@
+import io
 import json
+import json as json_module
 import os
+from collections import namedtuple
 
 import decorator
+import folium
+from folium.plugins.draw import Draw
+from folium.raster_layers import TileLayer
 from PyQt5 import QtCore, QtWebEngineWidgets, QtWidgets
 from PyQt5.QtCore import QFile, QUrl, pyqtSlot
 from PyQt5.QtNetwork import QNetworkDiskCache
@@ -12,8 +18,24 @@ from PyQt5.QtWidgets import QApplication
 QtCore.qInstallMessageHandler(lambda *args: None)
 
 
-class MapEngine(QWebEngineView):
+def geojson_to_coordinates(geojson) -> str:
+    if type(geojson) is str:
+        geojson = json.loads(geojson)
+    else:
+        geojson = geojson
 
+    geometry_type = geojson.get("geometry", {}).get("type", "")
+    coordinates = geojson.get("geometry", {}).get("coordinates", [])
+
+    if len(coordinates) == 0:
+        print("No coordinates found in GeoJSON")
+        return []
+
+    return [geometry_type, coordinates]
+
+
+class MapEngine(QWebEngineView):
+    # marker events
     @pyqtSlot(str, float, float)
     def markerMoved(self, key, latitude, longitude):
         self.markerMovedCallback(key, latitude, longitude)
@@ -46,9 +68,11 @@ class MapEngine(QWebEngineView):
     def mapDoubleClicked(self, latitude, longitude):
         self.mapDoubleClickedCallback(latitude, longitude)
 
-    @pyqtSlot(list)
-    def polygonDrawn(self, polygon):
-        self.polygonDrawnCallback(polygon)
+    # drawn events
+    @pyqtSlot(str)
+    def geoJsonHandle(self, geojson):
+        # print(f"Received GeoJSON:", coordinates)
+        self.mapGeojsonCallback(geojson)
 
     def __init__(self, widget=None):
         super().__init__(parent=widget)
@@ -65,8 +89,8 @@ class MapEngine(QWebEngineView):
         self.map_page.setWebChannel(web_channel)
         web_channel.registerObject("qtWidget", self)
 
-        # self.loadFinished.connect(self.onLoadFinished)
-
+        self.loadFinished.connect(self.onLoadFinished)
+        # set callback to transfer data from JS to Python
         self.mapMovedCallback = None
         self.mapClickedCallback = None
         self.mapRightClickedCallback = None
@@ -76,8 +100,8 @@ class MapEngine(QWebEngineView):
         self.markerClickedCallback = None
         self.markerDoubleClickedCallback = None
         self.markerRightClickedCallback = None
-        #! Polygon Drawn Callback not implemented
-        self.polygonDrawnCallback = None
+
+        self.mapGeojsonCallback = None
 
     def onLoadFinished(self, ok):
         if self.initialized:
@@ -115,3 +139,58 @@ class MapEngine(QWebEngineView):
 
     def positionMarker(self, key):
         return tuple(self.runScript("posMarker(key={!r});".format(key)))
+
+    def drawGeoJson(self, geojson):
+        return self.runScript(f"drawGeoJsonJs({geojson})")
+
+    #
+
+
+def load_map() -> None:
+    titles = TileLayer(
+        tiles="http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
+        attr="google",
+        name="google",
+        max_zoom=20,
+        subdomains=["mt0", "mt1", "mt2", "mt3"],
+    )
+    m = folium.Map(
+        tiles=titles,
+        location=[21.064862, 105.792958],
+        zoom_start=16,
+    )
+    Draw(
+        export=False,
+        filename="data.geojson",
+        position="topright",
+        draw_options={
+            "polygon": {
+                "shapeOptions": {
+                    "color": "#6bc2e5",
+                    "fillColor": "#6bc2e5",
+                    "fillOpacity": 0.5,
+                },
+                "drawError": {"color": "#dd253b", "timeout": 1000, "message": "Oups!"},
+                "allowIntersection": False,
+                "showArea": True,
+                "metric": True,
+                "repeatMode": True,
+            },
+            "polyline": {
+                "shapeOptions": {
+                    "color": "red",
+                }
+            },
+            "rectangle": {
+                "shapeOptions": {
+                    "color": "#6bc2e5",
+                }
+            },
+            "circle": False,
+            "circlemarker": False,
+        },
+        edit_options={"poly": {"allowIntersection": False}},
+    ).add_to(m)
+    data = io.BytesIO()
+    m.save(data, close_file=False)
+    return data.getvalue().decode()

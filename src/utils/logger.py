@@ -15,12 +15,13 @@ class Logger:
         self.logger.setLevel(logging.DEBUG)
 
     def log(self, message, level="info"):
+        level = level.lower()
         if level == "info":
             self.logger.info(message)
         elif level == "warning":
             self.logger.warning(message, exc_info=False)
         elif level == "error":
-            self.logger.error(message, exc_info=False)
+            self.logger.error(message, exc_info=True)
         elif level == "critical":
             self.logger.critical(message, exc_info=True)
         else:

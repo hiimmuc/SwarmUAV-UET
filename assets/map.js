@@ -4,6 +4,8 @@ var map;
 
 var markers = [];
 
+var markerCounter = 0;  // Initialize a counter for markers
+
 var LeafIcon;
 
 function initialize() {
@@ -16,6 +18,7 @@ function initialize() {
     // Satellite: 'http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'
     // Terrain:   'http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}'
     // OSM:       'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+
 
     L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', 
         {
@@ -37,25 +40,26 @@ function initialize() {
         }
     });
 
-        // Draw polygon and line features
+    // Draw polygon and line features
     var drawnItems = new L.FeatureGroup();
 
     map.addLayer(drawnItems);
     var drawControl = new L.Control.Draw({
+        export: true,
         position: 'topright',
         draw: {
             polygon: {
                 shapeOptions: {
                     color: "rgb(0% 98.576% 15.974%)" //polygons being drawn will be purple color
                 },
-                allowIntersection: false,
                 drawError: {
                     color: 'orange',
                     timeout: 1000
                 },
                 showArea: true, //the area of the polygon will be displayed as it is drawn.
                 metric: true,
-                repeatMode: true
+                repeatMode: true,
+                allowIntersection: false,
             },
             polyline: {
                 shapeOptions: {
@@ -74,12 +78,17 @@ function initialize() {
             featureGroup: drawnItems
         }
     });
+    
     map.addControl(drawControl);
     map.on('draw:created', function (e) {
         var type = e.layerType,
             layer = e.layer;
+        // Add the drawn layer to the map
         drawnItems.addLayer(layer);
-        $('#polygon').val(JSON.stringify(layer.toGeoJSON()));
+        // Get the GeoJSON of the layer (polygon or marker)
+        var geojsonData = JSON.stringify(layer.toGeoJSON());
+        // Set the GeoJSON data to the hidden input field
+        $('#polygon').val(geojsonData);
 
     });
 
@@ -91,7 +100,7 @@ function initialize() {
         });
 
         map.on('click', function (ev) {
-            qtWidget.mapClicked(ev.latlng.lat, ev.latlng.lng);
+            qtWidget.mapLeftClicked(ev.latlng.lat, ev.latlng.lng);
         });
 
         map.on('dblclick', function (ev) {
@@ -101,19 +110,18 @@ function initialize() {
         map.on('contextmenu', function (ev) {
             qtWidget.mapRightClicked(ev.latlng.lat, ev.latlng.lng);
         });
-
-        // map.on('draw:created', function (e) {
-        //     var type = e.layerType,
-        //         layer = e.layer;
-        //         // console.log(layer.toGeoJSON());
-        //     qtWidget.polygonDrawn(JSON.stringify(layer.toGeoJSON()));
-        // });
+        map.on("draw:created", function (e) {
+            var type = e.layerType,
+                layer = e.layer;
+            var geojsonData = JSON.stringify(layer.toGeoJSON());
+            qtWidget.geoJsonHandle(geojsonData);
+        });
+        
     });
 
 }
 
 function setCenterJs(lat, lng) {
-    //console.log(lat);
     map.panTo(new L.LatLng(lat, lng));
 }
 
@@ -125,22 +133,33 @@ function setZoomJs(zoom) {
     map.setZoom(zoom);
 }
 
+function drawGeoJsonJs(geoJson) {
+    var geoJsonLayer = L.geoJson(JSON.parse(geoJson)).addTo(map);
+    map.fitBounds(geoJsonLayer.getBounds());
+}
+
 function addMarkerJs(key, latitude, longitude) {
 
     if (key in markers) {
-        deleteMarker(key);
+        deleteMarkerJs(key);
     }
 
-    // if ("icon" in parameters) {
+    // Increment the marker counter
+    markerCounter++;
 
-    //     parameters["icon"] = new L.Icon({
-    //         iconUrl: parameters["icon"],
-    //         iconAnchor: new L.Point(16, 16)
-    //     });
-    // }
+    // Create a custom DivIcon with the marker number
+    var customIcon = L.divIcon({
+        className: 'custom-marker',  // Custom class for styling
+        html: `<div class="marker-label">${markerCounter}</div>`,  // HTML with marker number
+        iconSize: [30, 42],  // Adjust size to fit the number display
+        iconAnchor: [15, 42],  // Anchor the icon to the correct position
+    });
 
-    var marker = L.marker([latitude, longitude]).addTo(map);
+    // Create a marker using the custom DivIcon
+    var marker = L.marker([latitude, longitude], { icon: customIcon, draggable: true }).addTo(map);
 
+
+    // Add event listeners (drag, click, etc.) for the marker
     marker.on('dragend', function (event) {
         var marker = event.target;
         qtWidget.markerMoved(key, marker.getLatLng().lat, marker.getLatLng().lng);
@@ -149,10 +168,10 @@ function addMarkerJs(key, latitude, longitude) {
     marker.on('click', function (event) {
         var marker = event.target;
         marker.bindPopup(parameters["title"]);
-        qtWidget.markerClicked(key, marker.getLatLng().lat, marker.getLatLng().lng);
+        qtWidget.markerLeftClicked(key, marker.getLatLng().lat, marker.getLatLng().lng);
     });
 
-    marker.on('dbclick', function (event) {
+    marker.on('dblclick', function (event) {
         var marker = event.target;
         qtWidget.markerDoubleClicked(key, marker.getLatLng().lat, marker.getLatLng().lng);
     });
@@ -162,9 +181,11 @@ function addMarkerJs(key, latitude, longitude) {
         qtWidget.markerRightClicked(key, marker.getLatLng().lat, marker.getLatLng().lng);
     });
 
+    // Store the marker in the markers array
     markers[key] = marker;
     return key;
 }
+
 
 function deleteMarkerJs(key) {
     map.removeLayer(markers[key]);

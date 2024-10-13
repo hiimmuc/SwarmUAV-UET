@@ -5,6 +5,8 @@ from threading import Thread
 
 import cv2
 from asyncqt import QEventLoop
+
+# mavsdk
 from mavsdk import System
 from mavsdk.mission import MissionItem, MissionPlan
 
@@ -22,6 +24,7 @@ from utils.map_utils import *
 from utils.mavsdk_server_utils import *
 from utils.model_utils import *
 from utils.qt_utils import *
+from utils.serial_utils import *
 
 stackedWidget_indexes = {"main page": 0, "map page": 1}
 
@@ -319,29 +322,28 @@ class App(QMainWindow):
 
         # handling settings
         self._handling_settings()
+        # Init map
+        # self.map_data = load_map()
+        # self.ui.MapWebView.setHtml(self.map_data)
+        # self.ui.Overview_map_view.setHtml(self.map_data)
 
-        # *init map
         # map URL
         self.ui.MapWebView.setUrl(QtCore.QUrl(map_html_path))
         self.ui.Overview_map_view.setUrl(QtCore.QUrl(map_html_path))
         # map engine
         self.map = MapEngine(self.ui.MapWebView)
-
         self.map.mapMovedCallback = self.onMapMoved
         self.map.mapClickedCallback = self.onMapLClick
         self.map.mapDoubleClickedCallback = self.onMapDClick
         self.map.mapRightClickedCallback = self.onMapRClick
-
-        # self.map.markerMovedCallback = self.onMarkerMoved
-        # self.map.markerClickedCallback = self.onMarkerLClick
-        # self.map.markerDoubleClickedCallback = self.onMarkerDClick
-        # self.map.markerRightClickedCallback = self.onMarkerRClick
+        self.map.mapGeojsonCallback = self.onMapGeojson
 
         self.ovv_map = MapEngine(self.ui.Overview_map_view)
         self.ovv_map.mapMovedCallback = self.onMapMoved
         self.ovv_map.mapClickedCallback = self.onMapLClick
         self.ovv_map.mapDoubleClickedCallback = self.onMapDClick
         self.ovv_map.mapRightClickedCallback = self.onMapRClick
+        self.ovv_map.mapGeojsonCallback = self.onMapGeojson
 
     # ---------------------------<UI Events>---------------------------
     def _uav_to_widgets(self) -> None:
@@ -1319,7 +1321,7 @@ class App(QMainWindow):
                         break
 
                 # NOTE: 2. Perform mission
-                self.update_terminal("Arming...", uav_index=uav_index)
+                self.update_terminal("Arming before starting mission ...", uav_index=uav_index)
                 await UAVs[uav_index]["system"].action.arm()
 
                 self.update_terminal("Starting mission...", uav_index=uav_index)
@@ -1374,10 +1376,6 @@ class App(QMainWindow):
                     plans_log_dir,
                     "Files (*.TXT *.txt)",
                 )[0]
-
-                with open(fpath, "r") as f:
-                    file_content = f.read()
-                    # print("File content:", file_content)
 
                 mission_items = []
                 # Assign hight for mission
@@ -1530,7 +1528,6 @@ class App(QMainWindow):
                     UAVs[uav_index]["uav_information"]["streaming_status"] = True
                     logger.log(f"UAV-{uav_index} streaming thread started!", level="info")
                 else:
-                    # self.uav_stream_threads[uav_index - 1].terminate()
                     UAVs[uav_index]["uav_information"]["streaming_status"] = False
                     logger.log(f"UAV-{uav_index} streaming thread stopped!", level="info")
             else:
@@ -1746,6 +1743,13 @@ class App(QMainWindow):
         """
         global UAVs
         async for position in UAVs[uav_index]["system"].telemetry.position():
+            # try to send RTCM data to the base station
+            try:
+                base_station_port = find_base_station_port(timeout=1, baud_rate=115200)
+                asyncio.ensure_future(send_rtcm(UAVs[uav_index]["system"], base_station_port))
+            except Exception as e:
+                logger.log(f"Error in sending RTCM: {repr(e)}", level="error")
+
             alt_rel = round(position.relative_altitude_m, 2)
             alt_msl = round(position.absolute_altitude_m, 2)
             latitude = round(position.latitude_deg, 6)
@@ -1833,6 +1837,12 @@ class App(QMainWindow):
         """
         global UAVs
         async for gps in UAVs[uav_index]["system"].telemetry.gps_info():
+            try:
+                base_station_port = find_base_station_port(timeout=1, baud_rate=115200)
+                asyncio.ensure_future(send_rtcm(UAVs[uav_index]["system"], base_station_port))
+            except Exception as e:
+                logger.log(f"Error in sending RTCM: {repr(e)}", level="error")
+
             gps_status = gps.fix_type
             UAVs[uav_index]["uav_information"]["gps_status"] = gps_status
             UAVs[uav_index]["information_view"].setText(
@@ -2097,8 +2107,8 @@ class App(QMainWindow):
             )
 
             is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
-
             logger.log(f"UAV-{uav_index} stream opened: {is_opened}", level="info")
+            # start the stream on the UAV screen
             while is_opened:
                 ret, frame = self.uav_stream_captures[uav_index - 1].read()
 
@@ -2162,6 +2172,38 @@ class App(QMainWindow):
         except Exception as e:
             logger.log(repr(e), level="error")
 
+    # -----------------------------< custom map functions >-----------------------------
+    def onMarkerMoved(self, key, latitude, longitude) -> None:
+        print("Moved!!", key, latitude, longitude)
+
+    def onMarkerRClick(self, key, latitude, longitude) -> None:
+        print("RClick on ", key)
+        # map.setMarkerOptions(key, draggable=False)
+
+    def onMarkerLClick(self, key, latitude, longitude) -> None:
+        print("LClick on ", key)
+
+    def onMarkerDClick(self, key, latitude, longitude) -> None:
+        print("DClick on ", key)
+        # map.setMarkerOptions(key, draggable=True)
+
+    def onMapMoved(self, latitude, longitude) -> None:
+        print("Moved to ", latitude, longitude)
+
+    def onMapRClick(self, latitude, longitude) -> None:
+        print("RClick on ", latitude, longitude)
+
+    def onMapLClick(self, latitude, longitude) -> None:
+        print("LClick on ", latitude, longitude)
+
+    def onMapDClick(self, latitude, longitude) -> None:
+        print("DClick on ", latitude, longitude)
+
+    def onMapGeojson(self, json) -> None:
+        # Handle the received GeoJSON data
+        coordinates = geojson_to_coordinates(json)
+        print(coordinates)
+
     # -----------------------------< UI display utility functions >-----------------------------
 
     def template_information(
@@ -2222,8 +2264,7 @@ class App(QMainWindow):
 
         Parameters:
         text (str): The text to append to the terminal.
-        uav_index (int, optional): The index of the UAV terminal to update.
-                                   Defaults to 0, which updates the main terminal.
+        uav_index (int, optional): The index of the UAV terminal to update.Defaults to 0, which updates the main terminal.
 
         Returns:
         None
@@ -2284,37 +2325,6 @@ class App(QMainWindow):
 
         except Exception as e:
             print("-> From: popup_msg", e)
-
-    # -----------------------------< Map widget utility functions >-----------------------------
-
-    def onMarkerMoved(self, key, latitude, longitude):
-        print("Moved!!", key, latitude, longitude)
-
-    def onMarkerRClick(self, key, latitude, longitude):
-        print("RClick on ", key)
-        # map.setMarkerOptions(key, draggable=False)
-
-    def onMarkerLClick(self, key, latitude, longitude):
-        print("LClick on ", key)
-
-    def onMarkerDClick(self, key, latitude, longitude):
-        print("DClick on ", key)
-        # map.setMarkerOptions(key, draggable=True)
-
-    def onMapMoved(self, latitude, longitude):
-        print("Moved to ", latitude, longitude)
-
-    def onMapRClick(self, latitude, longitude):
-        print("RClick on ", latitude, longitude)
-
-    def onMapLClick(self, latitude, longitude):
-        print("LClick on ", latitude, longitude)
-
-    def onMapDClick(self, latitude, longitude):
-        print("DClick on ", latitude, longitude)
-
-    def onPolygonDrawn(self, json):
-        print("Polygon Drawn", json)
 
 
 # ------------------------------------< Main Application Class >-----------------------------
