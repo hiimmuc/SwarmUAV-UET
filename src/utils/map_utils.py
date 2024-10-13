@@ -52,6 +52,7 @@ class MapEngine(QWebEngineView):
     def markerDoubleClicked(self, key, latitude, longitude):
         self.markerDoubleClickedCallback(key, latitude, longitude)
 
+    # map events
     @pyqtSlot(float, float)
     def mapMoved(self, latitude, longitude):
         self.mapMovedCallback(latitude, longitude)
@@ -71,7 +72,6 @@ class MapEngine(QWebEngineView):
     # drawn events
     @pyqtSlot(str)
     def geoJsonHandle(self, geojson):
-        # print(f"Received GeoJSON:", coordinates)
         self.mapGeojsonCallback(geojson)
 
     def __init__(self, widget=None):

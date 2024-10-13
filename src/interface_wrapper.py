@@ -2177,15 +2177,13 @@ class App(QMainWindow):
         print("Moved!!", key, latitude, longitude)
 
     def onMarkerRClick(self, key, latitude, longitude) -> None:
-        print("RClick on ", key)
-        # map.setMarkerOptions(key, draggable=False)
+        print("RClick on ", key, latitude, longitude)
 
     def onMarkerLClick(self, key, latitude, longitude) -> None:
-        print("LClick on ", key)
+        print("LClick on ", key, latitude, longitude)
 
     def onMarkerDClick(self, key, latitude, longitude) -> None:
-        print("DClick on ", key)
-        # map.setMarkerOptions(key, draggable=True)
+        print("DClick on ", key, latitude, longitude)
 
     def onMapMoved(self, latitude, longitude) -> None:
         print("Moved to ", latitude, longitude)
