@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "debounce": "^2.1.0",
+    "leaflet-draw": "^1.0.4",
     "leaflet.offline": "^3.1.0"
   }
 }

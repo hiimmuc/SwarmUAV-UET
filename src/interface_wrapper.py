@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import os
 import sys
 from threading import Thread
@@ -652,6 +653,7 @@ class App(QMainWindow):
                     target=self.stream_on_uav_screen,
                     args=(uav_index,),
                     name=f"UAV-{uav_index}-thread",
+                    daemon=True,
                 )
 
                 logger.log(
@@ -1111,12 +1113,13 @@ class App(QMainWindow):
             await UAVs[uav_index]["system"].action.takeoff()
 
             # # update initial position of UAV
-            UAVs[uav_index]["uav_information"]["init_latitude"] = UAVs[uav_index][
-                "uav_information"
-            ]["position_status"][0]
-            UAVs[uav_index]["uav_information"]["init_longitude"] = UAVs[uav_index][
-                "uav_information"
-            ]["position_status"][1]
+
+            UAVs[uav_index]["uav_information"]["init_latitude"] = float(
+                UAVs[uav_index]["uav_information"]["position_status"][0]
+            )
+            UAVs[uav_index]["uav_information"]["init_longitude"] = float(
+                UAVs[uav_index]["uav_information"]["position_status"][1]
+            )
 
             # update UAV information
             UAVs[uav_index]["uav_information"]["connection_status"] = True
@@ -1187,6 +1190,7 @@ class App(QMainWindow):
                 init_longitude = UAVs[uav_index]["uav_information"]["init_longitude"]
                 current_latitude = UAVs[uav_index]["uav_information"]["position_status"][0]
                 current_longitude = UAVs[uav_index]["uav_information"]["position_status"][1]
+                # print(init_latitude, init_longitude, current_latitude, current_longitude)
                 if rtl:
                     self.update_terminal(f"[INFO] Sent RTL command to UAV {uav_index}")
                     if (init_latitude, init_longitude) == (current_latitude, current_longitude):
@@ -1198,7 +1202,8 @@ class App(QMainWindow):
                         await UAVs[uav_index]["system"].action.set_return_to_launch_altitude(
                             UAVs[uav_index]["uav_information"]["init_height"]
                         )
-                        await UAVs[uav_index]["system"].action.return_to_launch()
+                        fn_rtl = UAVs[uav_index]["system"].action.return_to_launch()
+                        await asyncio.gather(*[fn_rtl, self.uav_fn_get_status(uav_index)])
 
                     UAVs[uav_index]["uav_information"]["mode_status"] = "RTL"
                     UAVs[uav_index]["information_view"].setText(
@@ -1206,9 +1211,7 @@ class App(QMainWindow):
                     )
                 else:  # return to initial position
                     self.update_terminal(
-                        f"[INFO] Sent RETURN command to UAV {uav_index} \
-                            to lat: {init_latitude} \
-                                long: {init_longitude}"
+                        f"[INFO] Sent RETURN command to UAV {uav_index} to lat: {init_latitude} long: {init_longitude}"
                     )
 
                     await self.uav_fn_goTo_location(
@@ -1325,13 +1328,16 @@ class App(QMainWindow):
                 await UAVs[uav_index]["system"].action.arm()
 
                 self.update_terminal("Starting mission...", uav_index=uav_index)
-                await UAVs[uav_index]["system"].mission.start_mission()
+                fn_mission = UAVs[uav_index]["system"].mission.start_mission()
 
                 UAVs[uav_index]["uav_information"]["mode_status"] = "Mission"
                 UAVs[uav_index]["information_view"].setText(
                     self.template_information(uav_index, **UAVs[uav_index]["uav_information"])
                 )
 
+                await asyncio.gather(
+                    *[fn_mission, self.uav_fn_get_status(uav_index)]
+                )  # mission and get status at the same time
                 # wait for mission to complete
                 await termination_task
 
@@ -1676,8 +1682,11 @@ class App(QMainWindow):
         """
         global UAVs
         if height is None:
-            height = UAVs[uav_index]["uav_information"]["init_height"]
-        await UAVs[uav_index]["system"].action.goto_location(latitude, longitude, height, 0)
+            async for position in UAVs[uav_index]["system"].telemetry.position():
+                height = position.absolute_altitude_m
+                break
+        fn_goto = UAVs[uav_index]["system"].action.goto_location(latitude, longitude, height, 0)
+        await asyncio.gather(*[fn_goto, self.uav_fn_get_status(uav_index)])
 
     async def uav_fn_goTo_UAVs(self, uav_indexes, *args) -> None:
         """NOTE: Not used
@@ -1744,11 +1753,11 @@ class App(QMainWindow):
         global UAVs
         async for position in UAVs[uav_index]["system"].telemetry.position():
             # try to send RTCM data to the base station
-            try:
-                base_station_port = find_base_station_port(timeout=1, baud_rate=115200)
-                asyncio.ensure_future(send_rtcm(UAVs[uav_index]["system"], base_station_port))
-            except Exception as e:
-                logger.log(f"Error in sending RTCM: {repr(e)}", level="error")
+            # try:
+            #     base_station_port = find_base_station_port(timeout=1, baud_rate=115200)
+            #     asyncio.ensure_future(send_rtcm(UAVs[uav_index]["system"], base_station_port))
+            # except Exception as e:
+            #     logger.log(f"Error in sending RTCM: {repr(e)}", level="error")
 
             alt_rel = round(position.relative_altitude_m, 2)
             alt_msl = round(position.absolute_altitude_m, 2)
@@ -1837,11 +1846,11 @@ class App(QMainWindow):
         """
         global UAVs
         async for gps in UAVs[uav_index]["system"].telemetry.gps_info():
-            try:
-                base_station_port = find_base_station_port(timeout=1, baud_rate=115200)
-                asyncio.ensure_future(send_rtcm(UAVs[uav_index]["system"], base_station_port))
-            except Exception as e:
-                logger.log(f"Error in sending RTCM: {repr(e)}", level="error")
+            # try:
+            #     base_station_port = find_base_station_port(timeout=1, baud_rate=115200)
+            #     asyncio.ensure_future(send_rtcm(UAVs[uav_index]["system"], base_station_port))
+            # except Exception as e:
+            #     logger.log(f"Error in sending RTCM: {repr(e)}", level="error")
 
             gps_status = gps.fix_type
             UAVs[uav_index]["uav_information"]["gps_status"] = gps_status

@@ -76,7 +76,9 @@ def get_values_from_table(table, headers=[]) -> pd.DataFrame:
     return df
 
 
-def draw_table(table, data=None, connection_allow_indexes=None, streaming_enabled_indexes = None, headers=[]) -> None:
+def draw_table(
+    table, data=None, connection_allow_indexes=None, streaming_enabled_indexes=None, headers=[]
+) -> None:
     """
     Draw tables with UAV data and highlight rows based on indexes.
 
@@ -99,14 +101,13 @@ def draw_table(table, data=None, connection_allow_indexes=None, streaming_enable
         else:
             table.item(i, 0).setBackground(QtGui.QColor(255, 160, 122))
             table.item(i, 1).setBackground(QtGui.QColor(255, 160, 122))
-        
+
         if int(data[headers[0]][i]) in streaming_enabled_indexes:
             table.item(i, 2).setBackground(QtGui.QColor(144, 238, 144))
         else:
             table.item(i, 2).setBackground(QtGui.QColor(255, 160, 122))
 
     refine_table(table)
-
 
 
 def refine_table(table) -> None:
@@ -137,7 +138,7 @@ def calculate_distance(lat1, lon1, lat2, lon2) -> float:
     return distance
 
 
-class QtThread(QThread):
+class QtThread(QThread):  # NOTE: not used
     change_image_signal = pyqtSignal(np.ndarray, int)
 
     def __init__(self, cap, uav_index):

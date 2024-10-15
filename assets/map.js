@@ -75,12 +75,12 @@ function initialize() {
             circle: false,
         },
         edit: {
-            featureGroup: drawnItems
+            featureGroup: drawnItems,
         }
     });
     
     map.addControl(drawControl);
-    map.on('draw:created', function (e) {
+    map.on(L.Draw.Event.CREATED, function (e) {
         var type = e.layerType,
             layer = e.layer;
         // Add the drawn layer to the map
@@ -110,7 +110,7 @@ function initialize() {
         map.on('contextmenu', function (ev) {
             qtWidget.mapRightClicked(ev.latlng.lat, ev.latlng.lng);
         });
-        map.on("draw:created", function (e) {
+        map.on(L.Draw.Event.CREATED, function (e) {
             var type = e.layerType,
                 layer = e.layer;
             var geojsonData = JSON.stringify(layer.toGeoJSON());

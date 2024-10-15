@@ -9,7 +9,7 @@ ROOT_DIR = SRC_DIR.parent
 NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-MODE = "real"  # "simulation" or "real"
+MODE = "simulation"  # "simulation" or "real"
 
 # UAV settings
 MAX_UAV_COUNT = 6

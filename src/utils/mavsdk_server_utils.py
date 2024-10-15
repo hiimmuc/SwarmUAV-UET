@@ -5,7 +5,10 @@ import subprocess
 
 import psutil
 
+from config import ROOT_DIR
+
 # remember to assign subprocess to a variable
+CMD = f"{ROOT_DIR}/dependencies/MAVSDK-Python/mavsdk/bin/mavsdk_server"
 
 
 def kills(pid):
@@ -34,13 +37,14 @@ def get_pids_by_script_name(script):
 
 class Server:
     def __init__(self, id, proto, server_host, port, bind_port):
-        self.id = id
-        self.proto = proto
-        self.server_host = server_host
-        self.port = port
-        self.bind_port = bind_port
-        self.command = f"python3 src/mavsdk_server_shell.py {proto}://{server_host}:{bind_port} -p {port} -i {id}"
-        self.shell = f"gnome-terminal -- /bin/bash -c  'sleep 1; {self.command}; exec /bin/bash' &"
+
+        if Path(CMD).exists():
+            self.command = f"{CMD} {proto}://{server_host}:{bind_port} -p {port}"
+        else:
+            self.command = f"python3 src/mavsdk_server_shell.py {proto}://{server_host}:{bind_port} -p {port} -i {id}"
+
+        self.init_msg = f"[INFO] Starting MAVSDK server {id} with {proto}://{server_host}:{bind_port} -p {port}"
+        self.shell = f"gnome-terminal -- /bin/bash -c  'echo {self.init_msg}; sleep 1; {self.command}; exec /bin/bash' &"
 
         self.process = None
 

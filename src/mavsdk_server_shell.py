@@ -2,9 +2,13 @@
 
 import argparse
 import asyncio
+import subprocess
 import sys
+from pathlib import Path
 
 from mavsdk import System
+
+from config import *
 
 
 async def run(system_address, port, id, health_check=False):
@@ -66,6 +70,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     asyncio.ensure_future(run(system_address=args.system_address, port=args.port, id=args.id))
+    # run_server_cmd(system_address=args.system_address, port=args.port, id=args.id)
 
     try:
         asyncio.get_event_loop().run_forever()
