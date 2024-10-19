@@ -66,7 +66,7 @@
        <enum>QFrame::WinPanel</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="MainScreen">
        <property name="minimumSize">
@@ -241,7 +241,7 @@ background-color: rgb(252, 175, 62);</string>
              <enum>QTabWidget::East</enum>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>8</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -9120,7 +9120,7 @@ background-color: rgb(252, 175, 62);</string>
                   </property>
                   <property name="url">
                    <url>
-                    <string>file:///media/phgnam-d/920C22060C21E5C7/Personal/Workspace/UAV/workspace/assets/map.html</string>
+                    <string>file:///home/phgnam-d/Workspace/SwarmUAV-UET/assets/map.html</string>
                    </url>
                   </property>
                  </widget>
@@ -10957,7 +10957,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="url">
              <url>
-              <string>file:///media/phgnam-d/920C22060C21E5C7/Personal/Workspace/UAV/workspace/assets/map.html</string>
+              <string>file:///home/phgnam-d/Workspace/SwarmUAV-UET/assets/map.html</string>
              </url>
             </property>
             <property name="zoomFactor">

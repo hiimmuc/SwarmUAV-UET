@@ -13,6 +13,9 @@ MODE = "simulation"  # "simulation" or "real"
 
 # UAV settings
 MAX_UAV_COUNT = 6
+FREE_UAV_INDEX = (
+    6  # index of the free UAV connect -> arm -> takeoff -> mission -> return -> disarm
+)
 
 """Set connection as follows:
 - Serial: serial:///path/to/serial/dev[:baudrate]
@@ -53,7 +56,7 @@ SYSTEMS_ADDRESSES = [
     for (proto, server_host, server_port) in zip(PROTOCOLS, SERVER_HOSTS, SERVER_PORTS)
 ]
 
-connection_allows = [True, True, False, False, False, False]
+connection_allows = [True, True, False, False, False, True]
 streaming_enables = [True, False, False, False, False, False]
 detection_enables = [True, False, False, False, False, False]
 
@@ -112,7 +115,7 @@ pause_img_paths["all"] = f"{ROOT_DIR}/assets/pictures/pause_screen.jpg"
 
 map_html_path = f"file://{ROOT_DIR}/assets/map.html"
 
-model_path = f"{SRC_DIR}/model/checkpoints/YOLO/yolov9t.pt"
+model_path = f"{SRC_DIR}/model/checkpoints/YOLO/yolo11x.pt"
 gps_log_paths = [
     f"{SRC_DIR}/logs/gps/gps_log_uav_{i}_{NOW}.txt" for i in range(1, MAX_UAV_COUNT + 1)
 ]

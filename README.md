@@ -46,7 +46,7 @@ ROS-Noetic
    #### Setup Gazebo for first run ([Instruction](https://docs.px4.io/main/en/sim_gazebo_classic/multi_vehicle_simulation.html))):
 
    ```
-   cd dependencies/PX4-Autopilot/
+   cd ../dependencies/PX4-Autopilot/
    ```
 
    ```[setup]
@@ -120,9 +120,7 @@ ROS-Noetic
    ```
 
    ```
-
    ~/miniconda3/bin/conda init bash
-   ~/miniconda3/bin/conda init zsh
 
    ```
 ### 8. Install Python requirements
@@ -141,13 +139,13 @@ ROS-Noetic
 ### 1. Run all:
 
    ```
-   python runs/simulation_updated.py
+   python src/runs/simulation_updated.py
    ```
 
    or
 
    ```
-   python runs/real.py
+   python src/runs/real.py
    ```
 ### 2. Run only UI
    ```
