@@ -2,6 +2,7 @@ import asyncio
 import copy
 import os
 import sys
+from collections import defaultdict
 from threading import Thread
 
 import cv2
@@ -251,7 +252,7 @@ class App(QMainWindow):
         self.init_application()
         logger.log("Application initialized successfully", level="info")
 
-        self.predictor = YOLO(model_path).to(DEVICE)
+        self.model = YOLO(model_path).to(DEVICE)
         logger.log(f"Model loaded successfully on {DEVICE}", level="info")
 
         # ---------------------------------------------------------
@@ -329,6 +330,7 @@ class App(QMainWindow):
         # self.ui.Overview_map_view.setHtml(self.map_data)
 
         # map URL
+        # file:///.../SwarmUAV-UET/assets/map.html
         self.ui.MapWebView.setUrl(QtCore.QUrl(map_html_path))
         self.ui.Overview_map_view.setUrl(QtCore.QUrl(map_html_path))
         # map engine
@@ -651,7 +653,10 @@ class App(QMainWindow):
 
                 self.uav_stream_threads[uav_index - 1] = Thread(
                     target=self.stream_on_uav_screen,
-                    args=(uav_index,),
+                    args=(
+                        uav_index,
+                        "track",
+                    ),
                     name=f"UAV-{uav_index}-thread",
                     daemon=True,
                 )
@@ -1657,7 +1662,7 @@ class App(QMainWindow):
                     "Invalid direction", src_msg="uav_fn_goTo_distance", type_msg="info"
                 )
             # go to the new position
-            await self.uav_fn_goTo_location(uav_index, lat, lon, alt)
+            await UAVs[uav_index]["system"].action.goto_location(lat, lon, alt, 0)
             break
         return
 
@@ -2083,7 +2088,7 @@ class App(QMainWindow):
 
     # -----------------------------< UAVs streaming functions >-----------------------------
 
-    def stream_on_uav_screen(self, uav_index, **kwargs) -> None:
+    def stream_on_uav_screen(self, uav_index, mode="track", **kwargs) -> None:
         """
         Updates the UAV screen view with the specified UAV's information.
 
@@ -2117,14 +2122,26 @@ class App(QMainWindow):
 
             is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
             logger.log(f"UAV-{uav_index} stream opened: {is_opened}", level="info")
+            #
+            if mode == "track":
+                track_history = defaultdict(lambda: [])
+            else:
+                track_history = None
+
             # start the stream on the UAV screen
             while is_opened:
                 ret, frame = self.uav_stream_captures[uav_index - 1].read()
 
                 if ret:
                     if UAVs[uav_index]["detection_enable"]:
-                        results = self.predictor(frame, device=DEVICE, stream=True, verbose=False)
-                        frame = draw_frame(frame, results)
+                        if mode == "detect":
+                            results = self.model(frame, device=DEVICE, stream=True, verbose=False)
+                            frame = draw_detected_frame(frame, results)
+                        elif mode == "track":
+                            results = self.model.track(
+                                frame, stream=True, persist=True, verbose=False
+                            )
+                            frame = draw_tracking_frame(frame, results, track_history)
 
                     self.update_uav_screen_view(
                         uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN

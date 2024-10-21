@@ -221,8 +221,8 @@ class Colors:
 colors = Colors()
 
 
-def draw_frame(frame, results):
-    """
+def draw_detected_frame(frame, results):
+    """,
     Draw the bounding boxes on the frame
     """
     # coordinates
@@ -257,3 +257,24 @@ def draw_frame(frame, results):
 
             cv2.putText(frame, classNames[cls], org, font, fontScale, color, thickness)
     return frame
+
+
+def draw_tracking_frame(frame, results, history):
+    for r in results:
+        boxes = r.boxes.xywh.cpu()
+        track_ids = r.boxes.id.int().cpu().tolist()
+        annotated_frame = r.plot()
+
+        for box, track_id in zip(boxes, track_ids):
+            x, y, w, h = box
+            track = history[track_id]
+            track.append((float(x), float(y)))  # x, y center point
+            if len(track) > 30:  # retain 90 tracks for 90 frames
+                track.pop(0)
+
+            # Draw the tracking lines
+            points = np.hstack(track).astype(np.int32).reshape((-1, 1, 2))
+            cv2.polylines(
+                annotated_frame, [points], isClosed=False, color=(230, 230, 230), thickness=10
+            )
+    return annotated_frame
