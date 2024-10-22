@@ -33,3 +33,4 @@ matplotlib
 tqdm
 folium
 PyYAML==6.0.2
+future

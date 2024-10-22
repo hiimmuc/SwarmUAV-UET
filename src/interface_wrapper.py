@@ -324,15 +324,10 @@ class App(QMainWindow):
 
         # handling settings
         self._handling_settings()
-        # Init map
-        # self.map_data = load_map()
-        # self.ui.MapWebView.setHtml(self.map_data)
-        # self.ui.Overview_map_view.setHtml(self.map_data)
 
         # map URL
         # file:///.../SwarmUAV-UET/assets/map.html
         self.ui.MapWebView.setUrl(QtCore.QUrl(map_html_path))
-        self.ui.Overview_map_view.setUrl(QtCore.QUrl(map_html_path))
         # map engine
         self.map = MapEngine(self.ui.MapWebView)
         self.map.mapMovedCallback = self.onMapMoved
@@ -340,13 +335,12 @@ class App(QMainWindow):
         self.map.mapDoubleClickedCallback = self.onMapDClick
         self.map.mapRightClickedCallback = self.onMapRClick
         self.map.mapGeojsonCallback = self.onMapGeojson
-
+        # Ovv map only for seeing
+        self.map_data = load_map()
+        # self.ui.MapWebView.setHtml(self.map_data)
+        self.ui.Overview_map_view.setHtml(self.map_data)
+        # self.ui.Overview_map_view.setUrl(QtCore.QUrl(map_html_path))
         self.ovv_map = MapEngine(self.ui.Overview_map_view)
-        self.ovv_map.mapMovedCallback = self.onMapMoved
-        self.ovv_map.mapClickedCallback = self.onMapLClick
-        self.ovv_map.mapDoubleClickedCallback = self.onMapDClick
-        self.ovv_map.mapRightClickedCallback = self.onMapRClick
-        self.ovv_map.mapGeojsonCallback = self.onMapGeojson
 
     # ---------------------------<UI Events>---------------------------
     def _uav_to_widgets(self) -> None:
@@ -2113,15 +2107,19 @@ class App(QMainWindow):
                 UAVs[uav_index]["streaming_address"],
             )
 
+            stream_fps = self.uav_stream_captures[uav_index - 1].get(cv2.CAP_PROP_FPS)
+
             self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
                 filename=DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
-                fourcc=cv2.VideoWriter_fourcc(*"MJPG"),
-                fps=30.0,
+                fourcc=FOURCC,
+                fps=int(stream_fps),
                 frameSize=DEFAULT_STREAM_SIZE,
             )
 
             is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
-            logger.log(f"UAV-{uav_index} stream opened: {is_opened}", level="info")
+            logger.log(
+                f"UAV-{uav_index} stream opened: {is_opened} | FPS: {stream_fps}", level="info"
+            )
             #
             if mode == "track":
                 track_history = defaultdict(lambda: [])
@@ -2147,7 +2145,13 @@ class App(QMainWindow):
                         uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN
                     )
 
-                    self.uav_stream_writers[uav_index - 1].write(frame)
+                    self.uav_stream_writers[uav_index - 1].write(
+                        cv2.resize(
+                            src=frame,
+                            dsize=DEFAULT_STREAM_SIZE,
+                            interpolation=cv2.INTER_LINEAR,
+                        )
+                    )
                 else:
                     self.uav_stream_captures[uav_index - 1].set(cv2.CAP_PROP_POS_FRAMES, 0)
 

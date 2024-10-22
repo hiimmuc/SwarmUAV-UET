@@ -177,6 +177,6 @@ dependencies/*.AppImage
 build/*.
 cache/*.
 assets/videos/*
-dependencies/PX4-Autopilot/
+dependencies/
 src/logs/videos/*
 src/logs/gps/*.txt

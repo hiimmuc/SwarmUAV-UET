@@ -1,6 +1,8 @@
+import os
 from datetime import datetime
 from pathlib import Path
 
+import cv2
 import torch
 
 SRC_DIR = Path(__file__).parent
@@ -66,8 +68,9 @@ screen_sizes = {
     "ovv_screen": (320, 180),
 }
 
-DEFAULT_STREAM_SIZE = (480, 270)
+DEFAULT_STREAM_SIZE = (320, 180)
 DEFAULT_STREAM_SCREEN = "general_screen"
+FOURCC = cv2.VideoWriter_fourcc(*"XVID")
 
 # Path settings
 """
@@ -82,6 +85,8 @@ DEFAULT_STREAM_VIDEO_PATHS = [
 DEFAULT_STREAM_VIDEO_LOG_PATHS = [
     f"{SRC_DIR}/logs/videos/stream_log_uav_{i}_{NOW}.avi" for i in range(1, MAX_UAV_COUNT + 1)
 ]
+
+os.makedirs(f"{SRC_DIR}/logs/videos", exist_ok=True)
 
 INIT_LON = 8.545594
 INIT_LAT = 47.397823
@@ -115,7 +120,7 @@ pause_img_paths["all"] = f"{ROOT_DIR}/assets/pictures/pause_screen.jpg"
 
 map_html_path = f"file://{ROOT_DIR}/assets/map.html"
 
-model_path = f"{SRC_DIR}/model/checkpoints/YOLO/yolo11x.pt"
+model_path = f"{SRC_DIR}/model/checkpoints/YOLO/yolo11n.pt"
 gps_log_paths = [
     f"{SRC_DIR}/logs/gps/gps_log_uav_{i}_{NOW}.txt" for i in range(1, MAX_UAV_COUNT + 1)
 ]

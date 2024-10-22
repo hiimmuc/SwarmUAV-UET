@@ -275,6 +275,6 @@ def draw_tracking_frame(frame, results, history):
             # Draw the tracking lines
             points = np.hstack(track).astype(np.int32).reshape((-1, 1, 2))
             cv2.polylines(
-                annotated_frame, [points], isClosed=False, color=(230, 230, 230), thickness=10
+                annotated_frame, [points], isClosed=False, color=(0, 225, 0), thickness=5
             )
     return annotated_frame
