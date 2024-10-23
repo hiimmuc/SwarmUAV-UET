@@ -1,5 +1,4 @@
 import asyncio
-import copy
 import os
 import sys
 from collections import defaultdict
@@ -1687,6 +1686,7 @@ class App(QMainWindow):
         fn_goto = UAVs[uav_index]["system"].action.goto_location(latitude, longitude, height, 0)
         await asyncio.gather(*[fn_goto, self.uav_fn_get_status(uav_index)])
 
+    # ! Not used functions
     async def uav_fn_goTo_UAVs(self, uav_indexes, *args) -> None:
         """NOTE: Not used
         Asynchronously directs a UAV to a specified location based on coordinates read from a file.
@@ -2036,6 +2036,7 @@ class App(QMainWindow):
             pass
 
     # //-/////////////////////////////////////////////////////////////
+    # ! Not used functions
     async def compareDistance(self, num_UAVs, *args) -> None:
         """NOTE: This function is not used now, modify later if needed.
         Compares the distance of multiple UAVs to a detected location and directs the closest ones to move.
@@ -2123,10 +2124,12 @@ class App(QMainWindow):
             #
             if mode == "track":
                 track_history = defaultdict(lambda: [])
+                track_frame_limit = int(stream_fps) * 3
             else:
                 track_history = None
+                track_frame_limit = 0
 
-            # start the stream on the UAV screen
+            # * start the stream on the UAV screen
             while is_opened:
                 ret, frame = self.uav_stream_captures[uav_index - 1].read()
 
@@ -2136,10 +2139,23 @@ class App(QMainWindow):
                             results = self.model(frame, device=DEVICE, stream=True, verbose=False)
                             frame = draw_detected_frame(frame, results)
                         elif mode == "track":
-                            results = self.model.track(
-                                frame, stream=True, persist=True, verbose=False
+                            results = self.model.track(frame, persist=True, verbose=False)
+                            frame, track_ids = draw_tracking_frame(
+                                frame, results, track_history, track_frame_limit
                             )
-                            frame = draw_tracking_frame(frame, results, track_history)
+
+                        if track_history != None:
+                            # ? check if the track history is full
+                            # ? if full, pause the mission and do the rescue mission
+                            # TODO: workflow will be:
+                            # - check if the cls is human
+                            # - check if the track history is full
+                            # - if full, pause the mission and do the rescue mission
+                            # ? if have many human so what id should be used?
+                            for id in track_ids:
+                                if len(track_history[id]) == 90:
+                                    print(f"Locked on target {id}")
+                                    UAVs[uav_index]["detection_enable"] = False
 
                     self.update_uav_screen_view(
                         uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN

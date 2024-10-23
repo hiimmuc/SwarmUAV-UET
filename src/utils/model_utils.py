@@ -3,6 +3,7 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+from ultralytics import YOLO
 
 classNames = [
     "person",
@@ -259,22 +260,44 @@ def draw_detected_frame(frame, results):
     return frame
 
 
-def draw_tracking_frame(frame, results, history):
-    for r in results:
-        boxes = r.boxes.xywh.cpu()
-        track_ids = r.boxes.id.int().cpu().tolist()
-        annotated_frame = r.plot()
+def draw_tracking_frame(frame, results, history, track_frame_limit=90):
+    # boxes attributes: cls, conf, data, id, is_track, orig_shape, xyxy, xywh
+    boxes = results[0].boxes.xywh.cpu()
+    track_ids = results[0].boxes.id.int().cpu().tolist()
+    annotated_frame = results[0].plot()
 
-        for box, track_id in zip(boxes, track_ids):
-            x, y, w, h = box
-            track = history[track_id]
-            track.append((float(x), float(y)))  # x, y center point
-            if len(track) > 30:  # retain 90 tracks for 90 frames
-                track.pop(0)
+    for box, track_id in zip(boxes, track_ids):
+        x, y, w, h = box
+        track = history[track_id]
+        track.append((float(x), float(y)))  # x, y center point
+        if len(track) > track_frame_limit:  # retain 90 tracks for 90 frames
+            track.pop(0)
 
-            # Draw the tracking lines
-            points = np.hstack(track).astype(np.int32).reshape((-1, 1, 2))
-            cv2.polylines(
-                annotated_frame, [points], isClosed=False, color=(0, 225, 0), thickness=5
-            )
-    return annotated_frame
+        # Draw the tracking lines
+        points = np.hstack(track).astype(np.int32).reshape((-1, 1, 2))
+        cv2.polylines(annotated_frame, [points], isClosed=False, color=(225, 225, 0), thickness=3)
+
+    return annotated_frame, track_ids
+
+
+if __name__ == "__main__":
+    from collections import defaultdict
+
+    import torch
+
+    model_path = "/media/phgnam-d/920C22060C21E5C7/Personal/Workspace/UAV/workspace/src/model/checkpoints/YOLO/yolo11n.pt"
+    DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
+
+    model = YOLO(model_path).to(DEVICE)
+
+    cap = cv2.VideoCapture(
+        "/media/phgnam-d/920C22060C21E5C7/Personal/Workspace/UAV/workspace/assets/videos/cam1.mp4"
+    )
+    track_history = defaultdict(lambda: [])
+
+    while True:
+        ret, frame = cap.read()
+        results = model.track(frame, persist=True, verbose=False)
+        print(len(results))
+        # for r in results:
+        #     print(r.boxes)
