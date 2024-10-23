@@ -2113,7 +2113,7 @@ class App(QMainWindow):
             self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
                 filename=DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
                 fourcc=FOURCC,
-                fps=int(stream_fps),
+                fps=int(stream_fps / 2),
                 frameSize=DEFAULT_STREAM_SIZE,
             )
 
