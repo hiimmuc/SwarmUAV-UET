@@ -648,7 +648,7 @@ class App(QMainWindow):
                     target=self.stream_on_uav_screen,
                     args=(
                         uav_index,
-                        "track",
+                        "detect",
                     ),
                     name=f"UAV-{uav_index}-thread",
                     daemon=True,
@@ -1533,7 +1533,10 @@ class App(QMainWindow):
                     logger.log(f"UAV-{uav_index} streaming thread started!", level="info")
                 else:
                     UAVs[uav_index]["uav_information"]["streaming_status"] = False
-                    logger.log(f"UAV-{uav_index} streaming thread stopped!", level="info")
+                    logger.log(
+                        f"UAV-{uav_index} streaming thread stopped! \n ---- Saved recordings into {SRC_DIR}/logs/videos",
+                        level="info",
+                    )
             else:
                 for uav_index in range(1, MAX_UAV_COUNT + 1):
                     self.uav_fn_toggle_camera(uav_index)
@@ -2113,7 +2116,7 @@ class App(QMainWindow):
             self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
                 filename=DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
                 fourcc=FOURCC,
-                fps=int(stream_fps / 2),
+                fps=int(stream_fps),
                 frameSize=DEFAULT_STREAM_SIZE,
             )
 
@@ -2139,7 +2142,9 @@ class App(QMainWindow):
                             results = self.model(frame, device=DEVICE, stream=True, verbose=False)
                             frame = draw_detected_frame(frame, results)
                         elif mode == "track":
-                            results = self.model.track(frame, persist=True, verbose=False)
+                            results = self.model.track(
+                                frame, device=DEVICE, persist=True, verbose=False
+                            )
                             frame, track_ids = draw_tracking_frame(
                                 frame, results, track_history, track_frame_limit
                             )
