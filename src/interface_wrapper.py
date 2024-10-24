@@ -648,7 +648,7 @@ class App(QMainWindow):
                     target=self.stream_on_uav_screen,
                     args=(
                         uav_index,
-                        "track",
+                        "detect",
                     ),
                     name=f"UAV-{uav_index}-thread",
                     daemon=True,
@@ -1533,7 +1533,10 @@ class App(QMainWindow):
                     logger.log(f"UAV-{uav_index} streaming thread started!", level="info")
                 else:
                     UAVs[uav_index]["uav_information"]["streaming_status"] = False
-                    logger.log(f"UAV-{uav_index} streaming thread stopped!", level="info")
+                    logger.log(
+                        f"UAV-{uav_index} streaming thread stopped! \n ---- Saved recordings into {SRC_DIR}/logs/videos",
+                        level="info",
+                    )
             else:
                 for uav_index in range(1, MAX_UAV_COUNT + 1):
                     self.uav_fn_toggle_camera(uav_index)
