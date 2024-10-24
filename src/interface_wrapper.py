@@ -14,10 +14,10 @@ from mavsdk.mission import MissionItem, MissionPlan
 # PyQt5
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
-from ultralytics import YOLO
 
 # user-defined modules
 from config import *
+from predictor import DEVICE, MODELS
 from UI.interface_uav import *
 from utils.drone_utils import *
 from utils.logger import *
@@ -251,8 +251,8 @@ class App(QMainWindow):
         self.init_application()
         logger.log("Application initialized successfully", level="info")
 
-        self.model = YOLO(model_path).to(DEVICE)
-        logger.log(f"Model loaded successfully on {DEVICE}", level="info")
+        self.models = MODELS
+        logger.log(f"Models loaded successfully on {DEVICE}", level="info")
 
         # ---------------------------------------------------------
 
@@ -2109,11 +2109,12 @@ class App(QMainWindow):
             )
 
             stream_fps = self.uav_stream_captures[uav_index - 1].get(cv2.CAP_PROP_FPS)
+            # stream_fps = 29
 
             self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
                 filename=DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
                 fourcc=FOURCC,
-                fps=int(stream_fps / 2),
+                fps=int(stream_fps),
                 frameSize=DEFAULT_STREAM_SIZE,
             )
 
@@ -2123,10 +2124,11 @@ class App(QMainWindow):
             )
             #
             if mode == "track":
-                track_history = defaultdict(lambda: [])
+                track_histories = dict()
+                track_histories[uav_index] = defaultdict(lambda: [])
                 track_frame_limit = int(stream_fps) * 3
             else:
-                track_history = None
+                track_histories = None
                 track_frame_limit = 0
 
             # * start the stream on the UAV screen
@@ -2136,15 +2138,19 @@ class App(QMainWindow):
                 if ret:
                     if UAVs[uav_index]["detection_enable"]:
                         if mode == "detect":
-                            results = self.model(frame, device=DEVICE, stream=True, verbose=False)
+                            results = self.models[uav_index](
+                                frame, device=DEVICE, stream=True, verbose=False
+                            )
                             frame = draw_detected_frame(frame, results)
                         elif mode == "track":
-                            results = self.model.track(frame, persist=True, verbose=False)
+                            results = self.models[uav_index].track(
+                                frame, persist=True, verbose=False
+                            )
                             frame, track_ids = draw_tracking_frame(
-                                frame, results, track_history, track_frame_limit
+                                frame, results, track_histories[uav_index], track_frame_limit
                             )
 
-                        if track_history != None:
+                        if track_histories != None:
                             # ? check if the track history is full
                             # ? if full, pause the mission and do the rescue mission
                             # TODO: workflow will be:
@@ -2153,7 +2159,7 @@ class App(QMainWindow):
                             # - if full, pause the mission and do the rescue mission
                             # ? if have many human so what id should be used?
                             for id in track_ids:
-                                if len(track_history[id]) == 90:
+                                if len(track_histories[uav_index][id]) == 90:
                                     print(f"Locked on target {id}")
                                     UAVs[uav_index]["detection_enable"] = False
 
