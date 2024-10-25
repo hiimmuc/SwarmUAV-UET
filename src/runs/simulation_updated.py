@@ -9,6 +9,7 @@ DEFAULT_BIND_PORT = 14541
 commands = []
 
 # run gazebo
+# cspell: ignore mavsdk mavlink routerd sitl lunp
 
 
 def run_commands():

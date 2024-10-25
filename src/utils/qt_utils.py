@@ -1,7 +1,5 @@
+# cSpell:ignore imutils pyqt Pixmap ndarray,
 import math
-import os
-import sys
-from pathlib import Path
 
 import cv2
 import imutils
@@ -127,18 +125,19 @@ def refine_table(table) -> None:
 
 
 def calculate_distance(lat1, lon1, lat2, lon2) -> float:
-    R = 6378000  # bán kính Trái Đất (đơn vị: m)
-    dlat = math.radians(lat2 - lat1)
-    dlon = math.radians(lon2 - lon1)
-    a = math.sin(dlat / 2) * math.sin(dlat / 2) + math.cos(math.radians(lat1)) * math.cos(
+    R = 6378000  # radius of Earth in meters
+    d_lat = math.radians(lat2 - lat1)
+    d_lon = math.radians(lon2 - lon1)
+    a = math.sin(d_lat / 2) * math.sin(d_lat / 2) + math.cos(math.radians(lat1)) * math.cos(
         math.radians(lat2)
-    ) * math.sin(dlon / 2) * math.sin(dlon / 2)
+    ) * math.sin(d_lon / 2) * math.sin(d_lon / 2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = R * c
     return distance
 
 
-class QtThread(QThread):  # NOTE: not used
+# ! Not used
+class QtThread(QThread):  # NOTE: slower than using Thread
     change_image_signal = pyqtSignal(np.ndarray, int)
 
     def __init__(self, cap, uav_index):

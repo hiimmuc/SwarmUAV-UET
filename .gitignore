@@ -178,6 +178,7 @@ dependencies/*.AppImage
 build/*.
 cache/*.
 assets/videos/*
+assets/streams/*
 dependencies/
 src/logs/videos/*
 src/logs/gps/*.txt

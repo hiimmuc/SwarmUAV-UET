@@ -4,6 +4,8 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+# cspell:ignore cv2, ultralytics, YOLO, bgr, xyxy, xywh, cls, conf, id, is_track, orig_shape aeroplane, tvmonitor, pottedplant, diningtable, ndarray polylines phgnam ultralytics
+
 classNames = [
     "person",
     "bicycle",

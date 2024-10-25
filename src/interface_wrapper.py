@@ -5,6 +5,7 @@ from collections import defaultdict
 from threading import Thread
 
 import cv2
+import matplotlib.pyplot as plt
 from asyncqt import QEventLoop
 
 # mavsdk
@@ -26,6 +27,8 @@ from utils.mavsdk_server_utils import *
 from utils.model_utils import *
 from utils.qt_utils import *
 from utils.serial_utils import *
+
+# cspell: ignore UAVs mavsdk asyncqt pixmap rtcm imwrite dsize
 
 stackedWidget_indexes = {"main page": 0, "map page": 1}
 
@@ -62,6 +65,7 @@ try:
             "connection_allow": connection_allows[uav_index - 1],
             "streaming_enable": streaming_enables[uav_index - 1],
             "detection_enable": detection_enables[uav_index - 1],
+            "recording_enable": recording_enables[uav_index - 1],
         }
         for uav_index in range(1, MAX_UAV_COUNT + 1)
     }
@@ -648,7 +652,7 @@ class App(QMainWindow):
                     target=self.stream_on_uav_screen,
                     args=(
                         uav_index,
-                        "detect",
+                        "track",
                     ),
                     name=f"UAV-{uav_index}-thread",
                     daemon=True,
@@ -805,7 +809,7 @@ class App(QMainWindow):
                     nSwarms=nSwarms,
                     headers=headers,
                 )
-                logger.log("Updated UAVs confirguration", level="info")
+                logger.log("Updated UAVs configuration", level="info")
                 # re-create streaming threads
                 for uav_index in range(1, MAX_UAV_COUNT + 1):
                     UAVs[uav_index]["uav_information"][
@@ -2113,13 +2117,13 @@ class App(QMainWindow):
 
             stream_fps = self.uav_stream_captures[uav_index - 1].get(cv2.CAP_PROP_FPS)
             # stream_fps = 29
-
-            self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
-                filename=DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
-                fourcc=FOURCC,
-                fps=int(stream_fps),
-                frameSize=DEFAULT_STREAM_SIZE,
-            )
+            if UAVs[uav_index]["recording_enable"]:
+                self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
+                    filename=DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
+                    fourcc=FOURCC,
+                    fps=int(stream_fps),
+                    frameSize=DEFAULT_STREAM_SIZE,
+                )
 
             is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
             logger.log(
@@ -2164,19 +2168,21 @@ class App(QMainWindow):
                             for id in track_ids:
                                 if len(track_histories[uav_index][id]) == 90:
                                     print(f"Locked on target {id}")
+                                    # cv2.imwrite(f"locked_target_{id}.png", frame)
+                                    #
                                     UAVs[uav_index]["detection_enable"] = False
 
                     self.update_uav_screen_view(
                         uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN
                     )
-
-                    self.uav_stream_writers[uav_index - 1].write(
-                        cv2.resize(
-                            src=frame,
-                            dsize=DEFAULT_STREAM_SIZE,
-                            interpolation=cv2.INTER_LINEAR,
+                    if UAVs[uav_index]["recording_enable"]:
+                        self.uav_stream_writers[uav_index - 1].write(
+                            cv2.resize(
+                                src=frame,
+                                dsize=DEFAULT_STREAM_SIZE,
+                                interpolation=cv2.INTER_LINEAR,
+                            )
                         )
-                    )
                 else:
                     self.uav_stream_captures[uav_index - 1].set(cv2.CAP_PROP_POS_FRAMES, 0)
 
@@ -2184,7 +2190,8 @@ class App(QMainWindow):
                     break
 
             self.uav_stream_captures[uav_index - 1].release()
-            self.uav_stream_writers[uav_index - 1].release()
+            if UAVs[uav_index]["recording_enable"]:
+                self.uav_stream_writers[uav_index - 1].release()
 
             # reset the screen to the pause screen
             pause_frame = cv2.imread(pause_img_paths[DEFAULT_STREAM_SCREEN])
@@ -2242,6 +2249,7 @@ class App(QMainWindow):
 
     def onMapMoved(self, latitude, longitude) -> None:
         print("Moved to ", latitude, longitude)
+        self.ui.Overview_map_view.setHtml(load_map([latitude, longitude]))
 
     def onMapRClick(self, latitude, longitude) -> None:
         print("RClick on ", latitude, longitude)

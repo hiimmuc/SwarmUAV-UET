@@ -80,12 +80,30 @@ function initialize() {
     });
     
     map.addControl(drawControl);
+
+    // Function to auto-save GeoJSON as a file
+    function autoSaveGeoJSON(data) {
+        var convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data));
+        
+        // Create a hidden link to trigger download
+        var a = document.createElement('a');
+        a.href = 'data:' + convertedData;
+        a.download = 'my_data.geojson';
+        a.style.display = 'none';
+        
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+
     map.on(L.Draw.Event.CREATED, function (e) {
         var type = e.layerType,
             layer = e.layer;
         // Add the drawn layer to the map
         drawnItems.addLayer(layer);
         // Get the GeoJSON of the layer (polygon or marker)
+        autoSaveGeoJSON(drawnItems.toGeoJSON());
         var geojsonData = JSON.stringify(layer.toGeoJSON());
         // Set the GeoJSON data to the hidden input field
         $('#polygon').val(geojsonData);
@@ -202,3 +220,4 @@ function posMarkerJs(key) {
     marker = markers[key];
     return [marker.getLatLng().lat, marker.getLatLng().lng];
 }
+

@@ -4,6 +4,7 @@ from pathlib import Path
 
 import cv2
 
+# cSpell:ignore baudrate, uav, rtl, opencv, cv2, fourcc, rtsp, uet, YOLO, nosignal, XVID
 SRC_DIR = Path(__file__).parent
 ROOT_DIR = SRC_DIR.parent
 
@@ -34,21 +35,34 @@ FREE_UAV_INDEX = (
     - DEFAULT_SERVER_PORT: 5760
 """
 
-DEFAULT_PROTOCOL = "udp"
-DEFAULT_SERVER_HOST = ""
-DEFAULT_SERVER_PORT = 14541
-DEFAULT_CLIENT_PORT = 50060
 
 if MODE == "simulation":
+    DEFAULT_PROTOCOL = "udp"
+    DEFAULT_SERVER_HOST = ""
+    DEFAULT_SERVER_PORT = 14541
+    DEFAULT_CLIENT_PORT = 50060
+    #
     PROTOCOLS = [DEFAULT_PROTOCOL] * MAX_UAV_COUNT
     SERVER_HOSTS = [DEFAULT_SERVER_HOST] * MAX_UAV_COUNT
     SERVER_PORTS = [DEFAULT_SERVER_PORT + i for i in range(MAX_UAV_COUNT)]
     CLIENT_PORTS = [DEFAULT_CLIENT_PORT + i for i in range(MAX_UAV_COUNT)]
 else:
-    PROTOCOLS = ["serial"] + [DEFAULT_PROTOCOL] * (MAX_UAV_COUNT - 1)
-    SERVER_HOSTS = ["/dev/ttyACM0"] + [DEFAULT_SERVER_HOST] * (MAX_UAV_COUNT - 1)
-    SERVER_PORTS = [57600] + [DEFAULT_SERVER_PORT + i for i in range(1, MAX_UAV_COUNT)]
-    CLIENT_PORTS = [50060] + [DEFAULT_CLIENT_PORT + i for i in range(1, MAX_UAV_COUNT)]
+    DEFAULT_PROTOCOL = "serial"
+    DEFAULT_SERVER_HOST = "/dev/tty"
+    DEFAULT_SERVER_PORT = 57600
+    DEFAULT_CLIENT_PORT = 50060
+    #
+    PROTOCOLS = [DEFAULT_PROTOCOL] * MAX_UAV_COUNT
+    SERVER_HOSTS = [
+        "/dev/ttyACM0",
+        "/dev/ttyACM1",
+        "/dev/ttyACM2",
+        "/dev/ttyACM3",
+        "/dev/ttyACM4",
+        "/dev/ttyACM5",
+    ]
+    SERVER_PORTS = [57600 for _ in range(MAX_UAV_COUNT)]  # same baudrate for all UAVs
+    CLIENT_PORTS = [DEFAULT_CLIENT_PORT + i for i in range(MAX_UAV_COUNT)]
 
 SYSTEMS_ADDRESSES = [
     f"{proto}://{server_host}:{server_port}"
@@ -58,6 +72,7 @@ SYSTEMS_ADDRESSES = [
 connection_allows = [True, True, False, False, False, True]
 streaming_enables = [True, False, False, False, False, False]
 detection_enables = [True, False, False, False, False, False]
+recording_enables = [True, False, False, False, False, False]
 
 screen_sizes = {
     "general_screen": (592, 333),

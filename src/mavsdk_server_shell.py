@@ -10,6 +10,8 @@ from mavsdk import System
 
 from config import *
 
+# cspell: ignore mavsdk baudrate
+
 
 async def run(system_address, port, id, health_check=False):
     drone = System(port=port)

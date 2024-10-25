@@ -146,7 +146,7 @@ class MapEngine(QWebEngineView):
     #
 
 
-def load_map() -> None:
+def load_map(location=[21.064862, 105.792958]) -> None:
     titles = TileLayer(
         tiles="http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
         attr="google",
@@ -156,12 +156,12 @@ def load_map() -> None:
     )
     m = folium.Map(
         tiles=titles,
-        location=[21.064862, 105.792958],
+        location=location,
         zoom_start=16,
     )
     Draw(
-        export=False,
-        filename="data.geojson",
+        export=True,
+        filename="./logs/data.geojson",
         position="topright",
         draw_options={
             "polygon": {
