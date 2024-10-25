@@ -82,18 +82,23 @@ function initialize() {
     map.addControl(drawControl);
 
     // Function to auto-save GeoJSON as a file
-    function autoSaveGeoJSON(data) {
-        var convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data));
-        
-        // Create a hidden link to trigger download
-        var a = document.createElement('a');
-        a.href = 'data:' + convertedData;
-        a.download = 'my_data.geojson';
-        a.style.display = 'none';
-        
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+    async function autoSaveGeoJSON(data) {
+        const geojsonData = JSON.stringify(data);
+        const handle = JSON.parse(localStorage.getItem('geojsonFileHandle'));
+
+        if (!handle) {
+            console.error('File handle not found. Please obtain the file handle first.');
+            return;
+        }
+
+        // Create a writable stream
+        const writableStream = await handle.createWritable();
+
+        // Write the GeoJSON data to the file
+        await writableStream.write(geojsonData);
+
+        // Close the file and write the contents to disk
+        await writableStream.close();
     }
 
 

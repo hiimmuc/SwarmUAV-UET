@@ -1204,7 +1204,10 @@ class App(QMainWindow):
                         await UAVs[uav_index]["system"].action.set_return_to_launch_altitude(
                             UAVs[uav_index]["uav_information"]["init_height"]
                         )
+                        await UAVs[uav_index]["system"].action.set_current_speed(2.0)
+
                         fn_rtl = UAVs[uav_index]["system"].action.return_to_launch()
+
                         await asyncio.gather(*[fn_rtl, self.uav_fn_get_status(uav_index)])
 
                     UAVs[uav_index]["uav_information"]["mode_status"] = "RTL"
