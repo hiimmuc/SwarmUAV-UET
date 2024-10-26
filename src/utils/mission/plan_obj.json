@@ -1,0 +1,15 @@
+{
+    "fileType": "Plan",
+    "geoFence": {
+        "circles": [],
+        "polygons": [],
+        "version": 2
+    },
+    "groundStation": "QGroundControl",
+    "mission": {},
+    "rallyPoints": {
+        "points": [],
+        "version": 2
+    },
+    "version": 1
+}

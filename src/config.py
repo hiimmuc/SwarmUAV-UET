@@ -49,7 +49,7 @@ else:
     DEFAULT_SERVER_HOST = "/dev/tty"
     DEFAULT_SERVER_PORT = 57600
     DEFAULT_CLIENT_PORT = 50060
-    #
+    # NOTE change the following values to match the actual connection
     PROTOCOLS = [DEFAULT_PROTOCOL] * MAX_UAV_COUNT
     SERVER_HOSTS = [
         "/dev/ttyACM0",

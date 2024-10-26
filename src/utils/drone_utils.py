@@ -1,4 +1,5 @@
 import asyncio
+import json
 import math
 
 from tqdm import tqdm
@@ -286,10 +287,26 @@ async def swarm_algorithm(drones, n_swarms, txt_file_path):
 
 
 # ? In development...
-def convert_pointsFile_to_missionPlan(pointsFile):
+def convert_pointsFile_to_missionPlan(pointsFile, default_height=10):
     # convert ./src/logs/points/points1.txt to ./src/data/mission plan
+    # item template from data/mission/single_item_obj.json
+
+    item_template = json.load(open("./mission/single_item_obj.json", "r"))
+    mission_template = json.load(open("./mission/mission_template.json", "r"))
+    plan_template = json.load(open("./mission/plan_template.json", "r"))
 
     with open(pointsFile, "r") as f:
-        points = f.readlines()
+        for line in f:
+            lat, lon = map(float, line.strip().split(", "))
+            # https://mavlink.io/en/messages/common.html#mav_commands
 
+            item_template["params"][4] = lat
+            item_template["params"][5] = lon
+            item_template["params"][6] = default_height
+            mission_template["items"].append(item_template)
+            
+    plan_template["mission"] = mission_template
+    
+    with open("./mission/mission_plan.json", "w") as f:
+        json.dump(plan_template, f, indent=4)
     pass

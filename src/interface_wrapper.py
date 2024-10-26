@@ -957,6 +957,13 @@ class App(Map, Interface):
                 mission_items = []
                 # Assign hight for mission
                 height = UAVs[uav_index]["uav_information"]["init_height"]
+
+                # ? option 1: using mission raw
+                # convert_pointsFile_to_missionPlan(f"{SRC_DIR}/logs/points/points{uav_index}.txt", height)
+                # out = await drone.mission_raw.import_qgroundcontrol_mission(f"{SRC_DIR}/data/mission.plan")
+                # await drone.mission_raw.upload_mission(out.mission_items)
+
+                # ? this is option 2
                 # read mission points from file
                 with open(f"{SRC_DIR}/logs/points/points{uav_index}.txt", "r") as file:
                     for line in file:
@@ -1068,6 +1075,13 @@ class App(Map, Interface):
                 mission_items = []
                 # Assign hight for mission
                 height = UAVs[uav_index]["uav_information"]["init_height"]
+
+                # ? option 1: using mission raw
+                # convert_pointsFile_to_missionPlan(f"{SRC_DIR}/logs/points/points{uav_index}.txt", height)
+                # out = await drone.mission_raw.import_qgroundcontrol_mission(f"{SRC_DIR}/data/mission.plan")
+                # await drone.mission_raw.upload_mission(out.mission_items)
+
+                # ? this is option 2
                 # read mission points from file
                 with open(fpath, "r") as file:
                     for line in file:

@@ -1,0 +1,19 @@
+{
+    "AMSLAltAboveTerrain": null,
+    "Altitude": 50,
+    "AltitudeMode": 0,
+    "autoContinue": true,
+    "command": 22,
+    "doJumpId": 1,
+    "frame": 3,
+    "params": [
+        15,
+        0,
+        0,
+        null,
+        47.3985099,
+        8.5451002,
+        50
+    ],
+    "type": "SimpleItem"
+}
