@@ -3,7 +3,6 @@ import sys
 
 from PyQt5 import QtWidgets
 
-from config import *
 from interface_wrapper import *
 
 
@@ -13,7 +12,7 @@ class Runner:
         self.app.setStyle("Oxygen")
         self.loop = QEventLoop(self.app)
         asyncio.set_event_loop(self.loop)
-        self.window = App(model_path=model_path)
+        self.window = App()
 
     def run(self):
         self.window.show()

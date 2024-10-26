@@ -2,8 +2,6 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-import cv2
-
 # cSpell:ignore baudrate, uav, rtl, opencv, cv2, fourcc, rtsp, uet, YOLO, nosignal, XVID
 SRC_DIR = Path(__file__).parent
 ROOT_DIR = SRC_DIR.parent
@@ -80,9 +78,10 @@ screen_sizes = {
     "ovv_screen": (320, 180),
 }
 
+# recording settings
 DEFAULT_STREAM_SIZE = (320, 180)
 DEFAULT_STREAM_SCREEN = "general_screen"
-FOURCC = cv2.VideoWriter_fourcc(*"XVID")
+FOURCC = "XVID"
 
 # Path settings
 """
@@ -134,7 +133,18 @@ map_html_path = f"file://{ROOT_DIR}/assets/map.html"
 
 model_path = f"{SRC_DIR}/model/checkpoints/YOLO/yolo11n.pt"
 
-gps_log_paths = [
-    f"{SRC_DIR}/logs/gps/gps_log_uav_{i}_{NOW}.txt" for i in range(1, MAX_UAV_COUNT + 1)
-]
 plans_log_dir = f"{SRC_DIR}/logs/points/"
+
+# parameters
+parameter_list = [
+    "MIS_TAKEOFF_ALT",
+    "COM_DISARM_LAND",
+    "MPC_TKO_SPEED",
+    "MPC_LAND_SPEED",
+    "MPC_XY_P",
+    "MPC_XY_VEL_P_ACC",
+    "MPC_XY_VEL_D_ACC",
+    "MC_PITCH_P",
+    "MC_ROLL_P",
+    "MC_YAW_P",
+]
