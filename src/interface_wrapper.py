@@ -26,7 +26,7 @@ from utils.model_utils import *
 from utils.qt_utils import *
 from utils.serial_utils import *
 
-# cspell: ignore UAVs mavsdk asyncqt pixmap rtcm imwrite dsize fourcc imread
+# cspell: ignore UAVs mavsdk asyncqt offboard pixmap qgroundcontrol rtcm imwrite dsize fourcc imread
 
 __current_path__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -1170,6 +1170,19 @@ class App(Map, Interface):
             None
         """
         global UAVs
+
+        group = 0
+        controls = [
+            0.0,
+            0.0,
+            0.5,
+            -0.5,
+            0.3,
+            -0.3,
+            0.0,
+            0.0,
+        ]
+
         if uav_index in range(1, MAX_UAV_COUNT + 1):
             if not (
                 UAVs[uav_index]["uav_information"]["connection_status"]
@@ -1180,10 +1193,12 @@ class App(Map, Interface):
             self.update_terminal(f"[INFO] Sent OPEN/CLOSE command to UAV {uav_index}")
 
             if UAVs[uav_index]["uav_information"]["actuator_status"]:
-                await UAVs[uav_index]["system"].action.set_actuator(uav_index, 0)
+                await uav_fn_offboard_set_actuator(UAVs[uav_index], group, controls)
+                group = 0
                 UAVs[uav_index]["uav_information"]["actuator_status"] = False
             else:
-                await UAVs[uav_index]["system"].action.set_actuator(uav_index, 1)
+                await uav_fn_offboard_set_actuator(UAVs[uav_index], group, controls)
+                group = 1
                 UAVs[uav_index]["uav_information"]["actuator_status"] = True
 
             UAVs[uav_index]["information_view"].setText(

@@ -2,9 +2,15 @@ import asyncio
 import json
 import math
 
+from mavsdk.offboard import (
+    ActuatorControl,
+    ActuatorControlGroup,
+    Offboard,
+    OffboardError,
+)
 from tqdm import tqdm
 
-# cSpell:ignore asyncio, asyncgen tqdm
+# cSpell:ignore asyncio, asyncgen tqdm offboard mavsdk
 
 
 def calculate_distance(lat1, lon1, lat2, lon2) -> float:
@@ -224,6 +230,55 @@ async def uav_fn_goto_distance(drone, distance, direction):
     return
 
 
+async def uav_fn_offboard_set_actuator(drone, group, controls):
+    """Set actuator control with offboard mode."""
+    nan = float("nan")
+    offsets1 = [nan] * 8  # 8 actuator control channels
+    offsets2 = [nan] * 8  # 8 actuator control channels
+
+    await drone["system"].action.arm()
+
+    await drone["system"].offboard.set_actuator_control(
+        ActuatorControl([ActuatorControlGroup(offsets1), ActuatorControlGroup(offsets2)])
+    )
+
+    print("-- Starting offboard")
+    try:
+        await drone["system"].offboard.start()
+    except OffboardError as error:
+        print(
+            f"Starting offboard mode failed with error code: \
+            {error._result.result}"
+        )
+        print("-- Disarming")
+        await drone["system"].action.disarm()
+        return
+
+    if group == 0:
+        await drone["system"].offboard.set_actuator_control(
+            ActuatorControl([ActuatorControlGroup(controls), ActuatorControlGroup(offsets2)])
+        )
+    elif group == 1:
+        await drone["system"].offboard.set_actuator_control(
+            ActuatorControl([ActuatorControlGroup(offsets1), ActuatorControlGroup(controls)])
+        )
+
+    await asyncio.sleep(2)
+
+    print("-- Stopping offboard")
+    try:
+        await drone["system"].offboard.stop()
+    except OffboardError as error:
+        print(
+            f"Stopping offboard mode failed with error code: \
+            {error._result.result}"
+        )
+    pass
+
+
+# -----------------------------------------------------
+
+
 # ! Not used
 async def uav_fn_swarm_goto(drones, txt_file_path):
     """NOTE: Not used
@@ -304,9 +359,9 @@ def convert_pointsFile_to_missionPlan(pointsFile, default_height=10):
             item_template["params"][5] = lon
             item_template["params"][6] = default_height
             mission_template["items"].append(item_template)
-            
+
     plan_template["mission"] = mission_template
-    
+
     with open("./mission/mission_plan.json", "w") as f:
         json.dump(plan_template, f, indent=4)
     pass
