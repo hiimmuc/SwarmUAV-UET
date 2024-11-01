@@ -1193,12 +1193,16 @@ class App(Map, Interface):
             self.update_terminal(f"[INFO] Sent OPEN/CLOSE command to UAV {uav_index}")
 
             if UAVs[uav_index]["uav_information"]["actuator_status"]:
+                # ====== replace with your function
                 await uav_fn_offboard_set_actuator(UAVs[uav_index], group, controls)
                 group = 0
+                # ======
                 UAVs[uav_index]["uav_information"]["actuator_status"] = False
             else:
+                # ====== replace with your function
                 await uav_fn_offboard_set_actuator(UAVs[uav_index], group, controls)
                 group = 1
+                # ======
                 UAVs[uav_index]["uav_information"]["actuator_status"] = True
 
             UAVs[uav_index]["information_view"].setText(
@@ -1564,12 +1568,11 @@ class App(Map, Interface):
             ):
                 return
 
+            # NOTE refine with this https://stackoverflow.com/questions/54801053/opencv-code-to-reconnect-a-disconnected-camera-feed-is-working-fine-but-in-the
+
             self.uav_stream_captures[uav_index - 1] = cv2.VideoCapture(
                 UAVs[uav_index]["streaming_address"],
             )
-
-            stream_fps = self.uav_stream_captures[uav_index - 1].get(cv2.CAP_PROP_FPS)
-            # stream_fps = 29
 
             self.uav_stream_writers[uav_index - 1] = cv2.VideoWriter(
                 filename=DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
@@ -1586,11 +1589,14 @@ class App(Map, Interface):
             )
 
             is_opened = self.uav_stream_captures[uav_index - 1].isOpened()
+            stream_fps = self.uav_stream_captures[uav_index - 1].get(cv2.CAP_PROP_FPS)
+
             logger.log(
                 f"UAV-{uav_index} stream opened: {is_opened} | FPS: {stream_fps}", level="info"
             )
-            #
-            if mode == "track":
+
+            # NOTE: rewrite logic from this
+            if mode == "track" and UAVs[uav_index]["detection_enable"]:
                 track_histories = dict()
                 track_histories[uav_index] = defaultdict(lambda: [])
                 track_frame_limit = int(stream_fps) * 3
@@ -1636,7 +1642,6 @@ class App(Map, Interface):
                                 )
                                 UAVs[uav_index]["detection_enable"] = False
                                 exported_frame = True
-                    # //
 
                     self.update_uav_screen_view(
                         uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN
@@ -1654,6 +1659,7 @@ class App(Map, Interface):
                     )
 
                 else:
+                    # NOTE: if the source is from video file, reset the frame to the beginning
                     self.uav_stream_captures[uav_index - 1].set(cv2.CAP_PROP_POS_FRAMES, 0)
 
                 if not UAVs[uav_index]["uav_information"]["streaming_status"]:
@@ -1668,6 +1674,8 @@ class App(Map, Interface):
 
             if not UAVs[uav_index]["recording_enable"]:
                 os.remove(DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1])
+
+            UAVs[uav_index]["uav_information"]["streaming_status"] = False
 
         except Exception as e:
             self.popup_msg(
