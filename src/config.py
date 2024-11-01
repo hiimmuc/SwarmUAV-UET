@@ -72,6 +72,7 @@ streaming_enables = [True, False, False, False, False, False]
 detection_enables = [True, False, False, False, False, False]
 recording_enables = [True, False, False, False, False, False]
 
+DEFAULT_STREAM_SCREEN = "general_screen"
 screen_sizes = {
     "general_screen": (592, 333),
     "stream_screen": (1280, 720),
@@ -80,7 +81,6 @@ screen_sizes = {
 
 # recording settings
 DEFAULT_STREAM_SIZE = (320, 180)
-DEFAULT_STREAM_SCREEN = "general_screen"
 FOURCC = "XVID"
 
 # Path settings
@@ -101,6 +101,7 @@ os.makedirs(f"{SRC_DIR}/logs/videos", exist_ok=True)
 
 INIT_LON = 8.545594
 INIT_LAT = 47.397823
+INIT_ALT = 5
 
 logo1_path = f"{ROOT_DIR}/assets/icons/logo1.png"
 logo2_path = f"{ROOT_DIR}/assets/icons/logoUET.png"

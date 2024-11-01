@@ -2,6 +2,7 @@ import asyncio
 import json
 import math
 
+import cv2
 from mavsdk.offboard import (
     ActuatorControl,
     ActuatorControlGroup,
@@ -274,6 +275,60 @@ async def uav_fn_offboard_set_actuator(drone, group, controls):
             {error._result.result}"
         )
     pass
+
+
+# cSpell:ignore fourcc dsize interpolation
+class Stream:
+    def __init__(self, capture: dict, writer: dict) -> None:
+        self.address = capture["address"]
+        self.capture = cv2.VideoCapture(capture["address"])
+        if writer["enable"]:
+            self.writer_frameSize = writer["frameSize"]
+            self.writer = cv2.VideoWriter(
+                filename=writer["filename"],
+                fourcc=cv2.VideoWriter_fourcc(*writer["fourcc"]),
+                fps=self.capture.get(cv2.CAP_PROP_FPS),
+                frameSize=writer["frameSize"],
+            )
+
+    def is_opened(self):
+        return self.capture.isOpened()
+
+    def is_video(self):
+        # Define common video file extensions
+        video_extensions = [".mp4", ".mov", ".avi", ".mkv", ".flv", ".wmv", ".webm"]
+        # Use regex to check for any of the video file extensions in the URL
+        return any(self.address.lower().endswith(ext) for ext in video_extensions)
+
+    def get_fps(self):
+        return self.capture.get(cv2.CAP_PROP_FPS)
+
+    def capture_reset(self):
+        self.capture.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
+    def read(self):
+        return self.capture.read()
+
+    def write(self, frame):
+        if hasattr(self, "writer"):
+            self.writer.write(
+                cv2.resize(
+                    frame,
+                    dsize=self.writer_frameSize,
+                    interpolation=cv2.INTER_LINEAR,
+                )
+            )
+
+    def release(self) -> None:
+        self.capture.release()
+        if hasattr(self, "writer"):
+            self.writer.release()
+        return
+
+
+# * develop later
+def convert_points_to_gps(points, origin_gps) -> list:
+    return []
 
 
 # -----------------------------------------------------

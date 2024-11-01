@@ -420,6 +420,36 @@ class Interface(QMainWindow):
             )
             self.uav_status_views[uav_index - 1].appendPlainText(text)
 
+    def update_uav_screen_view(self, uav_index, frame, screen_name="all") -> None:
+        """
+        Starts streaming video from the specified UAV to the screen view.
+
+        Args:
+            uav_index (int): The index of the UAV to start streaming video from.
+
+        Returns:
+            None
+        """
+        screen_views = {
+            "general_screen": self.uav_general_screen_views[uav_index - 1],
+            "ovv_screen": self.uav_ovv_screen_views[uav_index - 1],
+            "stream_screen": self.uav_stream_screen_views[uav_index - 1],
+        }
+
+        try:
+            if screen_name != "all":
+                width, height = (
+                    screen_views[screen_name].geometry().width(),
+                    screen_views[screen_name].geometry().height(),
+                )
+                screen_views[screen_name].setPixmap(convert_cv2qt(frame, size=(width, height)))
+            else:  # all types of screen
+                screen_names = ["general_screen", "ovv_screen", "stream_screen"]
+                for name in screen_names:
+                    self.update_uav_screen_view(uav_index, frame, screen_name=name)
+        except Exception as e:
+            logger.log(repr(e), level="error")
+
     def popup_msg(self, msg, src_msg="", type_msg="error"):
         """Create popup window to the ui
 
