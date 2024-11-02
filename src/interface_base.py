@@ -1,3 +1,7 @@
+import asyncio
+import sys
+
+from asyncqt import QEventLoop
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 
@@ -477,3 +481,24 @@ class Interface(QMainWindow):
 
         except Exception as e:
             print("-> From: popup_msg", e)
+
+
+# ------------------------------------< Base Application Class >-----------------------------
+def run():
+    app = QtWidgets.QApplication(sys.argv)
+    app.setStyle("Oxygen")  # ['Breeze', 'Oxygen', 'QtCurve', 'Windows', 'Fusion']
+    loop = QEventLoop(app)
+    asyncio.set_event_loop(loop)
+    MainWindow = Interface()
+    MainWindow.show()
+
+    with loop:
+        pending = asyncio.all_tasks(loop=loop)
+        for task in pending:
+            task.cancel()
+
+        sys.exit(loop.run_forever())
+
+
+if __name__ == "__main__":
+    run()
