@@ -47,6 +47,7 @@ function initialize() {
     var drawControl = new L.Control.Draw({
         export: true,
         position: 'topright',
+        show_geometry_on_click: true,
         draw: {
             polygon: {
                 shapeOptions: {

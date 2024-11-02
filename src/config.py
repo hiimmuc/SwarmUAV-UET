@@ -131,6 +131,7 @@ pause_img_paths = {
 pause_img_paths["all"] = f"{ROOT_DIR}/assets/pictures/pause_screen.jpg"
 
 map_html_path = f"file://{ROOT_DIR}/assets/map.html"
+map_html_updated_path = f"file://{SRC_DIR}/data/map.html"
 
 model_path = f"{SRC_DIR}/model/checkpoints/YOLO/yolo11n.pt"
 

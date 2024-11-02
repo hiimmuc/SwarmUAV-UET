@@ -1,4 +1,5 @@
 # PyQt5
+import datetime
 import sys
 
 from asyncqt import QEventLoop
@@ -32,11 +33,12 @@ class Map(Interface):
         self.map.mapRightClickedCallback = self.onMapRClick
         self.map.mapGeojsonCallback = self.onMapGeojson
         # Ovv map only for seeing
-        self.map_data = load_map()
+        self.map_data = MapFolium([21.064862, 105.792958], 16)
         # self.ui.MapWebView.setHtml(self.map_data)
-        self.ui.Overview_map_view.setHtml(self.map_data)
+        self.ui.Overview_map_view.setHtml(self.map_data.render_map())
         # self.ui.Overview_map_view.setUrl(QtCore.QUrl(map_html_path))
         self.ovv_map = MapEngine(self.ui.Overview_map_view)
+        self.ui.dateTimeEdit.setDateTime(QtCore.QDateTime.currentDateTime())
 
     def _init_map_events(self):
         self.ui.btn_map_show_drones.clicked.connect(self.btn_show_drones_callback)
@@ -51,7 +53,6 @@ class Map(Interface):
     # -----------------------------< map event functions >--------------------------------
     def btn_show_drones_callback(self):
         # get gps from drones gps.log file and show on map
-
         # NOTE: draw to ui
         pass
 
@@ -94,7 +95,8 @@ class Map(Interface):
 
     def onMapMoved(self, latitude, longitude) -> None:
         print("Moved to ", latitude, longitude)
-        self.ui.Overview_map_view.setHtml(load_map([latitude, longitude]))
+        html = self.map_data.center_to(latitude, longitude)
+        self.ui.Overview_map_view.setHtml(html)
 
     def onMapRClick(self, latitude, longitude) -> None:
         print("RClick on ", latitude, longitude)
@@ -107,8 +109,26 @@ class Map(Interface):
 
     def onMapGeojson(self, json) -> None:
         # Handle the received GeoJSON data
-        coordinates = geojson_to_coordinates(json)
-        print(coordinates)
+        try:
+            coordinates = geojson_to_coordinates(json)
+            type, points = coordinates
+
+            if type == "Point":
+                lon, lat = points
+                html = self.map_data.add_marker(
+                    type, float(lat), float(lon), icon={"color": "blue", "icon": "map-pin"}
+                )
+            elif type == "Polygon":
+                points = [[float(lat), float(lon)] for lon, lat in points[0]]
+                html = self.map_data.add_polygon(type, points)
+
+            elif type == "LineString":
+                points = [[float(lat), float(lon)] for lon, lat in points]
+                html = self.map_data.add_line(type, points)
+
+            self.ui.Overview_map_view.setHtml(html)
+        except Exception as e:
+            print(repr(e))
 
 
 # ------------------------------------< Map Application Class >-----------------------------
