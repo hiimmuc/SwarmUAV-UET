@@ -186,6 +186,18 @@ titles = [
     ),
 ]
 
+ICON = {
+    "plane": folium.plugins.BeautifyIcon(
+        icon="plane", border_color="#b3334f", text_color="#b3334f", icon_shape="triangle"
+    ),
+    "number": lambda x: folium.plugins.BeautifyIcon(
+        border_color="#00ABDC",
+        text_color="#00ABDC",
+        number=x,
+        inner_icon_style="margin-top:0;",
+    ),
+}
+
 
 class MapFolium:
     def __init__(self, location: list = [0, 0], zoom_start: int = 10):
