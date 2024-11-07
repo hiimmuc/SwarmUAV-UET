@@ -1570,6 +1570,9 @@ class App(Map, Interface):
             while is_opened:
                 ret, frame = self.uav_streams[uav_index - 1].read()
 
+                if not UAVs[uav_index]["status"]["streaming_status"]:
+                    break
+
                 if ret:
                     if UAVs[uav_index]["detection_enable"]:
                         results = self.models[uav_index - 1].track(
@@ -1636,10 +1639,6 @@ class App(Map, Interface):
                     if self.uav_streams[uav_index - 1].is_video():
                         self.uav_streams[uav_index - 1].capture_reset()
                         continue
-
-                if not UAVs[uav_index]["status"]["streaming_status"]:
-                    UAVs[uav_index]["status"]["streaming_status"] = False
-                    break
 
             # reset the screen to the pause screen
             pause_frame = cv2.imread(pause_img_paths[DEFAULT_STREAM_SCREEN])
