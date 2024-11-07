@@ -297,9 +297,7 @@ class Stream:
         self.address = capture["address"]
 
         self.capture = cv2.VideoCapture(capture["address"])
-        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, capture["width"])
-        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, capture["height"])
-        self.capture.set(cv2.CAP_PROP_FPS, capture["fps"])
+        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
         if writer["enable"]:
             self.writer_frameSize = writer["frameSize"]
@@ -346,8 +344,14 @@ class Stream:
 
 
 # * develop later
-def convert_points_to_gps(points, origin_gps) -> list:
-    return []
+def convert_points_to_gps(detected_pos, frame_shape, uav_gps) -> list:
+    x, y = detected_pos
+    h, w, c = frame_shape
+    lat, lon, alt = uav_gps
+    # * ===== Modify here =============================
+
+    # * ================================================
+    return lat, lon
 
 
 # -----------------------------------------------------

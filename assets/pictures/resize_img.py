@@ -3,9 +3,9 @@ import glob
 import cv2
 
 screen_sizes = {
-    "general_screen": (360, 592),
-    "stream_screen": (720, 1280),
-    "ovv_screen": (180, 320),
+    "general_screen": (640, 360),
+    "stream_screen": (1280, 720),
+    "ovv_screen": (320, 180),
 }
 
 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     for image in images:
         cv_img = cv2.imread(image)
         for screen_name, size in screen_sizes.items():
-            resized_img = resize_image(cv_img, size[::-1])
+            resized_img = resize_image(cv_img, size[::])
             cv2.imwrite(
                 f"./assets/pictures/resized/{image.split('/')[-1].split('.')[0]}_{'x'.join([str(e) for e in screen_sizes[screen_name]])}.jpg",
                 resized_img,

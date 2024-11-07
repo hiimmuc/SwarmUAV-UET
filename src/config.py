@@ -151,7 +151,7 @@ Stream source paths:
 """
 # NOTE: Change the following values to match the actual stream source
 DEFAULT_STREAM_VIDEO_PATHS = [
-    f"{ROOT_DIR}/assets/videos/cam{i}.mp4" for i in range(1, MAX_UAV_COUNT + 1)
+    f"{ROOT_DIR}/assets/streams/cam{i}.mp4" for i in range(1, MAX_UAV_COUNT + 1)
 ]
 # Destination paths for recording videos
 DEFAULT_STREAM_VIDEO_LOG_PATHS = [

@@ -321,25 +321,7 @@ class App(Map, Interface):
                     target=self.stream_on_uav_screen,
                     args=(uav_index,),
                     name=f"UAV-{uav_index}-thread",
-                )
-
-                capture = {
-                    "address": UAVs[uav_index]["streaming_address"],
-                    "width": DEFAULT_STREAM_SIZE[0],
-                    "height": DEFAULT_STREAM_SIZE[1],
-                    "fps": DEFAULT_STREAM_FPS,
-                }
-
-                writer = {
-                    "enable": UAVs[uav_index]["recording_enable"],
-                    "filename": DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
-                    "fourcc": FOURCC,
-                    "frameSize": DEFAULT_STREAM_SIZE,
-                }
-
-                self.uav_streams[uav_index - 1] = Stream(
-                    capture=capture,
-                    writer=writer,
+                    daemon=True,
                 )
 
                 logger.log(f"UAV-{uav_index} streaming thread created!", level="info")
@@ -1545,6 +1527,25 @@ class App(Map, Interface):
             ):
                 return
 
+            capture = {
+                "address": UAVs[uav_index]["streaming_address"],
+                "width": DEFAULT_STREAM_SIZE[0],
+                "height": DEFAULT_STREAM_SIZE[1],
+                "fps": DEFAULT_STREAM_FPS,
+            }
+
+            writer = {
+                "enable": UAVs[uav_index]["recording_enable"],
+                "filename": DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
+                "fourcc": FOURCC,
+                "frameSize": DEFAULT_STREAM_SIZE,
+            }
+
+            self.uav_streams[uav_index - 1] = Stream(
+                capture=capture,
+                writer=writer,
+            )
+
             logger.log(
                 f"UAV-{uav_index} streaming thread started! \n\
                     -- Capture stream from {os.path.relpath(UAVs[uav_index]['streaming_address'], __current_path__)} \n\
@@ -1563,6 +1564,7 @@ class App(Map, Interface):
             track_histories = dict()
             track_histories[uav_index] = defaultdict(lambda: [])
             track_frame_limit = int(stream_fps) * 3
+            export_frame = False
 
             # * start the stream on the UAV screen
             while is_opened:
@@ -1580,20 +1582,44 @@ class App(Map, Interface):
                         for id, obj in zip(track_ids, objects):
                             if obj["class"] == "person":
                                 if (
-                                    len(track_histories[uav_index][id]) == track_frame_limit * 3
-                                ):  # ? check if the track history is full
+                                    len(track_histories[uav_index][id]) == track_frame_limit - 1
+                                ) and not export_frame:  # ? check if the track history is full
                                     cv2.imwrite(
                                         f"{SRC_DIR}/logs/images/UAV{uav_index}_locked_target_{id}.png",
                                         frame,
                                     )
-                                    UAVs[uav_index][
-                                        "detection_enable"
-                                    ] = False  # turn off the detection
+
+                                    # UAVs[uav_index][
+                                    #     "detection_enable"
+                                    # ] = False  # turn off the detection
+
+                                    export_frame = True
+
                                     # pause the mission and do the rescue mission
-                                    logger.log(
-                                        f"Detect obj at X: {obj['x']} Y: {obj['y']} with frame size: {frame.shape}",
+
+                                    # * ============ modify here ======================
+                                    # logger.log(
+                                    #     f"Detect obj at X: {obj['x']} Y: {obj['y']} with frame size: {frame.shape}",
+                                    # )
+                                    detected_pos = (obj["x"], obj["y"])
+                                    frame_shape = frame.shape
+                                    uav_lat, uav_lon = UAVs[uav_index]["status"]["position_status"]
+                                    uav_alt = UAVs[uav_index]["status"]["altitude_status"][0]
+                                    uav_gps = [uav_lat, uav_lon, uav_alt]
+
+                                    self.update_terminal(
+                                        f"UAV-{uav_index} at gps ({uav_gps[0]}, {uav_gps[1]}, {uav_gps[2]}) detect {obj['class']} at X: {detected_pos[0]} Y: {detected_pos[1]} with frame size: {frame_shape}",
+                                        uav_index=0,
                                     )
-                                    # * ===== convert the detected point to GPS ======
+
+                                    # convert the detected position to gps
+                                    print(
+                                        convert_points_to_gps(
+                                            detected_pos=detected_pos,
+                                            frame_shape=frame_shape,
+                                            uav_gps=uav_gps,
+                                        )
+                                    )
 
                                     # * ================================================
 
@@ -1609,6 +1635,7 @@ class App(Map, Interface):
                 else:  # not ret
                     if self.uav_streams[uav_index - 1].is_video():
                         self.uav_streams[uav_index - 1].capture_reset()
+                        continue
 
                 if not UAVs[uav_index]["status"]["streaming_status"]:
                     UAVs[uav_index]["status"]["streaming_status"] = False
@@ -1626,6 +1653,7 @@ class App(Map, Interface):
             )
 
         except Exception as e:
+            UAVs[uav_index]["status"]["streaming_status"] = False
             self.popup_msg(
                 f"Stream on UAV screen error: {repr(e)}",
                 src_msg="stream_on_uav_screen",
