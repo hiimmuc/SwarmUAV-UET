@@ -11,6 +11,7 @@ from config import *
 from interface_base import *
 from UI.interface_uav import *
 from utils.drone_utils import *
+from utils.map_folium import *
 from utils.map_utils import *
 from utils.qt_utils import *
 
@@ -25,19 +26,26 @@ class Map(Interface):
         # map URL
         # file:///.../SwarmUAV-UET/assets/map.html
         self.ui.MapWebView.setUrl(QtCore.QUrl(map_html_path))
+        # self.rescue_map_data = MapFolium(
+        #     [21.064862, 105.792958], 16, plugins=["Draw", "Geocoder", "MeasureControl", "MiniMap"]
+        # )
+        # self.ui.MapWebView.setHtml(self.rescue_map_data.render_map())
         # map engine
-        self.map = MapEngine(self.ui.MapWebView)
-        self.map.mapMovedCallback = self.onMapMoved
-        self.map.mapClickedCallback = self.onMapLClick
-        self.map.mapDoubleClickedCallback = self.onMapDClick
-        self.map.mapRightClickedCallback = self.onMapRClick
-        self.map.mapGeojsonCallback = self.onMapGeojson
+        self.rescue_map = MapEngine(self.ui.MapWebView)
+        self.rescue_map.mapMovedCallback = self.onMapMoved
+        self.rescue_map.mapClickedCallback = self.onMapLClick
+        self.rescue_map.mapDoubleClickedCallback = self.onMapDClick
+        self.rescue_map.mapRightClickedCallback = self.onMapRClick
+        self.rescue_map.mapGeojsonCallback = self.onMapGeojson
+
         # Ovv map only for seeing
-        self.map_data = MapFolium([21.064862, 105.792958], 16)
-        # self.ui.MapWebView.setHtml(self.map_data)
-        self.ui.Overview_map_view.setHtml(self.map_data.render_map())
+        self.ovv_map_data = MapFolium(
+            [21.064862, 105.792958], 16, plugins=["Geocoder", "MeasureControl", "MiniMap"]
+        )
         # self.ui.Overview_map_view.setUrl(QtCore.QUrl(map_html_path))
+        self.ui.Overview_map_view.setHtml(self.ovv_map_data.render_map())
         self.ovv_map = MapEngine(self.ui.Overview_map_view)
+        #
         self.ui.dateTimeEdit.setDateTime(QtCore.QDateTime.currentDateTime())
 
     def _init_map_events(self):
@@ -95,7 +103,7 @@ class Map(Interface):
 
     def onMapMoved(self, latitude, longitude) -> None:
         print("Moved to ", latitude, longitude)
-        html = self.map_data.center_to(latitude, longitude)
+        html = self.ovv_map_data.center_to(latitude, longitude)
         self.ui.Overview_map_view.setHtml(html)
 
     def onMapRClick(self, latitude, longitude) -> None:
@@ -115,16 +123,16 @@ class Map(Interface):
 
             if type == "Point":
                 lon, lat = points
-                html = self.map_data.add_marker(
+                html = self.ovv_map_data.add_marker(
                     type, float(lat), float(lon), icon={"color": "blue", "icon": "map-pin"}
                 )
             elif type == "Polygon":
                 points = [[float(lat), float(lon)] for lon, lat in points[0]]
-                html = self.map_data.add_polygon(type, points)
+                html = self.ovv_map_data.add_polygon(type, points)
 
             elif type == "LineString":
                 points = [[float(lat), float(lon)] for lon, lat in points]
-                html = self.map_data.add_line(type, points)
+                html = self.ovv_map_data.add_line(type, points)
 
             self.ui.Overview_map_view.setHtml(html)
         except Exception as e:

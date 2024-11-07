@@ -1590,11 +1590,9 @@ class App(Map, Interface):
                                     logger.log(
                                         f"Detect obj at X: {obj['x']} Y: {obj['y']} with frame size: {frame.shape}",
                                     )
-                                    # * convert the detected point to GPS
-                                    # convert_points_to_gps(
-                                    #     [obj["x"], obj["y"]],
-                                    #     UAVs[uav_index]["status"]["position_status"],
-                                    # )
+                                    # * ===== convert the detected point to GPS ======
+
+                                    # * ================================================
 
                     self.update_uav_screen_view(
                         uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN

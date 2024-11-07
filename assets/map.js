@@ -82,37 +82,16 @@ function initialize() {
     
     map.addControl(drawControl);
 
-    async function autoSaveGeoJSON(data) {
-        const geojsonData = JSON.stringify(data);
-
-        // Request permission to access the file system
-        const handle = await window.showSaveFilePicker({
-            suggestedName: 'my_data.geojson',
-            types: [{
-                description: 'GeoJSON Files',
-                accept: {'application/json': ['.geojson']}
-            }]
-        });
-
-        // Create a writable stream
-        const writableStream = await handle.createWritable();
-
-        // Write the GeoJSON data to the file
-        await writableStream.write(geojsonData);
-
-        // Close the file and write the contents to disk
-        await writableStream.close();
-    }
-
-
     map.on(L.Draw.Event.CREATED, function (e) {
         var type = e.layerType,
             layer = e.layer;
         // Add the drawn layer to the map
+        layer.on('click', function() {
+            alert(coords);
+            console.log(coords);
+        });
         drawnItems.addLayer(layer);
         // Get the GeoJSON of the layer (polygon or marker)
-
-        autoSaveGeoJSON(drawnItems.toGeoJSON());
         var geojsonData = JSON.stringify(layer.toGeoJSON());
         // Set the GeoJSON data to the hidden input field
         $('#polygon').val(geojsonData);
