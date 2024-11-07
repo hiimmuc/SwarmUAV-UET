@@ -323,6 +323,25 @@ class App(Map, Interface):
                     name=f"UAV-{uav_index}-thread",
                 )
 
+                capture = {
+                    "address": UAVs[uav_index]["streaming_address"],
+                    "width": DEFAULT_STREAM_SIZE[0],
+                    "height": DEFAULT_STREAM_SIZE[1],
+                    "fps": DEFAULT_STREAM_FPS,
+                }
+
+                writer = {
+                    "enable": UAVs[uav_index]["recording_enable"],
+                    "filename": DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
+                    "fourcc": FOURCC,
+                    "frameSize": DEFAULT_STREAM_SIZE,
+                }
+
+                self.uav_streams[uav_index - 1] = Stream(
+                    capture=capture,
+                    writer=writer,
+                )
+
                 logger.log(f"UAV-{uav_index} streaming thread created!", level="info")
 
         except Exception as e:
@@ -520,7 +539,6 @@ class App(Map, Interface):
                 return
 
             text = self.uav_update_commands[uav_index - 1].text()
-            # TODO: if command <do something more here>
 
             if text.lower().strip() == "hold":
                 await UAVs[uav_index]["system"].action.hold()
@@ -528,13 +546,28 @@ class App(Map, Interface):
                 command, value = str(text).split("=")
                 command = command.strip().lower()
                 value = value.strip().lower()
-                # print(f"Command: {command}, Value: {value}")
+
+                # TODO: if command <do something more here>
+
+                # * 1. control movement command
                 if command in ["forward", "backward", "left", "right", "up", "down"]:
                     distance = float(value)
                     await uav_fn_goto_distance(
                         drone=UAVs[self.active_tab_index],
                         distance=distance,
                         direction=command,
+                    )
+
+                # * 2. control gimbal command
+                if command in ["pitch", "yaw"]:
+                    angle = float(value)
+                    control_value = (
+                        {"pitch": angle, "yaw": 0}
+                        if command == "pitch"
+                        else {"pitch": 0, "yaw": angle}
+                    )
+                    await uav_fn_control_gimbal(
+                        drone=UAVs[self.active_tab_index], control_value=control_value
                     )
                 # Clear the input after processing the command
                 self.uav_update_commands[uav_index - 1].clear()
@@ -1141,18 +1174,6 @@ class App(Map, Interface):
         """
         global UAVs
 
-        group = 0
-        controls = [
-            0.0,
-            0.0,
-            0.5,
-            -0.5,
-            0.3,
-            -0.3,
-            0.0,
-            0.0,
-        ]
-
         if uav_index in range(1, MAX_UAV_COUNT + 1):
             if not (
                 UAVs[uav_index]["status"]["connection_status"]
@@ -1164,14 +1185,16 @@ class App(Map, Interface):
 
             if UAVs[uav_index]["status"]["actuator_status"]:
                 # ====== replace with your function
-                await uav_fn_offboard_set_actuator(UAVs[uav_index], group, controls)
-                group = 0
+                await uav_fn_control_gimbal(
+                    drone=UAVs[uav_index], control_value={"pitch": 90, "yaw": 0}
+                )
                 # ======
                 UAVs[uav_index]["status"]["actuator_status"] = False
             else:
                 # ====== replace with your function
-                await uav_fn_offboard_set_actuator(UAVs[uav_index], group, controls)
-                group = 1
+                await uav_fn_control_gimbal(
+                    drone=UAVs[uav_index], control_value={"pitch": -90, "yaw": 0}
+                )
                 # ======
                 UAVs[uav_index]["status"]["actuator_status"] = True
 
@@ -1522,24 +1545,6 @@ class App(Map, Interface):
             ):
                 return
 
-            # NOTE refine with this https://stackoverflow.com/questions/54801053/opencv-code-to-reconnect-a-disconnected-camera-feed-is-working-fine-but-in-the
-
-            capture = {
-                "address": UAVs[uav_index]["streaming_address"],
-            }
-
-            writer = {
-                "enable": UAVs[uav_index]["recording_enable"],
-                "filename": DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
-                "fourcc": FOURCC,
-                "frameSize": DEFAULT_STREAM_SIZE,
-            }
-
-            self.uav_streams[uav_index - 1] = Stream(
-                capture=capture,
-                writer=writer,
-            )
-
             logger.log(
                 f"UAV-{uav_index} streaming thread started! \n\
                     -- Capture stream from {os.path.relpath(UAVs[uav_index]['streaming_address'], __current_path__)} \n\
@@ -1553,8 +1558,6 @@ class App(Map, Interface):
             logger.log(
                 f"UAV-{uav_index} stream opened: {is_opened} | FPS: {stream_fps}", level="info"
             )
-
-            print("Is streaming", UAVs[uav_index]["status"]["streaming_status"])
 
             # * for tracking mode
             track_histories = dict()
@@ -1577,7 +1580,7 @@ class App(Map, Interface):
                         for id, obj in zip(track_ids, objects):
                             if obj["class"] == "person":
                                 if (
-                                    len(track_histories[uav_index][id]) == track_frame_limit - 1
+                                    len(track_histories[uav_index][id]) == track_frame_limit * 3
                                 ):  # ? check if the track history is full
                                     cv2.imwrite(
                                         f"{SRC_DIR}/logs/images/UAV{uav_index}_locked_target_{id}.png",
@@ -1608,7 +1611,12 @@ class App(Map, Interface):
                         self.uav_streams[uav_index - 1].capture_reset()
 
                 if not UAVs[uav_index]["status"]["streaming_status"]:
+                    UAVs[uav_index]["status"]["streaming_status"] = False
                     break
+
+            # reset the screen to the pause screen
+            pause_frame = cv2.imread(pause_img_paths[DEFAULT_STREAM_SCREEN])
+            self.update_uav_screen_view(uav_index, pause_frame, screen_name=DEFAULT_STREAM_SCREEN)
 
             self.uav_streams[uav_index - 1].release()
 
@@ -1616,9 +1624,6 @@ class App(Map, Interface):
                 f"UAV-{uav_index} streaming thread stopped!",
                 level="info",
             )
-            # reset the screen to the pause screen
-            pause_frame = cv2.imread(pause_img_paths[DEFAULT_STREAM_SCREEN])
-            self.update_uav_screen_view(uav_index, pause_frame, screen_name=DEFAULT_STREAM_SCREEN)
 
         except Exception as e:
             self.popup_msg(

@@ -442,10 +442,7 @@ class Interface(QMainWindow):
 
         try:
             if screen_name != "all":
-                width, height = (
-                    screen_views[screen_name].geometry().width(),
-                    screen_views[screen_name].geometry().height(),
-                )
+                width, height = screen_sizes[screen_name]
                 screen_views[screen_name].setPixmap(convert_cv2qt(frame, size=(width, height)))
             else:  # all types of screen
                 screen_names = ["general_screen", "ovv_screen", "stream_screen"]

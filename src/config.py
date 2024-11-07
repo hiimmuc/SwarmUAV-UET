@@ -13,7 +13,7 @@ NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # NOTE: No change: Config for displaying screen
 screen_sizes = {
-    "general_screen": (592, 333),
+    "general_screen": (640, 360),
     "stream_screen": (1280, 720),
     "ovv_screen": (320, 180),
 }
@@ -36,11 +36,11 @@ toggle_icon_path = f"{SRC_DIR}/UI/icons/toggle_camera.png"
 open_close_icon_path = f"{SRC_DIR}/UI/icons/toggle_open.png"
 
 noSignal_img_paths = {
-    k: f"{ROOT_DIR}/assets/pictures/resized/nosignal_{h}x{w}.jpg"
+    k: f"{ROOT_DIR}/assets/pictures/resized/nosignal_{w}x{h}.jpg"
     for k, (w, h) in screen_sizes.items()
 }
 pause_img_paths = {
-    k: f"{ROOT_DIR}/assets/pictures/resized/pause_screen_{h}x{w}.jpg"
+    k: f"{ROOT_DIR}/assets/pictures/resized/pause_screen_{w}x{h}.jpg"
     for k, (w, h) in screen_sizes.items()
 }
 pause_img_paths["all"] = f"{ROOT_DIR}/assets/pictures/pause_screen.jpg"
@@ -131,14 +131,15 @@ SYSTEMS_ADDRESSES = [
 ]
 
 # Allow to connect, stream, detect, record
-connection_allows = [True, True, False, False, False, True]
-streaming_enables = [True, False, False, False, False, False]
-detection_enables = [True, False, False, False, False, False]
-recording_enables = [True, False, False, False, False, False]
+connection_allows = [True, True, True, True, True, True]
+streaming_enables = [False, False, False, False, False, False]
+detection_enables = [False, False, False, False, False, False]
+recording_enables = [True, True, True, True, True, True]
 
 DEFAULT_STREAM_SCREEN = "general_screen"  # NOTE: Change between "general_screen" or "stream_screen" or "ovv_screen" or "all"
 # NOTE Change for modify recording settings
 DEFAULT_STREAM_SIZE = (320, 180)
+DEFAULT_STREAM_FPS = 15
 FOURCC = "XVID"
 
 # Path settings
@@ -160,4 +161,4 @@ DEFAULT_STREAM_VIDEO_LOG_PATHS = [
 os.makedirs(f"{SRC_DIR}/logs/videos", exist_ok=True)
 
 # YOLO settings
-model_path = f"{SRC_DIR}/model/checkpoints/YOLO/yolo11n.pt"  # YOLO model path
+model_path = f"{SRC_DIR}/model/checkpoints/YOLO/yolov8n.pt"  # YOLO model path

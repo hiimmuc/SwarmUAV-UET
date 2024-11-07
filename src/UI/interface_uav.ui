@@ -66,7 +66,7 @@
        <enum>QFrame::WinPanel</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="MainScreen">
        <property name="minimumSize">
@@ -241,7 +241,7 @@ background-color: rgb(252, 175, 62);</string>
              <enum>QTabWidget::East</enum>
             </property>
             <property name="currentIndex">
-             <number>8</number>
+             <number>0</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -261,8 +261,8 @@ background-color: rgb(252, 175, 62);</string>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>592</width>
-                  <height>333</height>
+                  <width>640</width>
+                  <height>360</height>
                  </size>
                 </property>
                 <property name="autoFillBackground">
@@ -301,8 +301,8 @@ background-color: rgb(252, 175, 62);</string>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>592</width>
-                  <height>333</height>
+                  <width>640</width>
+                  <height>360</height>
                  </size>
                 </property>
                 <property name="autoFillBackground">
@@ -341,8 +341,8 @@ background-color: rgb(252, 175, 62);</string>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>592</width>
-                  <height>333</height>
+                  <width>640</width>
+                  <height>360</height>
                  </size>
                 </property>
                 <property name="autoFillBackground">
@@ -381,8 +381,8 @@ background-color: rgb(252, 175, 62);</string>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>592</width>
-                  <height>333</height>
+                  <width>640</width>
+                  <height>360</height>
                  </size>
                 </property>
                 <property name="autoFillBackground">
@@ -421,8 +421,8 @@ background-color: rgb(252, 175, 62);</string>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>592</width>
-                  <height>333</height>
+                  <width>640</width>
+                  <height>360</height>
                  </size>
                 </property>
                 <property name="autoFillBackground">
@@ -461,8 +461,8 @@ background-color: rgb(252, 175, 62);</string>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>592</width>
-                  <height>333</height>
+                  <width>640</width>
+                  <height>360</height>
                  </size>
                 </property>
                 <property name="autoFillBackground">

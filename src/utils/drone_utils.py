@@ -3,6 +3,7 @@ import json
 import math
 
 import cv2
+from mavsdk.gimbal import ControlMode, GimbalMode
 from mavsdk.offboard import (
     ActuatorControl,
     ActuatorControlGroup,
@@ -277,11 +278,29 @@ async def uav_fn_offboard_set_actuator(drone, group, controls):
     pass
 
 
+async def uav_fn_control_gimbal(drone, control_value={"pitch": 0, "yaw": 0}):
+    """Control the gimbal of the UAV."""
+    await drone["system"].gimbal.take_control(
+        control_mode=ControlMode.PRIMARY
+    )  # ControlMode.PRIMARY or ControlMode.SECONDARY
+    await drone["system"].gimbal.set_mode(
+        GimbalMode.YAW_FOLLOW
+    )  # GimbalMode.YAW_FOLLOW or GimbalMode.YAW_LOCK
+    await drone["system"].gimbal.set_pitch_and_yaw(control_value["pitch"], control_value["yaw"])
+    await asyncio.sleep(2)
+    await drone["system"].gimbal.release_control()
+
+
 # cSpell:ignore fourcc dsize interpolation
 class Stream:
     def __init__(self, capture: dict, writer: dict) -> None:
         self.address = capture["address"]
+
         self.capture = cv2.VideoCapture(capture["address"])
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, capture["width"])
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, capture["height"])
+        self.capture.set(cv2.CAP_PROP_FPS, capture["fps"])
+
         if writer["enable"]:
             self.writer_frameSize = writer["frameSize"]
             self.writer = cv2.VideoWriter(

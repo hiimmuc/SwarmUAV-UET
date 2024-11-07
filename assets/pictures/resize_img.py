@@ -3,7 +3,7 @@ import glob
 import cv2
 
 screen_sizes = {
-    "general_screen": (333, 592),
+    "general_screen": (360, 592),
     "stream_screen": (720, 1280),
     "ovv_screen": (180, 320),
 }

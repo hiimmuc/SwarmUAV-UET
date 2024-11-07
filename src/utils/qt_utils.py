@@ -25,7 +25,8 @@ def convert_cv2qt(cv_img, size=(640, 360)) -> QPixmap:
     """
     (screen_width, screen_height) = size
 
-    cv_img = imutils.resize(imutils.resize(cv_img, width=screen_width), height=screen_height)
+    # cv_img = imutils.resize(imutils.resize(cv_img, width=screen_width), height=screen_height)
+    cv_img = cv2.resize(cv_img, (screen_width, screen_height), interpolation=cv2.INTER_LINEAR)
 
     rgb_image = cv2.cvtColor(
         cv_img,
@@ -139,7 +140,6 @@ class QtThread(QThread):  # NOTE: slower than using Thread
         while self.isRunning:
             ret, frame = self.cap.read()
             if ret:
-                # print(frame.shape)
                 self.change_image_signal.emit(frame, self.uav_index)
             else:
                 self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
