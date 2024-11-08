@@ -270,7 +270,6 @@ def draw_tracking_frame(frame, results, history, track_frame_limit=90):
         boxes = results[0].boxes.xywh.cpu()
         classes = results[0].boxes.cls.int().cpu().tolist()
         track_ids = results[0].boxes.id.int().cpu().tolist()
-        annotated_frame = results[0].plot()
 
         for index, (box, track_id) in enumerate(zip(boxes, track_ids)):
             cls_name = classNames[classes[index]]

@@ -297,8 +297,14 @@ class Stream:
         self.address = capture["address"]
 
         self.capture = cv2.VideoCapture(capture["address"])
-        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
+        # Set capture properties
+        success_width = self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, int(capture["width"]))
+        success_height = self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(capture["height"]))
+        success_fps = self.capture.set(cv2.CAP_PROP_FPS, int(capture["fps"]))
+        success_buffersize = self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+
+        # Set writer properties
         if writer["enable"]:
             self.writer_frameSize = writer["frameSize"]
             self.writer = cv2.VideoWriter(

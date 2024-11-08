@@ -1,6 +1,7 @@
 import asyncio
 import os
 import sys
+import time
 from collections import defaultdict
 from threading import Thread
 
@@ -1566,8 +1567,12 @@ class App(Map, Interface):
             track_frame_limit = int(stream_fps) * 3
             export_frame = False
 
+            #
+            start_time = time.time()
+
             # * start the stream on the UAV screen
             while is_opened:
+                time_elapsed = time.time() - start_time
                 ret, frame = self.uav_streams[uav_index - 1].read()
 
                 if not UAVs[uav_index]["status"]["streaming_status"]:
@@ -1576,7 +1581,7 @@ class App(Map, Interface):
                 if ret:
                     if UAVs[uav_index]["detection_enable"]:
                         results = self.models[uav_index - 1].track(
-                            frame, device=DEVICE, persist=True, verbose=False
+                            frame, classes=0, device=DEVICE, persist=True, verbose=False
                         )
                         frame, track_ids, objects = draw_tracking_frame(
                             frame, results, track_histories[uav_index], track_frame_limit
@@ -1626,9 +1631,15 @@ class App(Map, Interface):
 
                                     # * ================================================
 
-                    self.update_uav_screen_view(
-                        uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN
-                    )
+                        self.update_uav_screen_view(
+                            uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN
+                        )
+                    else:  # if not detection, using time elapsed to limit the frame rate
+                        if time_elapsed > 6.0 / stream_fps:
+                            start_time = time.time()
+                            self.update_uav_screen_view(
+                                uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN
+                            )
 
                     if not UAVs[uav_index]["recording_enable"]:
                         continue
@@ -1638,7 +1649,6 @@ class App(Map, Interface):
                 else:  # not ret
                     if self.uav_streams[uav_index - 1].is_video():
                         self.uav_streams[uav_index - 1].capture_reset()
-                        continue
 
             # reset the screen to the pause screen
             pause_frame = cv2.imread(pause_img_paths[DEFAULT_STREAM_SCREEN])
