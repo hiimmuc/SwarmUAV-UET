@@ -318,12 +318,44 @@ class App(Map, Interface):
                 ):
                     continue
 
+                capture = {
+                    "address": UAVs[uav_index]["streaming_address"],
+                    "width": DEFAULT_STREAM_SIZE[0],
+                    "height": DEFAULT_STREAM_SIZE[1],
+                    "fps": DEFAULT_STREAM_FPS,
+                }
+
+                writer = {
+                    "enable": UAVs[uav_index]["recording_enable"],
+                    "filename": DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
+                    "fourcc": FOURCC,
+                    "frameSize": DEFAULT_STREAM_SIZE,
+                }
+
+                self.uav_streams[uav_index - 1] = Stream(
+                    capture=capture,
+                    writer=writer,
+                )
+
+                logger.log(
+                    f"UAV-{uav_index} Capture/Writer information: \n\
+                        -- Capture stream from {os.path.relpath(UAVs[uav_index]['streaming_address'], __current_path__)} \n\
+                        -- Save recording to {os.path.relpath(DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1], __current_path__) if UAVs[uav_index]['recording_enable'] else 'None'}",
+                    level="info",
+                )
+
                 self.uav_stream_threads[uav_index - 1] = Thread(
                     target=self.stream_on_uav_screen,
                     args=(uav_index,),
                     name=f"UAV-{uav_index}-thread",
                     daemon=True,
                 )
+                # self.uav_stream_threads[uav_index - 1] = QtThread(
+                #     cap=self.uav_streams[uav_index - 1].capture, uav_index=uav_index
+                # )
+                # self.uav_stream_threads[uav_index - 1].change_image_signal.connect(
+                #     self.stream_on_uav_screen
+                # )
 
                 logger.log(f"UAV-{uav_index} streaming thread created!", level="info")
 
@@ -684,10 +716,9 @@ class App(Map, Interface):
             self.uav_information_views[uav_index - 1].setText(
                 self.template_information(uav_index, **UAVs[uav_index]["status"])
             )
+
         else:
-            arm_all_UAVs = [
-                self.uav_arm_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
-            ]
+            arm_all_UAVs = [self.uav_arm_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES]
             await asyncio.gather(*arm_all_UAVs)
 
     async def uav_disarm_callback(self, uav_index) -> None:
@@ -723,7 +754,7 @@ class App(Map, Interface):
 
         else:
             disarm_all_UAVs = [
-                self.uav_disarm_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
+                self.uav_disarm_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
             ]
             await asyncio.gather(*disarm_all_UAVs)
 
@@ -783,7 +814,7 @@ class App(Map, Interface):
 
         else:
             takeoff_all_UAVs = [
-                self.uav_takeoff_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
+                self.uav_takeoff_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
             ]
             await asyncio.gather(*takeoff_all_UAVs)
 
@@ -816,7 +847,7 @@ class App(Map, Interface):
 
         else:
             landing_all_UAVs = [
-                self.uav_land_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
+                self.uav_land_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
             ]
             await asyncio.gather(*landing_all_UAVs)
 
@@ -886,8 +917,7 @@ class App(Map, Interface):
                     )
             else:
                 return_all_UAVs = [
-                    self.uav_return_callback(uav_index, rtl=rtl)
-                    for uav_index in range(1, MAX_UAV_COUNT + 1)
+                    self.uav_return_callback(uav_index, rtl=rtl) for uav_index in AVAIL_UAV_INDEXES
                 ]
                 await asyncio.gather(*return_all_UAVs)
 
@@ -920,7 +950,7 @@ class App(Map, Interface):
         """
         global UAVs
         try:
-            if uav_index in range(1, MAX_UAV_COUNT + 1):
+            if uav_index in AVAIL_UAV_INDEXES:
                 if not (
                     UAVs[uav_index]["status"]["connection_status"]
                     and UAVs[uav_index]["connection_allow"]
@@ -1011,10 +1041,12 @@ class App(Map, Interface):
                 # wait for mission to complete
                 await termination_task
 
+            elif uav_index == RESCUE_UAV_INDEX:  # instead of doing mission, do rescue
+                await self.uav_fn_rescue()
+
             else:
                 mission_all_UAVs = [
-                    self.uav_mission_callback(uav_index)
-                    for uav_index in range(1, MAX_UAV_COUNT + 1)
+                    self.uav_mission_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
                 ]
                 await asyncio.gather(*mission_all_UAVs)
 
@@ -1051,6 +1083,10 @@ class App(Map, Interface):
                 self.update_terminal(f"[INFO] Sent PUSH MISSION command to UAV {uav_index}")
 
                 # read mission points from file
+                if not os.path.exists(plans_log_dir):
+                    logger.log(f"Directory {plans_log_dir} does not exist", level="error")
+                    return
+
                 fpath = QFileDialog.getOpenFileName(
                     self,
                     "Open file",
@@ -1140,8 +1176,7 @@ class App(Map, Interface):
 
         else:
             pauseMission_all_UAVs = [
-                self.uav_pause_mission_callback(uav_index)
-                for uav_index in range(1, MAX_UAV_COUNT + 1)
+                self.uav_pause_mission_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
             ]
             await asyncio.gather(*pauseMission_all_UAVs)
 
@@ -1187,8 +1222,7 @@ class App(Map, Interface):
 
         else:
             openClose_all_UAVs = [
-                self.uav_toggle_open_callback(uav_index)
-                for uav_index in range(1, MAX_UAV_COUNT + 1)
+                self.uav_toggle_open_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
             ]
             await asyncio.gather(*openClose_all_UAVs)
 
@@ -1226,9 +1260,14 @@ class App(Map, Interface):
                         self._create_streaming_threads(uav_indexes=[uav_index])
                         self.uav_stream_threads[uav_index - 1].start()
 
+                    # if not self.uav_stream_threads[uav_index - 1].isRunning:
+                    #     self.uav_stream_threads[uav_index - 1].start()
+
                     UAVs[uav_index]["status"]["streaming_status"] = True
                     logger.log(f"UAV-{uav_index} streaming thread is starting...", level="info")
                 else:
+                    # if self.uav_stream_threads[uav_index - 1].isRunning:
+                    #     self.uav_stream_threads[uav_index - 1].stop()
                     UAVs[uav_index]["status"]["streaming_status"] = False
                     logger.log(
                         f"UAV-{uav_index} streaming thread is stopping...",
@@ -1288,7 +1327,7 @@ class App(Map, Interface):
                     uav_fn_goto_location(
                         drone=UAVs[uav_index], latitude=latitude, longitude=longitude
                     )
-                    for uav_index in range(1, MAX_UAV_COUNT + 1)
+                    for uav_index in AVAIL_UAV_INDEXES
                 ]
                 await asyncio.gather(*goTo_all_UAVs)
         except Exception as e:
@@ -1477,7 +1516,7 @@ class App(Map, Interface):
                 )
             else:
                 get_status_all_UAVs = [
-                    self.uav_fn_get_status(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
+                    self.uav_fn_get_status(uav_index) for uav_index in AVAIL_UAV_INDEXES
                 ]
                 await asyncio.gather(*get_status_all_UAVs)
         except Exception as e:
@@ -1506,8 +1545,37 @@ class App(Map, Interface):
             self.update_terminal(status, uav_index)
 
     # -----------------------------< UAVs streaming functions >-----------------------------
+    # @pyqtSlot(np.ndarray, int)
+    # def stream_on_uav_screen(self, uav_index) -> None:
+    #     global UAVs
+    #     try:
+    #         if not (
+    #             (
+    #                 UAVs[uav_index]["connection_allow"]
+    #                 or UAVs[uav_index]["status"]["connection_status"]
+    #             )
+    #             and UAVs[uav_index]["streaming_enable"]
+    #         ):
+    #             return
 
-    def stream_on_uav_screen(self, uav_index, **kwargs) -> None:
+    #         if not UAVs[uav_index]["status"]["streaming_status"]:
+    #             pause_frame = cv2.imread(pause_img_paths[DEFAULT_STREAM_SCREEN])
+    #             self.update_uav_screen_view(
+    #                 uav_index, pause_frame, screen_name=DEFAULT_STREAM_SCREEN
+    #             )
+    #             return
+
+    #         print("Receive frame:", frame.shape)
+    #         self.update_uav_screen_view(
+    #             uav_index=uav_index, frame=frame, screen_name=DEFAULT_STREAM_SCREEN
+    #         )
+
+    #     except Exception as e:
+    #         self.popup_msg(
+    #             f"Stream error: {repr(e)}", src_msg="stream_on_uav_screen", type_msg="error"
+    #         )
+
+    def stream_on_uav_screen(self, uav_index) -> None:
         """
         Updates the UAV screen view with the specified UAV's information.
 
@@ -1527,32 +1595,6 @@ class App(Map, Interface):
                 and UAVs[uav_index]["streaming_enable"]
             ):
                 return
-
-            capture = {
-                "address": UAVs[uav_index]["streaming_address"],
-                "width": DEFAULT_STREAM_SIZE[0],
-                "height": DEFAULT_STREAM_SIZE[1],
-                "fps": DEFAULT_STREAM_FPS,
-            }
-
-            writer = {
-                "enable": UAVs[uav_index]["recording_enable"],
-                "filename": DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1],
-                "fourcc": FOURCC,
-                "frameSize": DEFAULT_STREAM_SIZE,
-            }
-
-            self.uav_streams[uav_index - 1] = Stream(
-                capture=capture,
-                writer=writer,
-            )
-
-            logger.log(
-                f"UAV-{uav_index} streaming thread started! \n\
-                    -- Capture stream from {os.path.relpath(UAVs[uav_index]['streaming_address'], __current_path__)} \n\
-                    -- Save recording to {os.path.relpath(DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1], __current_path__) if UAVs[uav_index]['recording_enable'] else 'None'}",
-                level="info",
-            )
 
             is_opened = self.uav_streams[uav_index - 1].is_opened()
             stream_fps = self.uav_streams[uav_index - 1].get_fps()
@@ -1597,18 +1639,12 @@ class App(Map, Interface):
                                         frame,
                                     )
 
-                                    # UAVs[uav_index][
-                                    #     "detection_enable"
-                                    # ] = False  # turn off the detection
-
                                     export_frame = True
 
                                     # pause the mission and do the rescue mission
 
                                     # * ============ modify here ======================
-                                    # logger.log(
-                                    #     f"Detect obj at X: {obj['x']} Y: {obj['y']} with frame size: {frame.shape}",
-                                    # )
+
                                     detected_pos = (obj["x"], obj["y"])
                                     frame_shape = frame.shape
                                     uav_lat, uav_lon = UAVs[uav_index]["status"]["position_status"]
@@ -1628,6 +1664,12 @@ class App(Map, Interface):
                                             uav_gps=uav_gps,
                                         )
                                     )
+
+                                    # * ================================================
+                                    # 1. Export to file
+                                    # 2. Pause the mission
+                                    # 3. Do the rescue mission
+                                    # 3.1 swarm_algorithm([UAVs[uav_index] for uav_index in range(5)], detected_pos)
 
                                     # * ================================================
 
@@ -1668,6 +1710,65 @@ class App(Map, Interface):
                 src_msg="stream_on_uav_screen",
                 type_msg="error",
             )
+
+    # ------------------------------------< Rescue UAV 6 >-----------------------------
+    async def uav_fn_rescue(self) -> None:
+        """
+        Rescue mission for UAV 6.
+
+        Args:
+            uav_index (int): The index of the UAV.
+
+        Returns:
+            None
+        """
+        global UAVs
+        # connect -> arm -> takeoff -> mission (goto pos) -> return -> disarm
+        uav_index = RESCUE_UAV_INDEX
+        if not (
+            UAVs[uav_index]["status"]["connection_status"] and UAVs[uav_index]["connection_allow"]
+        ):
+            return
+
+        await UAVs[uav_index]["system"].connect(system_address=UAVs[uav_index]["system_address"])
+
+        await UAVs[uav_index]["system"].action.set_maximum_speed(1.0)
+
+        await UAVs[uav_index]["system"].action.arm()
+        await UAVs[uav_index]["system"].action.set_takeoff_altitude(
+            UAVs[uav_index]["init_params"]["altitude"]
+        )
+        await UAVs[uav_index]["system"].action.takeoff()
+
+        # # update initial position of UAV
+
+        UAVs[uav_index]["init_params"]["latitude"] = float(
+            UAVs[uav_index]["status"]["position_status"][0]
+        )
+        UAVs[uav_index]["init_params"]["longitude"] = float(
+            UAVs[uav_index]["status"]["position_status"][1]
+        )
+
+        # update UAV information
+        UAVs[uav_index]["status"]["connection_status"] = True
+
+        # Go to the detected position
+        with open(f"{SRC_DIR}/logs/rescue_pos/rescue_pos.log", "r") as file:
+            line = file.readline()
+            if not line:
+                return
+
+            RESCUE_POS = list(map(float, line.strip().split(", ")))
+
+        await uav_fn_goto_location(
+            drone=UAVs[uav_index],
+            latitude=RESCUE_POS[0],
+            longitude=RESCUE_POS[1],
+        )
+        # do the rescue mission
+        await self.uav_fn_get_status(uav_index)
+
+        pass
 
 
 # ------------------------------------< Main Application Class >-----------------------------

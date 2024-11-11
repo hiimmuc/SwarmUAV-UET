@@ -69,10 +69,15 @@ parameter_list = [
 MODE = "simulation"  # "simulation" or "real"
 
 # UAV settings
-MAX_UAV_COUNT = 6
-FREE_UAV_INDEX = (
-    6  # index of the free UAV connect -> arm -> takeoff -> mission -> return -> disarm
-)
+AVAIL_UAV_INDEXES = [i for i in range(1, 7)]
+RESCUE_UAV_INDEX = 6  # index of the free UAV for rescue mission
+
+MAX_UAV_COUNT = len(AVAIL_UAV_INDEXES)
+try:
+    AVAIL_UAV_INDEXES.remove(RESCUE_UAV_INDEX)
+except Exception as e:
+    print(e)
+# // UAVs' initial positions
 
 INIT_LON = 8.545594
 INIT_LAT = 47.397823
@@ -107,7 +112,7 @@ if MODE == "simulation":
     SERVER_HOSTS = [DEFAULT_SERVER_HOST] * MAX_UAV_COUNT
     SERVER_PORTS = [DEFAULT_SERVER_PORT + i for i in range(MAX_UAV_COUNT)]
     CLIENT_PORTS = [DEFAULT_CLIENT_PORT + i for i in range(MAX_UAV_COUNT)]
-else:
+else:  # acm ports for real UAVs
     DEFAULT_PROTOCOL = "serial"
     DEFAULT_SERVER_HOST = "/dev/tty"
     DEFAULT_SERVER_PORT = 57600
@@ -153,10 +158,12 @@ Stream source paths:
 DEFAULT_STREAM_VIDEO_PATHS = [
     f"{ROOT_DIR}/assets/streams/cam{i}.mp4" for i in range(1, MAX_UAV_COUNT + 1)
 ]
+
 # DEFAULT_STREAM_VIDEO_PATHS = [
 #     f"rtsp://192.168.144.70:8554/main.264",
 #     f"rtsp://192.168.144.60/video0",
 # ]
+
 # Destination paths for recording videos
 DEFAULT_STREAM_VIDEO_LOG_PATHS = [
     f"{SRC_DIR}/logs/videos/stream_log_uav_{i}_{NOW}.avi" for i in range(1, MAX_UAV_COUNT + 1)

@@ -47,7 +47,11 @@ def convert_cv2qt(cv_img, size=(640, 360)) -> QPixmap:
 
     qt_image = qt_image.scaled(*size, aspectRatioMode=Qt.KeepAspectRatio)
 
-    return QPixmap(QPixmap.fromImage(qt_image, ))
+    return QPixmap(
+        QPixmap.fromImage(
+            qt_image,
+        )
+    )
 
 
 def get_values_from_table(table, headers=[]) -> pd.DataFrame:
