@@ -4,26 +4,91 @@ from tkintermapview import TkinterMapView
 import os
 import tkinter as tk
 from tkinter import filedialog
-from inoutfile import read_points_from_file, read_number_from_file
+from .inoutfile import read_points_from_file, read_number_from_file
 import tkinter
 import tkintermapview
 import math
 import copy
 import numpy as np
-import os
-from chia_luoi import find_path
-from chia_dien_tich import chia_dien_tich, chia_luoi, chia_luoi_one
+from .chia_luoi import find_path
+from .chia_dien_tich import chia_dien_tich, chia_luoi, chia_luoi_one
 from PIL import Image, ImageTk
 import time
 from threading import Thread
 from math import atan2, degrees
 import threading
-from calculation_helpers import *
+from .calculation_helpers import *
+import json
 
 
 parent_dir = Path(__file__).parent.parent
 print(parent_dir)
 
+# -----------------------------------------------------------------------------------------------
+x_coords = []
+y_coords = []
+grid_enabled = False
+multi_area = True
+grid_path_enable = False
+position_list = []  # danh sach diem
+marker_list = []  # danh sach marker
+grid_points_markers = []  # danh sach marker cua diem luoi
+rotated_area_list = []
+grid_points_list = []
+grid_points_markers_list = []  # danh sach marker cua tat ca cac khu vuc
+area_grid = []
+number = 0  # dem so diem
+polygon_number = 0  # so da giac
+polygon_list = []  # danh sach cac da giac
+path_list = []  # danh sach duong
+grid_path_list = []  # danh sach duong cua diem luoi
+ordered_grid_points = []  # diem luoi
+drone = 0  # dem so drone
+drone_num = 0  # so drone connected
+drone_position_list = []  # danh sach diem
+drone_marker_list = []  # danh sach marker
+divisions = 0
+# update path
+update_active = False
+current_paths = {}
+latest_markers = {}
+update_active = False  # Initially, updates are not active
+update_thread = None  # Initialize the thread variable
+drone_paths = []  # List to store the paths for each drone
+path_lock = threading.Lock()  # Lock to synchronize access to `drone_paths`
+# Reduce path
+all_filtered_sets = []
+# chia khu vuc
+first_time = True
+
+def process_grid_points(grid_points, drone_position):
+    global area_grid, ordered_grid_points
+
+    if multi_area:
+        for area in grid_points:
+            # print("AREA", area)
+            # print(drone_position_list)
+            ordered_grid_points = find_path(area, drone_position)
+            # print(ordered_grid_points)
+            area_grid.append(ordered_grid_points)
+    else:
+        ordered_grid_points = find_path(grid_points, drone_position)
+        area_grid.append(ordered_grid_points)
+
+    return area_grid
+
+def point_on_line(point_a, point_c, point_b, margin_of_error=0.0001):
+        """
+        Check if point_c lies on the line defined by point_a and point_b
+        within a specified margin of error.
+        """
+        # Calculate distances between the points
+        dist_ab = haversine(point_a[0], point_a[1], point_b[0], point_b[1])
+        dist_ac = haversine(point_a[0], point_a[1], point_c[0], point_c[1])
+        dist_bc = haversine(point_b[0], point_b[1], point_c[0], point_c[1])
+
+        # Check if the sum of distances AC and BC is approximately equal to AB
+        return math.isclose(dist_ab, dist_ac + dist_bc, rel_tol=margin_of_error)
 
 def main():
     app = ctk.CTk()  # Create the main window
@@ -53,27 +118,27 @@ def main():
         frame_right.grid_columnconfigure(i, weight=1)
 
     # Map widget
-    # script_directory = os.path.dirname(os.path.abspath(__file__))
-    # database_path = os.path.join(script_directory, "offline_tiles(baithunghiem).db")
+    script_directory = os.path.dirname(os.path.abspath(__file__))
+    database_pathh = os.path.join(script_directory, "offline_tiles(satellite).db")
 
     # Set the map normal (offline)
-    # map_widget = tkintermapview.TkinterMapView(frame_right, corner_radius=0, use_database_only=True,
-    #                        max_zoom=20, database_path=database_path)
-    # map_widget.set_tile_server("https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga")
-    # map_widget.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga")
-    # map_widget.grid(row=1, column=0, columnspan=4, padx=20, pady=20, sticky="nsew")  # Increase columnspan for the map to expand
+    map_widget = tkintermapview.TkinterMapView(frame_right, corner_radius=0, use_database_only=True,
+                           max_zoom=22, database_path=database_pathh)
+    map_widget.set_tile_server("https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga")
+
+    map_widget.grid(row=1, column=0, columnspan=4, padx=20, pady=20, sticky="nsew")  # Increase columnspan for the map to expand
 
     # Set the map satellite (online)
-    map_widget = tkintermapview.TkinterMapView(frame_right, corner_radius=0)
-    map_widget.set_tile_server(
-        "https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)
-    # Increase columnspan for the map to expand
-    map_widget.grid(row=1, column=0, columnspan=4,
-                    padx=20, pady=20, sticky="nsew")
+    # map_widget = tkintermapview.TkinterMapView(frame_right, corner_radius=0)
+    # map_widget.set_tile_server(
+    #     "https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)
+    # # Increase columnspan for the map to expand
+    # map_widget.grid(row=1, column=0, columnspan=4,
+    #                 padx=20, pady=20, sticky="nsew")
 
     # Set the map server and position
 
-    map_widget.set_position(21.0609062, 105.791999817)  # Default position
+    map_widget.set_position(21.043222610225516, 105.72812693556824)  # Default position
     # map_widget.set_position(21.064677823616574, 105.79319877446977)  # Default position
     # map_widget.set_position(47.400162, 8.542776)  # Default position
 
@@ -84,47 +149,12 @@ def main():
     dot_image = ImageTk.PhotoImage(Image.open(
         f"{parent_dir}/map/images/Dot.png").resize((10, 10)))
 
-    # -----------------------------------------------------------------------------------------------
-    x_coords = []
-    y_coords = []
-    grid_enabled = False
-    multi_area = False
-    grid_path_enable = False
-    position_list = []  # danh sach diem
-    marker_list = []  # danh sach marker
-    grid_points_markers = []  # danh sach marker cua diem luoi
-    rotated_area_list = []
-    grid_points_list = []
-    grid_points_markers_list = []  # danh sach marker cua tat ca cac khu vuc
-    area_grid = []
-    number = 0  # dem so diem
-    polygon_number = 0  # so da giac
-    polygon_list = []  # danh sach cac da giac
-    path_list = []  # danh sach duong
-    grid_path_list = []  # danh sach duong cua diem luoi
-    ordered_grid_points = []  # diem luoi
-    drone = 0  # dem so drone
-    drone_num = 0  # so drone connected
-    drone_position_list = []  # danh sach diem
-    drone_marker_list = []  # danh sach marker
-    divisions = 0
-    # update path
-    update_active = False
-    current_paths = {}
-    latest_markers = {}
-    update_active = False  # Initially, updates are not active
-    update_thread = None  # Initialize the thread variable
-    drone_paths = []  # List to store the paths for each drone
-    path_lock = threading.Lock()  # Lock to synchronize access to `drone_paths`
-    # Reduce path
-    all_filtered_sets = []
-    # chia khu vuc
-    first_time = True
+    
 
     # -----------------THÊM ĐIỂM------------------------------------------------------------
 
     def left_click_event(coordinates_tuple):
-        nonlocal number
+        global number
         print("Left click event with coordinates:", coordinates_tuple)
         number += 1
         latitude, longitude = coordinates_tuple
@@ -137,7 +167,7 @@ def main():
             f"Point {number} set at latitude: {latitude}, longitude: {longitude}")
 
     def open_file():
-        nonlocal number
+        global number
         filename = filedialog.askopenfilename(initialdir=f"{parent_dir}/logs/area/", title="Chọn file",
                                               filetypes=(("Text files", "*.txt"), ("All files", "*.*")))
         if filename:
@@ -161,7 +191,7 @@ def main():
                     f"Point {index + 1} set at latitude: {position[0]}, longitude: {position[1]}")
 
     def add_point():
-        nonlocal number
+        global number
         x = float(entry_search_1.get())
         y = float(entry_search_2.get())
         number += 1
@@ -176,7 +206,7 @@ def main():
     # -----------------THÊM ĐIỂM DRONE------------------------------------------------------------
 
     def add_poin_station():
-        nonlocal drone
+        global drone
         drone += 1
         x = float(entry_search_1.get())
         y = float(entry_search_2.get())
@@ -190,7 +220,7 @@ def main():
         entry_search_2.delete(0, tk.END)
 
     def open_file_drone():
-        nonlocal drone, drone_num
+        global drone, drone_num
         id_drone = []
 
         if drone != 0:
@@ -232,7 +262,7 @@ def main():
 
         # đọc vị trí drone
         for i in range(drone_num):
-            with open(f'{parent_dir}/logs/gps/gps_data{id_drone[i]}.txt', 'r') as file:
+            with open(f'{parent_dir}/logs/gps/gps_log_uav_{id_drone[i]}.txt', 'r') as file:
                 first_line = file.readline()  # Read only the first line of each file
                 # Assuming space-separated x, y coordinates.
                 parts = first_line.strip().split(", ")
@@ -273,7 +303,7 @@ def main():
     # -----------------XÓA ĐIỂM DRONE------------------------------------------------------------
 
     def clear_poin_station():
-        nonlocal drone
+        global drone
         drone_position_list.pop()
         removed_marker = drone_marker_list.pop()
         removed_marker.delete()
@@ -288,7 +318,7 @@ def main():
 
     # -----------------XÓA ĐIỂM CỨU NẠN------------------------------------------------------------
     def clear_last_point():  # Xóa điểm
-        nonlocal number
+        global number
         position_list.pop()
         removed_marker = marker_list.pop()
         removed_marker.delete()
@@ -306,7 +336,7 @@ def main():
         path_1.delete()
 
     def clear_polygon():  # Xóa đa giác
-        nonlocal polygon_number
+        global polygon_number
         polygon_number -= 1
         polygon1 = polygon_list.pop()
         polygon1.delete()
@@ -381,8 +411,7 @@ def main():
     color_index = 0  # Index to iterate over colors list
 
     def read_points_update_paths(num_drones, update_interval=2):
-        global drone_paths
-        nonlocal update_active
+        global drone_paths, update_active
 
         # Initialize paths for each drone
         drone_paths = [[] for _ in range(num_drones)]
@@ -391,7 +420,7 @@ def main():
             for i in range(num_drones):
                 try:
                     # Read the latest point from each file
-                    with open(f'{parent_dir}/logs/gps/gps_data{i+1}.txt', 'r') as file:
+                    with open(f'{parent_dir}/logs/gps/gps_log_uav_{i+1}.txt', 'r') as file:
                         line = file.readline().strip()
                         if line:
                             lat, lon = map(float, line.split(', '))
@@ -429,15 +458,13 @@ def main():
                 [p for p in drone_paths[drone_id]], color=colors[drone_id])
 
     def toggle_path_updates():
-        nonlocal drone_num
-
-        nonlocal update_active
+        global drone_num, update_active
 
         if update_active:
             update_active = False
             print("Updating stopped.")
         else:
-            nonlocal drone
+            global drone
             for i in range(drone_num):
                 drone_position_list.pop()
                 removed_marker = drone_marker_list.pop()
@@ -454,70 +481,11 @@ def main():
                              args=(drone_num,)).start()
             print("Updating started.")
 
-    # def toggle_path_updates():
-    #     nonlocal all_filtered_sets
-    #     drone_paths = copy.deepcopy(all_filtered_sets)
-    #     nonlocal update_active, current_paths, latest_markers
-
-    #     def delete_drone_path(drone_id):
-    #         if latest_markers.get(drone_id):
-    #             latest_markers[drone_id].delete()
-    #             latest_markers[drone_id] = None
-    #         if current_paths.get(drone_id):
-    #             current_paths[drone_id].delete()
-    #             current_paths[drone_id] = None
-
-    #     def add_point_to_path(drone_id, index, marker=None):
-    #         nonlocal current_paths, latest_markers
-    #         position_list = drone_paths[drone_id]
-
-    #         if index < len(position_list):
-    #             latest_position = position_list[index]
-
-    #             if marker:
-    #                 marker.delete()
-
-    #             if index + 1 < len(position_list):
-    #                 next_position = position_list[index + 1]
-    #                 yaw = calculate_bearing(latest_position[0], latest_position[1], next_position[0], next_position[1])
-    #                 closest_angle = min(rotations, key=lambda x: abs(x - yaw))
-    #                 icon_image = rotated_drone_images[closest_angle]
-    #             else:
-    #                 icon_image = Drone_image  # Default icon if it's the last point
-
-    #             latest_markers[drone_id] = map_widget.set_marker(latest_position[0], latest_position[1], text=f"Drone {drone_id}", icon=icon_image)
-
-    #             if current_paths.get(drone_id):
-    #                 current_paths[drone_id].delete()
-
-    #             if index > 0:
-    #                 current_paths[drone_id] = map_widget.set_path(position_list[:index + 1], color='#FFA500')
-
-    #             if index + 1 < len(position_list):
-    #                 map_widget.after(2000, lambda: add_point_to_path(drone_id, index + 1, latest_markers[drone_id]))
-    #             else:
-    #                 print(f"All points for drone {drone_id} have been added to the map.")
-
-    #     if update_active:
-    #         # Delete paths for all drones
-    #         for drone_id in range(len(drone_paths)):
-    #             delete_drone_path(drone_id)
-    #         print("Latest markers and paths have been removed.")
-    #         update_active = False
-    #     else:
-    #         drone_position_list.pop()
-    #         removed_marker = drone_marker_list.pop()
-    #         removed_marker.delete()
-    #         # Activate path updates for all drones
-    #         for drone_id, _ in enumerate(drone_paths):
-    #             if drone_paths[drone_id]:
-    #                 add_point_to_path(drone_id, 0)
-    #         update_active = True
 
     # -----------------THÊM ĐA GIÁC------------------------------------------------------------
 
     def add_polygon():
-        nonlocal polygon_number
+        global polygon_number
         polygon_number += 1
         polygon_list.append(map_widget.set_polygon(position_list))
         print(f'POLYGON: {polygon_number}')
@@ -545,21 +513,117 @@ def main():
 
     # -----------------TÍNH GÓC GIỮA 3 ĐIỂM------------------------------------------------------------
 
-    def calculate_area_and_display():
-        goc = find_biggest_angle(position_list)
-        canh = distance_list()
-        area_m2 = calculate_polygon_area(goc, canh, position_list)
-        if area_m2 is not None:
-            label_info.configure(text=f"{area_m2:.2f} m2")
-        else:
-            label_info.configure(text="NaN")
+    # def calculate_area_and_display():
+    #     goc = find_biggest_angle(position_list)
+    #     canh = distance_list()
+    #     area_m2 = calculate_polygon_area(goc, canh, position_list)
+    #     if area_m2 is not None:
+    #         label_info.configure(text=f"{area_m2:.2f} m2")
+    #     else:
+    #         label_info.configure(text="NaN")
+
+    def export_segmen_file():
+
+        # Define the structure of the .plan file according to QGroundControl specifications
+        plan_data = {
+            "fileType": "Plan",
+            "geoFence": {
+                "circles": [],
+                "polygons": [],
+                "version": 2
+            },
+            "groundStation": "QGroundControl",
+            "mission": {
+                "cruiseSpeed": 2,  # Set cruise speed in m/s
+                "hoverSpeed": None,    # Set hover speed in m/s
+                "firmwareType": 12, # Specify the firmware type (e.g., PX4)
+                "globalPlanAltitudeMode": 1,  # Altitude mode
+                "items": [],
+                "plannedHomePosition": [0, 0, 0],  # Placeholder for home position
+                "vehicleType": 2,  # Type of vehicle (e.g., 2 for fixed-wing)
+                "version": 2
+            },
+            "rallyPoints": {
+                "points": [],  # Initialize with empty points
+                "version": 2
+            },
+            "version": 1
+        }
+
+        # Populate mission items from area_grid waypoints
+       
+        home_position = position_list[0]  # First point as the home position
+        plan_data["mission"]["plannedHomePosition"] = [home_position[0], home_position[1], None]
+        for y, pos in enumerate(position_list):
+            # First waypoint
+            if y == 0:
+                waypoint = {
+                    "AMSLAltAboveTerrain": None,
+                    "Altitude": 3,
+                    "AltitudeMode": 1,
+                    "autoContinue": True,
+                    "command": 22,  # MAV_CMD_NAV_TAKEOFF
+                    "doJumpId": y + 1,
+                    "frame": 3,
+                    "params": [0, 0, 0, None, pos[0], pos[1], 3],
+                    "type": "SimpleItem"
+                }
+                plan_data["mission"]["items"].append(waypoint)
+            
+            # Last waypoint
+            elif y == len(position_list) - 1:
+                waypoint = {
+                    "AMSLAltAboveTerrain": None,
+                    "Altitude": 3,
+                    "AltitudeMode": 1,
+                    "autoContinue": True,
+                    "command": 16,  # MAV_CMD_NAV_LAND or equivalent end command
+                    "doJumpId": y + 1,
+                    "frame": 3,
+                    "params": [0, 0, 0, None, pos[0], pos[1], 3],
+                    "type": "SimpleItem"
+                }
+                plan_data["mission"]["items"].append(waypoint)
+                waypoint = {
+                    "autoContinue": True,
+                    "command": 20,  # MAV_CMD_NAV_LAND or equivalent end command
+                    "doJumpId": y + 2,
+                    "frame": 2,
+                    "params": [0, 0, 0, 0, 0, 0, 0],
+                    "type": "SimpleItem"
+                }
+                plan_data["mission"]["items"].append(waypoint)
+            
+            # Middle waypoints
+            else:
+                waypoint = {
+                    "AMSLAltAboveTerrain": None,
+                    "Altitude": 3,
+                    "AltitudeMode": 1,
+                    "autoContinue": True,
+                    "command": 16,  # MAV_CMD_NAV_WAYPOINT
+                    "doJumpId": y + 1,
+                    "frame": 3,
+                    "params": [0, 0, 0, None, pos[0], pos[1], 3],
+                    "type": "SimpleItem"
+                }
+                plan_data["mission"]["items"].append(waypoint)
+                
+        # Define the path to save the .plan file
+        plan_file_path = filedialog.asksaveasfilename(defaultextension=".plan", title="Lưu file",
+                                                initialdir=f"{parent_dir}/logs/points/",
+                                                filetypes=(("Plan files", "*.plan"), ("All files", "*.*")))
+
+        # Save as JSON to .plan file with UTF-8 encoding
+        with open(plan_file_path, 'w', encoding='utf-8') as plan_file:
+            json.dump(plan_data, plan_file, indent=4)
+
+        print(f"Mission plan exported to {plan_file_path}")
+
 
     # -----------------CHIA KHU VỰC------------------------------------------------------------
     def area_division():
-        nonlocal polygon_number
-        nonlocal grid_points_list
-        nonlocal rotated_area_list
-        nonlocal drone_num, first_time
+        global polygon_number, grid_points_list, rotated_area_list, drone_num, first_time
 
         areass = int(drone_num) - 1
         if first_time:
@@ -582,13 +646,8 @@ def main():
     # -----------------THÊM LƯỚI------------------------------------------------------------
 
     def toggle_grid():
-        nonlocal grid_enabled
-        nonlocal multi_area
-        nonlocal ordered_grid_points
-        nonlocal grid_points_markers_list
-        nonlocal area_grid
-        nonlocal rotated_area_list
-        nonlocal position_list
+        global grid_enabled, multi_area, ordered_grid_points, grid_points_markers_list, area_grid
+        global rotated_area_list, position_list
         grid_points = []
 
         if grid_enabled or not entry_grid_distance.get():
@@ -636,24 +695,7 @@ def main():
             # Start writing points to files in another thread
             # threading.Thread(target=write_points_to_files, args=(area_grid,)).start()
 
-    def process_grid_points(grid_points):
-        nonlocal area_grid, grid_points_markers_list, ordered_grid_points
-
-        if multi_area:
-            for area in grid_points:
-                print("AREA", area)
-                print(drone_position_list)
-                ordered_grid_points = find_path(area, drone_position_list[0])
-                print(ordered_grid_points)
-                area_marker = create_markers_for_points(ordered_grid_points)
-                grid_points_markers_list.append(area_marker)
-                area_grid.append(ordered_grid_points)
-        else:
-            ordered_grid_points = find_path(
-                grid_points, drone_position_list[0])
-            area_marker = create_markers_for_points(ordered_grid_points)
-            grid_points_markers_list.append(area_marker)
-            area_grid.append(ordered_grid_points)
+    
 
     def create_markers_for_points(points):
         area_marker = []
@@ -757,48 +799,151 @@ def main():
 
     # -----------------XUẤT ĐIỂM LƯỚI------------------------------------------------------------
 
+    # def export_grid_points():
+    #     nonlocal area_grid
+    #     print("DAY LA ordered_grid_points")
+    #     print(f"{area_grid}")
+    #     for i in range(len(area_grid)):
+    #         points = area_grid[i]
+    #         print("DAY LA POINTS")
+    #         print(f"{points}")
+
+    #         # with open(f'{parent_dir}/logs/points/points{i+1}.txt', 'r') as file:
+    #         #     # Read the first line from the file
+    #         #     first_line = file.readline().strip()
+
+    #         #     # Split the line into an array based on the comma separator
+    #         #     result_array = first_line.split(',')
+
+    #         #     # Convert string values to float
+    #         #     result_array = [float(value) for value in result_array]
+
+    #         with open(f'{parent_dir}/logs/points/points{i+1}.txt', 'w') as file:
+    #             # file.write(f"{result_array[0]}, {result_array[1]}\n")
+    #             for pos in points:
+    #                 file.write(f"{pos[0]}, {pos[1]}\n")
+
+
     def export_grid_points():
-        nonlocal area_grid
-        print("DAY LA ordered_grid_points")
+        global area_grid
+        print("Exporting waypoints to .plan file format")
         print(f"{area_grid}")
-        for i in range(len(area_grid)):
-            points = area_grid[i]
-            print("DAY LA POINTS")
-            print(f"{points}")
 
-            with open(f'{parent_dir}logs/gps/gps_data{i+1}.txt', 'r') as file:
-                # Read the first line from the file
-                first_line = file.readline().strip()
+        # Define the structure of the .plan file according to QGroundControl specifications
+        plan_data = {
+            "fileType": "Plan",
+            "geoFence": {
+                "circles": [],
+                "polygons": [],
+                "version": 2
+            },
+            "groundStation": "QGroundControl",
+            "mission": {
+                "cruiseSpeed": 1,  # Set cruise speed in m/s
+                "hoverSpeed": 1,    # Set hover speed in m/s
+                "firmwareType": 12, # Specify the firmware type (e.g., PX4)
+                "globalPlanAltitudeMode": 1,  # Altitude mode
+                "items": [],
+                "plannedHomePosition": [0, 0, 0],  # Placeholder for home position
+                "vehicleType": 2,  # Type of vehicle (e.g., 2 for fixed-wing)
+                "version": 2
+            },
+            "rallyPoints": {
+                "points": [],  # Initialize with empty points
+                "version": 2
+            },
+            "version": 1
+        }
 
-                # Split the line into an array based on the comma separator
-                result_array = first_line.split(',')
+        # Populate mission items from area_grid waypoints
+        for i, points in enumerate(area_grid):
+            # Assuming the first waypoint will be the planned home position
+            with open(f'{parent_dir}/logs/gps/gps_log_uav_{i+1}.txt', 'r') as file:
+                first_line = file.readline()  # Read only the first line of each file
+                # Assuming space-separated x, y coordinates.
+                parts = first_line.strip().split(", ")
+                if len(parts) >= 2:
+                    # Convert string to float for coordinates
+                    lon, lat  = float(parts[0]), float(parts[1])
+        
+            # if area_grid and area_grid[0]:
+            #     home_position = area_grid[i][0]  # First point as the home position
+            #     plan_data["mission"]["plannedHomePosition"] = [home_position[0], home_position[1], None]
 
-                # Convert string values to float
-                result_array = [float(value) for value in result_array]
+            if area_grid and area_grid[0]:
+                plan_data["mission"]["plannedHomePosition"] = [lon, lat, None]
+            for y, pos in enumerate(points):
+                # First waypoint
+                if y == 0:
+                    waypoint = {
+                        "AMSLAltAboveTerrain": None,
+                        "Altitude": 5 + i,
+                        "AltitudeMode": 1,
+                        "autoContinue": True,
+                        "command": 22,  # MAV_CMD_NAV_TAKEOFF
+                        "doJumpId": y + 1,
+                        "frame": 3,
+                        "params": [0, 0, 0, None, pos[0], pos[1], 5 + i],
+                        "type": "SimpleItem"
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
+                
+                # Last waypoint
+                elif y == len(points) - 1:
+                    waypoint = {
+                        "AMSLAltAboveTerrain": None,
+                        "Altitude": 5 + i,
+                        "AltitudeMode": 1,
+                        "autoContinue": True,
+                        "command": 16,  # MAV_CMD_NAV_LAND or equivalent end command
+                        "doJumpId": y + 1,
+                        "frame": 3,
+                        "params": [0, 0, 0, None, pos[0], pos[1], 5 + i],
+                        "type": "SimpleItem"
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
+                    waypoint = {
+                        "autoContinue": True,
+                        "command": 20,  # MAV_CMD_NAV_LAND or equivalent end command
+                        "doJumpId": y + 2,
+                        "frame": 2,
+                        "params": [0, 0, 0, 0, 0, 0, 0],
+                        "type": "SimpleItem"
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
+                
+                # Middle waypoints
+                else:
+                    waypoint = {
+                        "AMSLAltAboveTerrain": None,
+                        "Altitude": 5 + i,
+                        "AltitudeMode": 1,
+                        "autoContinue": True,
+                        "command": 16,  # MAV_CMD_NAV_WAYPOINT
+                        "doJumpId": y + 1,
+                        "frame": 3,
+                        "params": [0, 0, 0, None, pos[0], pos[1], 5 + i],
+                        "type": "SimpleItem"
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
+                    
+            # Define the path to save the .plan file
+            plan_file_path = f"{parent_dir}/logs/points/points{i+1}.plan"
 
-            with open(f'{parent_dir}logs/points/points{i+1}.txt', 'w') as file:
-                file.write(f"{result_array[0]}, {result_array[1]}\n")
-                for pos in points:
-                    file.write(f"{pos[0]}, {pos[1]}\n")
+            # Save as JSON to .plan file with UTF-8 encoding
+            with open(plan_file_path, 'w', encoding='utf-8') as plan_file:
+                json.dump(plan_data, plan_file, indent=4)
+
+            print(f"Mission plan exported to {plan_file_path}")
+
+        
+
 
     # -----------------RÚT GỌN ĐIỂM LƯỚI------------------------------------------------------------
 
-    def point_on_line(point_a, point_c, point_b, margin_of_error=0.0001):
-        """
-        Check if point_c lies on the line defined by point_a and point_b
-        within a specified margin of error.
-        """
-        # Calculate distances between the points
-        dist_ab = haversine(point_a[0], point_a[1], point_b[0], point_b[1])
-        dist_ac = haversine(point_a[0], point_a[1], point_c[0], point_c[1])
-        dist_bc = haversine(point_b[0], point_b[1], point_c[0], point_c[1])
-
-        # Check if the sum of distances AC and BC is approximately equal to AB
-        return math.isclose(dist_ab, dist_ac + dist_bc, rel_tol=margin_of_error)
-
     def remove_collinear_points():
-        nonlocal all_filtered_sets
-        nonlocal area_grid
+        global all_filtered_sets
+        global area_grid
         points_sets = copy.deepcopy(area_grid)
         all_filtered_sets = []
 
@@ -818,22 +963,129 @@ def main():
             filtered_points.append(points[-1])  # Always keep the last point
             all_filtered_sets.append(filtered_points)
 
-        for i in range(len(all_filtered_sets)):
-            points = all_filtered_sets[i]
-            print("DAY LA POINTS")
-            print(f"{points}")
-            with open(f'{parent_dir}/logs/remove/removed{i+1}.txt', 'w') as file:
-                for pos in points:
-                    file.write(f"{pos[0]}, {pos[1]}\n")
+        # for i in range(len(all_filtered_sets)):
+        #     points = all_filtered_sets[i]
+        #     print("DAY LA POINTS")
+        #     print(f"{points}")
+        #     with open(f'{parent_dir}/logs/remove/points{i+1}.txt', 'w') as file:
+        #         for pos in points:
+        #             file.write(f"{pos[0]}, {pos[1]}\n")
+        
+        # Define the structure of the .plan file according to QGroundControl specifications
+        plan_data = {
+            "fileType": "Plan",
+            "geoFence": {
+                "circles": [],
+                "polygons": [],
+                "version": 2
+            },
+            "groundStation": "QGroundControl",
+            "mission": {
+                "cruiseSpeed": 5,  # Set cruise speed in m/s
+                "hoverSpeed": 1,    # Set hover speed in m/s
+                "firmwareType": 12, # Specify the firmware type (e.g., PX4)
+                "globalPlanAltitudeMode": 1,  # Altitude mode
+                "items": [],
+                "plannedHomePosition": [0, 0, 0],  # Placeholder for home position
+                "vehicleType": 2,  # Type of vehicle (e.g., 2 for fixed-wing)
+                "version": 2
+            },
+            "rallyPoints": {
+                "points": [],  # Initialize with empty points
+                "version": 2
+            },
+            "version": 1
+        }
+
+        # Populate mission items from area_grid waypoints
+        for i, points in enumerate(all_filtered_sets):
+            # Assuming the first waypoint will be the planned home position
+            with open(f'{parent_dir}/logs/gps/gps_log_uav_{i+1}.txt', 'r') as file:
+                first_line = file.readline()  # Read only the first line of each file
+                # Assuming space-separated x, y coordinates.
+                parts = first_line.strip().split(", ")
+                if len(parts) >= 2:
+                    # Convert string to float for coordinates
+                    lon, lat  = float(parts[0]), float(parts[1])
+        
+            # if all_filtered_sets and all_filtered_sets[0]:
+            #     home_position = all_filtered_sets[i][0]  # First point as the home position
+            #     plan_data["mission"]["plannedHomePosition"] = [home_position[0], home_position[1], None]
+
+            if all_filtered_sets and all_filtered_sets[0]:
+                plan_data["mission"]["plannedHomePosition"] = [lon, lat, None]
+            for y, pos in enumerate(points):
+                # First waypoint
+                if y == 0:
+                    waypoint = {
+                        "AMSLAltAboveTerrain": None,
+                        "Altitude": 5 + i,
+                        "AltitudeMode": 1,
+                        "autoContinue": True,
+                        "command": 22,  # MAV_CMD_NAV_TAKEOFF
+                        "doJumpId": y + 1,
+                        "frame": 3,
+                        "params": [0, 0, 0, None, pos[0], pos[1], 5 + i],
+                        "type": "SimpleItem"
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
+                
+                # Last waypoint
+                elif y == len(points) - 1:
+                    waypoint = {
+                        "AMSLAltAboveTerrain": None,
+                        "Altitude": 5 + i,
+                        "AltitudeMode": 1,
+                        "autoContinue": True,
+                        "command": 16,  # MAV_CMD_NAV_LAND or equivalent end command
+                        "doJumpId": y + 1,
+                        "frame": 3,
+                        "params": [0, 0, 0, None, pos[0], pos[1], 5 + i],
+                        "type": "SimpleItem"
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
+                    waypoint = {
+                        "autoContinue": True,
+                        "command": 20,  # MAV_CMD_NAV_LAND or equivalent end command
+                        "doJumpId": y + 2,
+                        "frame": 2,
+                        "params": [0, 0, 0, 0, 0, 0, 0],
+                        "type": "SimpleItem"
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
+                
+                # Middle waypoints
+                else:
+                    waypoint = {
+                        "AMSLAltAboveTerrain": None,
+                        "Altitude": 5 + i,
+                        "AltitudeMode": 1,
+                        "autoContinue": True,
+                        "command": 16,  # MAV_CMD_NAV_WAYPOINT
+                        "doJumpId": y + 1,
+                        "frame": 3,
+                        "params": [0, 0, 0, None, pos[0], pos[1], 5 + i],
+                        "type": "SimpleItem"
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
+                    
+            # Define the path to save the .plan file
+            plan_file_path = f"{parent_dir}/logs/points/points{i+1}.plan"
+
+            # Save as JSON to .plan file with UTF-8 encoding
+            with open(plan_file_path, 'w', encoding='utf-8') as plan_file:
+                json.dump(plan_data, plan_file, indent=4)
+
+            print(f"Mission plan exported to {plan_file_path}")
 
         return all_filtered_sets
 
     # -----------------VẼ ĐƯỜNG ĐI TRÊN LƯỚI------------------------------------------------------------
 
     def path_grid_points():
-        nonlocal grid_path_enable
-        nonlocal area_grid
-        nonlocal grid_path_list
+        global grid_path_enable
+        global area_grid
+        global grid_path_list
         # Define a list of colors for paths
         colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange']
         color_index = 0  # Index to iterate over colors list
@@ -913,7 +1165,7 @@ def main():
     button_add_marker.grid(row=9, column=0, padx=10, pady=10, sticky="ew")
 
     button_add_marker = ctk.CTkButton(
-        frame_left, text="Tính diện tích", command=calculate_area_and_display)
+        frame_left, text="Xuất file đường", command=export_segmen_file)
     button_add_marker.grid(row=10, column=0, padx=10, pady=10, sticky="ew")
 
     # Define a label and place it under the button

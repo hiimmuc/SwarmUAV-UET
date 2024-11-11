@@ -192,6 +192,22 @@ function addMarkerJs(key, latitude, longitude) {
     return key;
 }
 
+// Function to add or update a UAV marker
+function updateUAVMarker(uavId, latitude, longitude) {
+    if (markers[uavId]) {
+        // Update existing marker position
+        markers[uavId].setLatLng([latitude, longitude]);
+    } else {
+        // Create a new marker for this UAV
+        markers[uavId] = L.marker([latitude, longitude], {
+            icon: L.icon({
+                iconUrl: './icons/drone.png', // Replace with actual path to icon
+                iconSize: [25, 41],            // Adjust icon size as needed
+                iconAnchor: [12, 41]           // Adjust anchor point as needed
+            })
+        }).addTo(map).bindPopup('UAV-' + uavId);
+    }
+}
 
 function deleteMarkerJs(key) {
     map.removeLayer(markers[key]);
