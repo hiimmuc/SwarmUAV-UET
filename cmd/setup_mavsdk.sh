@@ -1,4 +1,4 @@
-cd ../dependencies/
+cd dependencies/
 
 git clone https://github.com/mavlink/MAVSDK-Python --recursive
 cd MAVSDK-Python
