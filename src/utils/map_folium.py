@@ -3,14 +3,21 @@ import io
 from pathlib import Path
 
 import folium
+from folium import CustomIcon
 import folium.plugins
 from folium.plugins import MarkerCluster
 from folium.plugins.draw import Draw
 from folium.raster_layers import TileLayer
 from jinja2 import Template
+from folium import Map, Marker
+from folium.elements import MacroElement
+
 
 NOW = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 _src_path = Path(__file__).resolve().parent.parent
+
+ICON_DIR = Path(__file__).parent.parent / 'assets' / 'icons'
+drone_icon_path = ICON_DIR / 'drone.png'
 
 titles = [
     TileLayer(
@@ -65,6 +72,27 @@ ICON = {
 # cSpell: ignore folium, geojson, lon, lat, polyline, polygon, circlemarker, circlemarker, Geocoder, bottomleft, topright
 
 
+class UpdateMarkerJs(MacroElement):
+    _template = Template("""
+        <script>
+            // JavaScript code to update markers
+            let droneMarkers = {};
+
+            function updateUAVMarkerovv(id, latitude, longitude) {
+                if (droneMarkers[id]) {
+                    droneMarkers[id].setLatLng([latitude, longitude]);
+                } else {
+                    droneMarkers[id] = L.marker([latitude, longitude], {
+                        icon: L.icon({
+                            iconUrl: '/home/hansen/Documents/SwarmUAV-UET/assets/icons/drone.png',  // Update the icon path
+                            iconSize: [32, 32]  // Adjust as necessary
+                        })
+                    }).addTo(map);
+                }
+            }
+        </script>
+    """)
+
 class MapFolium:
     def __init__(
         self,
@@ -78,6 +106,7 @@ class MapFolium:
         self.maker_cluster = MarkerCluster(
             name="1000 clustered icons", overlay=True, control=False, icon_create_function=None
         )
+        
 
     def _init_map(self, location: list, zoom_start: int) -> None:
         self.m = folium.Map(
@@ -87,6 +116,8 @@ class MapFolium:
             prefer_canvas=True,
             zoom_control=False,
         )
+        # Add your custom JavaScript code
+        self.m.get_root().add_child(UpdateMarkerJs())
 
         # self.m.default_js.append(("qtwebchannel", "src/utils/qwebchannel.js"))
 
@@ -165,22 +196,60 @@ class MapFolium:
 
         return self.render_map()
 
+    # def add_marker(
+    #     self, key: str, latitude: float, longitude: float, tooltip=None, icon=None
+    # ) -> None:
+    #     marker = folium.Marker(
+    #         location=[latitude, longitude],
+    #         popup=None,
+    #         tooltip=tooltip,
+    #         icon=folium.Icon(color=icon["color"], icon=icon["icon"], prefix="fa"),
+    #         draggable=False,
+    #     )
+    #     popup = "{}<br>lat:{}<br>lon:{}".format(key, latitude, longitude)
+    #     folium.Popup(popup, show=True).add_to(marker)
+
+    #     self.maker_cluster.add_child(marker)
+    #     self.maker_cluster.add_to(self.m)
+
+    #     return self.render_map()
+
     def add_marker(
         self, key: str, latitude: float, longitude: float, tooltip=None, icon=None
     ) -> None:
-        marker = folium.Marker(
-            location=[latitude, longitude],
-            popup=None,
-            tooltip=tooltip,
-            icon=folium.Icon(color=icon["color"], icon=icon["icon"], prefix="fa"),
-            draggable=False,
-        )
+        print("Adding", key, latitude, longitude)
+        print(type(longitude), type(latitude))
+
+        # Use a custom icon if a file path is provided
+        if icon and "icon_path" in icon:
+            # Convert the icon path to a string to avoid PosixPath issues
+            icon_path = str(icon["icon_path"])  # Convert PosixPath to string
+            custom_icon = CustomIcon(
+                icon_image=icon_path,  # Path to the custom icon image
+                icon_size=(32, 32)     # Adjust the size as needed
+            )
+            marker = folium.Marker(
+                location=[latitude, longitude],
+                popup=None,
+                tooltip=tooltip,
+                icon=custom_icon,
+                draggable=False,
+            )
+        else:
+            # Fallback to default Folium Icon if no custom icon path is specified
+            marker = folium.Marker(
+                location=[latitude, longitude],
+                popup=None,
+                tooltip=tooltip,
+                icon=folium.Icon(color=icon["color"], icon=icon["icon"], prefix="fa"),
+                draggable=False,
+            )
+
         popup = "{}<br>lat:{}<br>lon:{}".format(key, latitude, longitude)
         folium.Popup(popup, show=True).add_to(marker)
 
         self.maker_cluster.add_child(marker)
         self.maker_cluster.add_to(self.m)
-
         return self.render_map()
 
     def add_line(

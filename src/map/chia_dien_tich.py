@@ -3,7 +3,10 @@ import sys
 import copy
 from scipy.spatial import ConvexHull
 import numpy as np
-from calculation_helpers import *
+from .calculation_helpers import *
+from pathlib import Path
+
+parent_dir = Path(__file__).parent.parent
 
 # -------------CHIA LUOI------------
 
@@ -277,7 +280,8 @@ def chia_dien_tich(positions, number_of_part):
         new = calculate_new_lat_lon(min_lat, min_lon, point[1], point[0])
         per_GPS_list.append(new)
         print(f"{point}")
-    with open('src/data/per.txt', 'w') as file:
+    p_filename = f"{parent_dir}/data/per.txt"  # Set the filename
+    with open(p_filename, 'w') as file:
         for pos in per_GPS_list:
             file.write(f"{pos[0]}, {pos[1]}\n")
 
@@ -290,7 +294,8 @@ def chia_dien_tich(positions, number_of_part):
         div_GPS_list.append(new)
         print(f"{new}")
 
-    with open('src/data/div.txt', 'w') as file:
+    div_filename = f"{parent_dir}/data/div.txt"  # Set the filename
+    with open(div_filename, 'w') as file:
         for pos in div_GPS_list:
             file.write(f"{pos[0]}, {pos[1]}\n")
 
@@ -368,7 +373,8 @@ def chia_dien_tich(positions, number_of_part):
         # Convert the vertices back to a list of tuples
         points = [tuple(point) for point in hull_vertices]
         final_area.append(points)
-        with open(f'src/logs/area/area{i+1}.txt', 'w') as file:
+        area_filename = f"{parent_dir}/data/area{i+1}.txt"  # Set the filename
+        with open(area_filename, 'w') as file:
             for pos in points:
                 file.write(f"{pos[0]}, {pos[1]}\n")
 

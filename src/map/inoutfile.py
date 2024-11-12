@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog
+from pathlib import Path
 
+parent_dir = Path(__file__).parent.parent
 
 def read_points_from_file(filename):
     try:
@@ -18,7 +20,7 @@ def read_points_from_file(filename):
 
 
 def read_number_from_file():
-    filename = 'src/data/ID_drone.txt'  # Set the filename
+    filename = f"{parent_dir}/data/ID_drone.txt"  # Set the filename
     try:
         with open(filename, 'r') as file:
             # Read each line, strip, and convert to integer if the line is not blank

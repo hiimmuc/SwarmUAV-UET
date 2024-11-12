@@ -3,7 +3,7 @@ from tkinter import filedialog
 import math
 import numpy as np
 from scipy.spatial import ConvexHull, Delaunay
-from calculation_helpers import *
+from .calculation_helpers import *
 
 x_coords = []
 y_coords = []
