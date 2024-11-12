@@ -1,4 +1,4 @@
-cd ../dependencies/
+cd dependencies/
 git clone https://github.com/intel/mavlink-router.git
 cd mavlink-router/
 git submodule update --init --recursive
