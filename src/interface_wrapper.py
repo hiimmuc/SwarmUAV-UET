@@ -1085,7 +1085,7 @@ class App(Map, Interface):
                 fpath = QFileDialog.getOpenFileName(
                     self,
                     "Open file",
-                    plans_log_dir,
+                    SRC_DIR,
                     "Files (*.TXT *.txt)",
                 )[0]
 
