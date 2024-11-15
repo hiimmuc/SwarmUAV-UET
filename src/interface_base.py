@@ -274,36 +274,42 @@ class Interface(QMainWindow):
         - Screen_7_Rescue_map: Switches to the map page with an overview of all UAVs.
         - Screen_11_Overview: Switches to the main page with an overview view.
         """
-        # setup tabs menubar actions
-        self.ui.actionUAV_1_view.triggered.connect(
-            lambda: self._switch_layout("main page", "uav1")
-        )
-        self.ui.actionUAV_2_view.triggered.connect(
-            lambda: self._switch_layout("main page", "uav2")
-        )
-        self.ui.actionUAV_3_view.triggered.connect(
-            lambda: self._switch_layout("main page", "uav3")
-        )
-        self.ui.actionUAV_4_view.triggered.connect(
-            lambda: self._switch_layout("main page", "uav4")
-        )
-        self.ui.actionUAV_5_view.triggered.connect(
-            lambda: self._switch_layout("main page", "uav5")
-        )
-        self.ui.actionUAV_6_view.triggered.connect(
-            lambda: self._switch_layout("main page", "uav6")
-        )
+        try:
+            # setup tabs menubar actions
+            self.ui.actionUAV_1_view.triggered.connect(
+                lambda: self._switch_layout("main page", "uav1")
+            )
+            self.ui.actionUAV_2_view.triggered.connect(
+                lambda: self._switch_layout("main page", "uav2")
+            )
+            self.ui.actionUAV_3_view.triggered.connect(
+                lambda: self._switch_layout("main page", "uav3")
+            )
+            self.ui.actionUAV_4_view.triggered.connect(
+                lambda: self._switch_layout("main page", "uav4")
+            )
+            self.ui.actionUAV_5_view.triggered.connect(
+                lambda: self._switch_layout("main page", "uav5")
+            )
+            self.ui.actionUAV_6_view.triggered.connect(
+                lambda: self._switch_layout("main page", "uav6")
+            )
 
-        self.ui.actionOverview.triggered.connect(lambda: self._switch_layout("main page", "all"))
-        self.ui.actionScreen_10_Settings.triggered.connect(
-            lambda: self._switch_layout("main page", "settings")
-        )
-        self.ui.actionScreen_7_Rescue_map.triggered.connect(
-            lambda: self._switch_layout("map page", "all")
-        )
-        self.ui.actionScreen_11_Overview.triggered.connect(
-            lambda: self._switch_layout("main page", "overview")
-        )
+            self.ui.actionOverview.triggered.connect(
+                lambda: self._switch_layout("main page", "all")
+            )
+            self.ui.actionScreen_10_Settings.triggered.connect(
+                lambda: self._switch_layout("main page", "settings")
+            )
+            self.ui.actionScreen_7_Rescue_map.triggered.connect(
+                lambda: self._switch_layout("map page", "all")
+            )
+            self.ui.actionScreen_11_Overview.triggered.connect(
+                lambda: self._switch_layout("main page", "overview")
+            )
+        except Exception as e:
+            logger.log(repr(e), level="error")
+            self.popup_msg(repr(e), src_msg="_menu_bar_clicked_event", type_msg="error")
 
     def _tab_clicked_event(self) -> None:
         """
@@ -342,11 +348,15 @@ class Interface(QMainWindow):
         Returns:
             None
         """
-        self.ui.stackedWidget.setCurrentIndex(stackedWidget_indexes[stack_name])
-        self.ui.tabWidget.setCurrentIndex(tabWidget_indexes[tab_name])
+        try:
+            self.ui.stackedWidget.setCurrentIndex(stackedWidget_indexes[stack_name])
+            self.ui.tabWidget.setCurrentIndex(tabWidget_indexes[tab_name])
 
-        self.active_tab_index = self.ui.tabWidget.currentIndex()
-        self.active_stack_index = self.ui.stackedWidget.currentIndex()
+            self.active_tab_index = self.ui.tabWidget.currentIndex()
+            self.active_stack_index = self.ui.stackedWidget.currentIndex()
+        except Exception as e:
+            logger.log(repr(e), level="error")
+            self.popup_msg(repr(e), src_msg="_switch_layout", type_msg="error")
 
     # -----------------------------< UI display utility functions >-----------------------------
 
