@@ -73,7 +73,7 @@ ROS-Noetic / ROS-Foxy
 
    ```
    pip install -r requirements.txt
-   pip install -r requirements_refine.txt
+   pip install -r requirements-refine.txt
    pip install mavsdk asyncio --force
    ```
 
