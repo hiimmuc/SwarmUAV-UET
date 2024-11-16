@@ -6,12 +6,12 @@ from collections import defaultdict
 from threading import Thread
 
 import cv2
+import mavsdk.mission_raw
 from asyncqt import QEventLoop
 
 # mavsdk
 from mavsdk import System
 from mavsdk.mission import MissionItem, MissionPlan
-import mavsdk.mission_raw
 
 # PyQt5
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -952,19 +952,22 @@ class App(Map, Interface):
                 # Import the mission from the QGroundControl .plan file
                 out = None  # Initialize out variable
                 try:
-                    out = await UAVs[uav_index]["system"].mission_raw.import_qgroundcontrol_mission(
+                    out = await UAVs[uav_index][
+                        "system"
+                    ].mission_raw.import_qgroundcontrol_mission(
                         f"{SRC_DIR}/logs/points/points{uav_index}.plan"
                     )
                 except Exception as e:
                     print(f"Error importing mission: {e}")
-                    self.popup_msg(f"Mission error: {e}", src_msg="uav_fn_mission", type_msg="error")
+                    self.popup_msg(
+                        f"Mission error: {e}", src_msg="uav_fn_mission", type_msg="error"
+                    )
                     return
 
-
-                print(f"{len(out.mission_items)} mission items and "
-                    f"{len(out.rally_items)} rally items imported.")
-                
-
+                print(
+                    f"{len(out.mission_items)} mission items and "
+                    f"{len(out.rally_items)} rally items imported."
+                )
 
                 # ? this is option 2
                 # read mission points from file
@@ -1003,7 +1006,7 @@ class App(Map, Interface):
 
                 # set return to launch after mission
                 await UAVs[uav_index]["system"].mission.set_return_to_launch_after_mission(True)
-                
+
                 # upload mission
                 self.update_terminal("Uploading mission...", uav_index=uav_index)
 
@@ -1083,10 +1086,10 @@ class App(Map, Interface):
 
                 # read mission points from file
                 fpath = QFileDialog.getOpenFileName(
-                    self,
-                    "Open file",
-                    SRC_DIR,
-                    "Files (*.TXT *.txt)",
+                    parent=self,
+                    caption="Open file",
+                    directory=str(SRC_DIR),
+                    initialFilter="Files (*.TXT *.txt)",
                 )[0]
 
                 mission_items = []
@@ -1345,10 +1348,10 @@ class App(Map, Interface):
         """
         global UAVs
         async for position in UAVs[uav_index]["system"].telemetry.position():
-            alt_rel = round(position.relative_altitude_m, 2)
-            alt_msl = round(position.absolute_altitude_m, 2)
-            latitude = round(position.latitude_deg, 6)
-            longitude = round(position.longitude_deg, 6)
+            alt_rel = round(position.relative_altitude_m, 12)
+            alt_msl = round(position.absolute_altitude_m, 12)
+            latitude = round(position.latitude_deg, 12)
+            longitude = round(position.longitude_deg, 12)
 
             # update UAVs information
             UAVs[uav_index]["status"]["altitude_status"] = [
