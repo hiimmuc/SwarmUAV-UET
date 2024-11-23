@@ -573,19 +573,17 @@ class App(Map, Interface):
             Exception: If there is an error during the connection process.
         """
         global UAVs
-        try:
-            if uav_index in range(1, MAX_UAV_COUNT + 1):
-                if not UAVs[uav_index]["connection_allow"]:
-                    self.update_terminal(f"[INFO] Connection not allowed for UAV {uav_index}")
-                    return
 
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
+            if not UAVs[uav_index]["connection_allow"]:
+                self.update_terminal(f"[INFO] Connection not allowed for UAV {uav_index}")
+                return
+            try:
                 self.update_terminal(f"[INFO] Sent CONNECT command to UAV {uav_index}")
                 # set default information
                 UAVs[uav_index]["status"]["connection_status"] = False
-                self.uav_label_params[uav_index - 1].setStyleSheet("background-color: red")
-                self.uav_information_views[uav_index - 1].setText(
-                    self.template_information(uav_index, **UAVs[uav_index]["status"])
-                )
+                self.set_connection_display(uav_index, UAVs[uav_index]["status"])
+
                 # init server
                 if UAVs[uav_index]["server"]["start"]:
                     UAVs[uav_index]["server"]["shell"].stop()
@@ -602,14 +600,12 @@ class App(Map, Interface):
                 )
 
                 logger.log(f"Waiting for drone {uav_index} to connect...", level="info")
+
                 async for state in UAVs[uav_index]["system"].core.connection_state():
                     if state.is_connected:
                         logger.log(f"UAV-{uav_index} -- Connected", level="info")
                         self.update_terminal(
                             f"[INFO] Received CONNECT signal from UAV {uav_index}"
-                        )
-                        self.uav_label_params[uav_index - 1].setStyleSheet(
-                            "background-color: green"
                         )
                         UAVs[uav_index]["status"]["connection_status"] = True
                     else:
@@ -617,34 +613,31 @@ class App(Map, Interface):
                         self.update_terminal(
                             f"[INFO] Cannot receive CONNECT signal from UAV {uav_index}"
                         )
+                        UAVs[uav_index]["status"]["connection_status"] = False
                     break
 
                 await UAVs[uav_index]["system"].action.set_maximum_speed(1.0)
 
-                self.uav_information_views[uav_index - 1].setText(
-                    self.template_information(uav_index, **UAVs[uav_index]["status"])
-                )
+                self.set_connection_display(uav_index, UAVs[uav_index]["status"])
+
                 await self.uav_fn_get_status(uav_index)
 
-            else:
-                connect_all_UAVs = [
-                    self.uav_connect_callback(uav_index)
-                    for uav_index in range(1, MAX_UAV_COUNT + 1)
-                ]
-                await asyncio.gather(*connect_all_UAVs)
+            except Exception as e:
+                UAVs[uav_index]["status"]["connection_status"] = False
+                self.set_connection_display(uav_index, UAVs[uav_index]["status"])
 
-        except Exception as e:
-            UAVs[uav_index]["status"]["connection_status"] = False
-            self.uav_label_params[uav_index - 1].setStyleSheet("background-color: red")
-            self.uav_information_views[uav_index - 1].setText(
-                self.template_information(uav_index, **UAVs[uav_index]["status"])
-            )
+                -logger.log(f"Connection error to uav {uav_index} :{repr(e)}", level="error")
+                self.popup_msg(
+                    f"Connection error to uav {uav_index} :{repr(e)}",
+                    src_msg="uav_connect_callback",
+                    type_msg="error",
+                )
 
-            self.popup_msg(
-                f"Connection error to uav {uav_index} :{repr(e)}",
-                src_msg="uav_connect_callback",
-                type_msg="error",
-            )
+        else:
+            connect_all_UAVs = [
+                self.uav_connect_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
+            ]
+            await asyncio.gather(*connect_all_UAVs)
 
     async def uav_arm_callback(self, uav_index) -> None:
         """
@@ -672,19 +665,27 @@ class App(Map, Interface):
                 and UAVs[uav_index]["connection_allow"]
             ):
                 return
-            self.update_terminal(f"[INFO] Sent ARM command to UAV {uav_index}")
-            #
-            await UAVs[uav_index]["system"].connect(
-                system_address=UAVs[uav_index]["system_address"]
-            )
-            await UAVs[uav_index]["system"].action.arm()
-            await asyncio.sleep(3)
-            await self.uav_disarm_callback(uav_index)
+            try:
+                self.update_terminal(f"[INFO] Sent ARM command to UAV {uav_index}")
+                #
+                await UAVs[uav_index]["system"].connect(
+                    system_address=UAVs[uav_index]["system_address"]
+                )
+                await UAVs[uav_index]["system"].action.arm()
+                await asyncio.sleep(3)
+                await self.uav_disarm_callback(uav_index)
 
-            UAVs[uav_index]["status"]["arming_status"] = "ARMED"
-            self.uav_information_views[uav_index - 1].setText(
-                self.template_information(uav_index, **UAVs[uav_index]["status"])
-            )
+                UAVs[uav_index]["status"]["arming_status"] = "ARMED"
+                self.uav_information_views[uav_index - 1].setText(
+                    self.template_information(uav_index, **UAVs[uav_index]["status"])
+                )
+            except Exception as e:
+                UAVs[uav_index]["status"]["arming_status"] = "DISARMED"
+                self.uav_information_views[uav_index - 1].setText(
+                    self.template_information(uav_index, **UAVs[uav_index]["status"])
+                )
+                logger.log(f"Error: {repr(e)}", level="error")
+                self.popup_msg(f"Error: {repr(e)}", src_msg="uav_arm_callback", type_msg="Error")
         else:
             arm_all_UAVs = [
                 self.uav_arm_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
@@ -712,16 +713,20 @@ class App(Map, Interface):
                 and UAVs[uav_index]["connection_allow"]
             ):
                 return
+            try:
+                self.update_terminal(f"[INFO] Sent DISARM command to UAV {uav_index}")
 
-            self.update_terminal(f"[INFO] Sent DISARM command to UAV {uav_index}")
+                await UAVs[uav_index]["system"].action.disarm()
 
-            await UAVs[uav_index]["system"].action.disarm()
-
-            UAVs[uav_index]["status"]["arming_status"] = "DISARMED"
-            self.uav_information_views[uav_index - 1].setText(
-                self.template_information(uav_index, **UAVs[uav_index]["status"])
-            )
-
+                UAVs[uav_index]["status"]["arming_status"] = "DISARMED"
+                self.uav_information_views[uav_index - 1].setText(
+                    self.template_information(uav_index, **UAVs[uav_index]["status"])
+                )
+            except Exception as e:
+                logger.log(f"Error: {repr(e)}", level="error")
+                self.popup_msg(
+                    f"Error: {repr(e)}", src_msg="uav_disarm_callback", type_msg="Error"
+                )
         else:
             disarm_all_UAVs = [
                 self.uav_disarm_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
@@ -754,33 +759,38 @@ class App(Map, Interface):
                 and UAVs[uav_index]["connection_allow"]
             ):
                 return
+            try:
+                self.update_terminal(f"[INFO] Sent TAKEOFF command to UAV {uav_index}")
 
-            self.update_terminal(f"[INFO] Sent TAKEOFF command to UAV {uav_index}")
+                await UAVs[uav_index]["system"].connect(
+                    system_address=UAVs[uav_index]["system_address"]
+                )
+                await UAVs[uav_index]["system"].action.arm()
+                await UAVs[uav_index]["system"].action.set_takeoff_altitude(
+                    UAVs[uav_index]["init_params"]["altitude"]
+                )
+                await UAVs[uav_index]["system"].action.takeoff()
 
-            await UAVs[uav_index]["system"].connect(
-                system_address=UAVs[uav_index]["system_address"]
-            )
-            await UAVs[uav_index]["system"].action.arm()
-            await UAVs[uav_index]["system"].action.set_takeoff_altitude(
-                UAVs[uav_index]["init_params"]["altitude"]
-            )
-            await UAVs[uav_index]["system"].action.takeoff()
+                # # update initial position of UAV
 
-            # # update initial position of UAV
+                UAVs[uav_index]["init_params"]["latitude"] = float(
+                    UAVs[uav_index]["status"]["position_status"][0]
+                )
+                UAVs[uav_index]["init_params"]["longitude"] = float(
+                    UAVs[uav_index]["status"]["position_status"][1]
+                )
 
-            UAVs[uav_index]["init_params"]["latitude"] = float(
-                UAVs[uav_index]["status"]["position_status"][0]
-            )
-            UAVs[uav_index]["init_params"]["longitude"] = float(
-                UAVs[uav_index]["status"]["position_status"][1]
-            )
-
-            # update UAV information
-            UAVs[uav_index]["status"]["connection_status"] = True
-            UAVs[uav_index]["status"]["mode_status"] = "TAKING OFF"
-            self.uav_information_views[uav_index - 1].setText(
-                self.template_information(uav_index, **UAVs[uav_index]["status"])
-            )
+                # update UAV information
+                UAVs[uav_index]["status"]["connection_status"] = True
+                UAVs[uav_index]["status"]["mode_status"] = "TAKING OFF"
+                self.uav_information_views[uav_index - 1].setText(
+                    self.template_information(uav_index, **UAVs[uav_index]["status"])
+                )
+            except Exception as e:
+                logger.log(f"Error: {repr(e)}", level="error")
+                self.popup_msg(
+                    f"Error: {repr(e)}", src_msg="uav_takeoff_callback", type_msg="Error"
+                )
 
         else:
             takeoff_all_UAVs = [
@@ -805,15 +815,18 @@ class App(Map, Interface):
                 and UAVs[uav_index]["connection_allow"]
             ):
                 return
+            try:
+                self.update_terminal(f"[INFO] Sent LANDING command to UAV {uav_index}")
 
-            self.update_terminal(f"[INFO] Sent LANDING command to UAV {uav_index}")
+                await UAVs[uav_index]["system"].action.land()
 
-            await UAVs[uav_index]["system"].action.land()
-
-            UAVs[uav_index]["status"]["mode_status"] = "LANDING"
-            self.uav_information_views[uav_index - 1].setText(
-                self.template_information(uav_index, **UAVs[uav_index]["status"])
-            )
+                UAVs[uav_index]["status"]["mode_status"] = "LANDING"
+                self.uav_information_views[uav_index - 1].setText(
+                    self.template_information(uav_index, **UAVs[uav_index]["status"])
+                )
+            except Exception as e:
+                logger.log(f"Error: {repr(e)}", level="error")
+                self.popup_msg(f"Error: {repr(e)}", src_msg="uav_land_callback", type_msg="Error")
 
         else:
             landing_all_UAVs = [
@@ -836,13 +849,14 @@ class App(Map, Interface):
             Exception: If there is an error in sending the pause command.
         """
         global UAVs
-        try:
-            if uav_index in range(1, MAX_UAV_COUNT + 1):
-                if not (
-                    UAVs[uav_index]["status"]["connection_status"]
-                    and UAVs[uav_index]["connection_allow"]
-                ):
-                    return
+
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
+            if not (
+                UAVs[uav_index]["status"]["connection_status"]
+                and UAVs[uav_index]["connection_allow"]
+            ):
+                return
+            try:
                 # if return to launch, which means the UAV will return to the initial position and land
                 init_latitude = UAVs[uav_index]["init_params"]["latitude"]
                 init_longitude = UAVs[uav_index]["init_params"]["longitude"]
@@ -885,17 +899,17 @@ class App(Map, Interface):
                     self.uav_information_views[uav_index - 1].setText(
                         self.template_information(uav_index, **UAVs[uav_index]["status"])
                     )
-            else:
-                return_all_UAVs = [
-                    self.uav_return_callback(uav_index, rtl=rtl)
-                    for uav_index in range(1, MAX_UAV_COUNT + 1)
-                ]
-                await asyncio.gather(*return_all_UAVs)
-
-        except Exception as e:
-            self.popup_msg(
-                f"Return error: {repr(e)}", src_msg="uav_return_callback", type_msg="error"
-            )
+            except Exception as e:
+                logger.log(f"Error: {repr(e)}", level="error")
+                self.popup_msg(
+                    f"Error: {repr(e)}", src_msg="uav_return_callback", type_msg="Error"
+                )
+        else:
+            return_all_UAVs = [
+                self.uav_return_callback(uav_index, rtl=rtl)
+                for uav_index in range(1, MAX_UAV_COUNT + 1)
+            ]
+            await asyncio.gather(*return_all_UAVs)
 
     async def uav_mission_callback(self, uav_index) -> None:
         """NOTE: convert file points to .plan file as in ./data/mission.plan
@@ -920,14 +934,13 @@ class App(Map, Interface):
         7. If uav_index is 0, executes the mission for all UAVs concurrently.
         """
         global UAVs
-        try:
-            if uav_index in range(1, MAX_UAV_COUNT + 1):
-                if not (
-                    UAVs[uav_index]["status"]["connection_status"]
-                    and UAVs[uav_index]["connection_allow"]
-                ):
-                    return
-
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
+            if not (
+                UAVs[uav_index]["status"]["connection_status"]
+                and UAVs[uav_index]["connection_allow"]
+            ):
+                return
+            try:
                 self.update_terminal(f"[INFO] Sent MISSION command to UAV {uav_index}")
 
                 # create tasks for monitoring mission progress and observing if the UAV is in the air
@@ -950,50 +963,50 @@ class App(Map, Interface):
                 # out = await drone.mission_raw.import_qgroundcontrol_mission(f"{SRC_DIR}/data/mission.plan")
                 # await drone.mission_raw.upload_mission(out.mission_items)
                 # Import the mission from the QGroundControl .plan file
-                out = None  # Initialize out variable
-                try:
-                    out = await UAVs[uav_index][
-                        "system"
-                    ].mission_raw.import_qgroundcontrol_mission(
-                        f"{SRC_DIR}/logs/points/points{uav_index}.plan"
-                    )
-                except Exception as e:
-                    print(f"Error importing mission: {e}")
-                    self.popup_msg(
-                        f"Mission error: {e}", src_msg="uav_fn_mission", type_msg="error"
-                    )
-                    return
+                # out = None  # Initialize out variable
+                # try:
+                #     out = await UAVs[uav_index][
+                #         "system"
+                #     ].mission_raw.import_qgroundcontrol_mission(
+                #         f"{SRC_DIR}/logs/points/points{uav_index}.plan"
+                #     )
+                # except Exception as e:
+                #     print(f"Error importing mission: {e}")
+                #     self.popup_msg(
+                #         f"Mission error: {e}", src_msg="uav_fn_mission", type_msg="error"
+                #     )
+                #     return
 
-                print(
-                    f"{len(out.mission_items)} mission items and "
-                    f"{len(out.rally_items)} rally items imported."
-                )
+                # print(
+                #     f"{len(out.mission_items)} mission items and "
+                #     f"{len(out.rally_items)} rally items imported."
+                # )
 
                 # ? this is option 2
                 # read mission points from file
-                # with open(f"{SRC_DIR}/logs/points/points{uav_index}.txt", "r") as file:
-                #     for line in file:
-                #         latitude, longitude = map(float, line.strip().split(", "))
-                #         mission_items.append(
-                #             MissionItem(
-                #                 latitude_deg=latitude,
-                #                 longitude_deg=longitude,
-                #                 relative_altitude_m=height,
-                #                 speed_m_s=1.0,  # Speed to use after this mission item (in metres/second)
-                #                 is_fly_through=False,  # True for fly through, False for reach
-                #                 gimbal_pitch_deg=float("nan"),
-                #                 gimbal_yaw_deg=float("nan"),
-                #                 loiter_time_s=10,
-                #                 acceptance_radius_m=float("nan"),
-                #                 yaw_deg=float("nan"),
-                #                 camera_action=MissionItem.CameraAction.NONE,
-                #                 camera_photo_distance_m=float("nan"),
-                #                 camera_photo_interval_s=float("nan"),
-                #                 vehicle_action=MissionItem.VehicleAction.NONE,
-                #             )
-                #         )
+                with open(f"{SRC_DIR}/logs/points/points{uav_index}.txt", "r") as file:
+                    for line in file:
+                        latitude, longitude = map(float, line.strip().split(", "))
+                        mission_items.append(
+                            MissionItem(
+                                latitude_deg=latitude,
+                                longitude_deg=longitude,
+                                relative_altitude_m=height,
+                                speed_m_s=1.0,  # Speed to use after this mission item (in metres/second)
+                                is_fly_through=False,  # True for fly through, False for reach
+                                gimbal_pitch_deg=float("nan"),
+                                gimbal_yaw_deg=float("nan"),
+                                loiter_time_s=10,
+                                acceptance_radius_m=float("nan"),
+                                yaw_deg=float("nan"),
+                                camera_action=MissionItem.CameraAction.NONE,
+                                camera_photo_distance_m=float("nan"),
+                                camera_photo_interval_s=float("nan"),
+                                vehicle_action=MissionItem.VehicleAction.NONE,
+                            )
+                        )
 
-                # mission_plan = MissionPlan(mission_items)
+                mission_plan = MissionPlan(mission_items)
 
                 # Set return to launch altitude and speed
                 rtl_altitude = 15 + uav_index - 1  # Adjust as necessary
@@ -1010,9 +1023,9 @@ class App(Map, Interface):
                 # upload mission
                 self.update_terminal("Uploading mission...", uav_index=uav_index)
 
-                # await UAVs[uav_index]["system"].mission.upload_mission(mission_plan)
+                await UAVs[uav_index]["system"].mission.upload_mission(mission_plan)
                 # Upload the mission and rally points
-                await UAVs[uav_index]["system"].mission_raw.upload_mission(out.mission_items)
+                # await UAVs[uav_index]["system"].mission_raw.upload_mission(out.mission_items)
                 # await UAVs[uav_index]["system"].mission_raw.upload_rally_points(out.rally_items)
                 print("Mission uploaded")
 
@@ -1044,18 +1057,17 @@ class App(Map, Interface):
                 )  # mission and get status at the same time
                 # wait for mission to complete
                 await termination_task
+            except Exception as e:
+                logger.log(f"Error: {repr(e)}", level="error")
+                self.popup_msg(
+                    f"Error: {repr(e)}", src_msg="uav_mission_callback", type_msg="Error"
+                )
 
-            else:
-                mission_all_UAVs = [
-                    self.uav_mission_callback(uav_index)
-                    for uav_index in range(1, MAX_UAV_COUNT + 1)
-                ]
-                await asyncio.gather(*mission_all_UAVs)
-
-        except Exception as e:
-            self.popup_msg(
-                f"Mission error: {repr(e)}", src_msg="uav_mission_callback", type_msg="error"
-            )
+        else:
+            mission_all_UAVs = [
+                self.uav_mission_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
+            ]
+            await asyncio.gather(*mission_all_UAVs)
 
     async def uav_push_mission_callback(self, uav_index) -> None:
         """NOTE: convert file points to .plan file as in ./data/mission.plan
@@ -1074,14 +1086,14 @@ class App(Map, Interface):
             - Updates the UAV's mode status to 'Mission pushing'.
         """
         global UAVs
-        try:
-            if uav_index in range(1, MAX_UAV_COUNT + 1):
-                if not (
-                    UAVs[uav_index]["status"]["connection_status"]
-                    and UAVs[uav_index]["connection_allow"]
-                ):
-                    return
 
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
+            if not (
+                UAVs[uav_index]["status"]["connection_status"]
+                and UAVs[uav_index]["connection_allow"]
+            ):
+                return
+            try:
                 self.update_terminal(f"[INFO] Sent PUSH MISSION command to UAV {uav_index}")
 
                 # read mission points from file
@@ -1135,17 +1147,16 @@ class App(Map, Interface):
                 self.uav_information_views[uav_index - 1].setText(
                     self.template_information(uav_index, **UAVs[uav_index]["status"])
                 )
-            else:
+            except Exception as e:
+                logger.log(f"Error: {repr(e)}", level="error")
                 self.popup_msg(
-                    msg="Buttons are disabled on this tab",
-                    type_msg="warning",
-                    src_msg="uav_push_mission_callback",
+                    f"Mission error: {repr(e)}", src_msg="uav_mission_callback", type_msg="error"
                 )
-        except Exception as e:
+        else:
             self.popup_msg(
-                f"Mission error: {repr(e)}",
+                msg="Buttons are disabled on this tab",
+                type_msg="warning",
                 src_msg="uav_push_mission_callback",
-                type_msg="error",
             )
 
     async def uav_pause_mission_callback(self, uav_index) -> None:
@@ -1155,6 +1166,7 @@ class App(Map, Interface):
         Args:
             uav_index (int): The index of the UAV to pause. If 0, pauses all UAVs.
         """
+        # NOTE: add toggle for mission pause and resume
         global UAVs
         if uav_index in range(1, MAX_UAV_COUNT + 1):
             if not (
@@ -1162,15 +1174,20 @@ class App(Map, Interface):
                 and UAVs[uav_index]["connection_allow"]
             ):
                 return
+            try:
+                self.update_terminal(f"[INFO] Sent PAUSE command to UAV {uav_index}")
 
-            self.update_terminal(f"[INFO] Sent PAUSE command to UAV {uav_index}")
-
-            await UAVs[uav_index]["system"].mission.pause_mission()
-            #
-            UAVs[uav_index]["status"]["mode_status"] = "Mission paused"
-            self.uav_information_views[uav_index - 1].setText(
-                self.template_information(uav_index, **UAVs[uav_index]["status"])
-            )
+                await UAVs[uav_index]["system"].mission.pause_mission()
+                #
+                UAVs[uav_index]["status"]["mode_status"] = "Mission paused"
+                self.uav_information_views[uav_index - 1].setText(
+                    self.template_information(uav_index, **UAVs[uav_index]["status"])
+                )
+            except Exception as e:
+                logger.log(f"Error: {repr(e)}", level="error")
+                self.popup_msg(
+                    f"Error: {repr(e)}", src_msg="uav_pause_mission_callback", type_msg="Error"
+                )
 
         else:
             pauseMission_all_UAVs = [
@@ -1197,27 +1214,32 @@ class App(Map, Interface):
                 and UAVs[uav_index]["connection_allow"]
             ):
                 return
+            try:
+                self.update_terminal(f"[INFO] Sent OPEN/CLOSE command to UAV {uav_index}")
 
-            self.update_terminal(f"[INFO] Sent OPEN/CLOSE command to UAV {uav_index}")
+                if UAVs[uav_index]["status"]["actuator_status"]:
+                    # ====== replace with your function
+                    await uav_fn_control_gimbal(
+                        drone=UAVs[uav_index], control_value={"pitch": 90, "yaw": 0}
+                    )
+                    # ======
+                    UAVs[uav_index]["status"]["actuator_status"] = False
+                else:
+                    # ====== replace with your function
+                    await uav_fn_control_gimbal(
+                        drone=UAVs[uav_index], control_value={"pitch": -90, "yaw": 0}
+                    )
+                    # ======
+                    UAVs[uav_index]["status"]["actuator_status"] = True
 
-            if UAVs[uav_index]["status"]["actuator_status"]:
-                # ====== replace with your function
-                await uav_fn_control_gimbal(
-                    drone=UAVs[uav_index], control_value={"pitch": 90, "yaw": 0}
+                self.uav_information_views[uav_index - 1].setText(
+                    self.template_information(uav_index, **UAVs[uav_index]["status"])
                 )
-                # ======
-                UAVs[uav_index]["status"]["actuator_status"] = False
-            else:
-                # ====== replace with your function
-                await uav_fn_control_gimbal(
-                    drone=UAVs[uav_index], control_value={"pitch": -90, "yaw": 0}
+            except Exception as e:
+                logger.log(f"Error: {repr(e)}", level="error")
+                self.popup_msg(
+                    f"Error: {repr(e)}", src_msg="uav_toggle_open_callback", type_msg="Error"
                 )
-                # ======
-                UAVs[uav_index]["status"]["actuator_status"] = True
-
-            self.uav_information_views[uav_index - 1].setText(
-                self.template_information(uav_index, **UAVs[uav_index]["status"])
-            )
 
         else:
             openClose_all_UAVs = [
@@ -1242,17 +1264,17 @@ class App(Map, Interface):
             None
         """
         global UAVs
-        try:
-            if uav_index in range(1, MAX_UAV_COUNT + 1):
-                if not (
-                    (
-                        UAVs[uav_index]["connection_allow"]
-                        or UAVs[uav_index]["status"]["connection_status"]
-                    )
-                    and UAVs[uav_index]["streaming_enable"]
-                ):
-                    return
 
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
+            if not (
+                (
+                    UAVs[uav_index]["connection_allow"]
+                    or UAVs[uav_index]["status"]["connection_status"]
+                )
+                and UAVs[uav_index]["streaming_enable"]
+            ):
+                return
+            try:
                 if not UAVs[uav_index]["status"]["streaming_status"]:
                     if (self.uav_stream_threads[uav_index - 1] is not None) and (
                         not self.uav_stream_threads[uav_index - 1].is_alive()
@@ -1268,12 +1290,12 @@ class App(Map, Interface):
                         f"UAV-{uav_index} streaming thread is stopping...",
                         level="info",
                     )
-            else:
-                for uav_index in range(1, MAX_UAV_COUNT + 1):
-                    self.uav_toggle_camera_callback(uav_index)
-        except Exception as e:
-            logger.log(repr(e), level="error")
-            self.popup_msg(type_msg="Error", msg=repr(e), src_msg="uav_toggle_camera_callback")
+            except Exception as e:
+                logger.log(repr(e), level="error")
+                self.popup_msg(type_msg="Error", msg=repr(e), src_msg="uav_toggle_camera_callback")
+        else:
+            for uav_index in range(1, MAX_UAV_COUNT + 1):
+                self.uav_toggle_camera_callback(uav_index)
 
     async def uav_goto_callback(self, uav_index, page="settings", *args) -> None:
         """
@@ -1326,6 +1348,7 @@ class App(Map, Interface):
                 ]
                 await asyncio.gather(*goTo_all_UAVs)
         except Exception as e:
+            logger.log(repr(e), level="error")
             self.popup_msg(
                 f"Go to error: {repr(e)}", src_msg="uav_goto_callback", type_msg="error"
             )
@@ -1496,10 +1519,31 @@ class App(Map, Interface):
 
         await self.uav_fn_get_flight_info(uav_index=uav_index, copy=False)
 
+    def set_connection_display(self, uav_index, uav_status):
+        """
+        Updates the connection status of a UAV in the UI.
+
+        Args:
+            uav_index (int): The index of the UAV to update.
+            status (bool): The connection status of the UAV.
+
+        Returns:
+            None
+        """
+        if uav_status["connection_status"]:
+            self.uav_label_params[uav_index - 1].setStyleSheet("background-color: green")
+        else:
+            self.uav_label_params[uav_index - 1].setStyleSheet("background-color: red")
+
+        self.uav_information_views[uav_index - 1].setText(
+            self.template_information(uav_index, **uav_status)
+        )
+
     async def uav_fn_get_status(self, uav_index) -> None:
         global UAVs
-        try:
-            if uav_index in range(1, MAX_UAV_COUNT + 1):
+
+        if uav_index in range(1, MAX_UAV_COUNT + 1):
+            try:
                 await asyncio.gather(
                     self.uav_fn_get_position(uav_index),
                     self.uav_fn_get_mode(uav_index),
@@ -1509,15 +1553,17 @@ class App(Map, Interface):
                     self.uav_fn_printStatus(uav_index),
                     self.uav_fn_get_flight_info(uav_index, copy=False),
                 )
-            else:
-                get_status_all_UAVs = [
-                    self.uav_fn_get_status(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
-                ]
-                await asyncio.gather(*get_status_all_UAVs)
-        except Exception as e:
-            self.popup_msg(
-                f"Get status error: {repr(e)}", src_msg="uav_fn_get_status", type_msg="error"
-            )
+            except Exception as e:
+                UAVs[uav_index]["status"]["connection_status"] = False
+                self.set_connection_display(uav_index, UAVs[uav_index]["status"])
+                self.popup_msg(
+                    f"Get status error: {repr(e)}", src_msg="uav_fn_get_status", type_msg="error"
+                )
+        else:
+            get_status_all_UAVs = [
+                self.uav_fn_get_status(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
+            ]
+            await asyncio.gather(*get_status_all_UAVs)
 
     async def uav_fn_printStatus(self, uav_index) -> None:
         """
@@ -1552,16 +1598,13 @@ class App(Map, Interface):
             None
         """
         global UAVs
-        try:
-            if not (
-                (
-                    UAVs[uav_index]["connection_allow"]
-                    or UAVs[uav_index]["status"]["connection_status"]
-                )
-                and UAVs[uav_index]["streaming_enable"]
-            ):
-                return
 
+        if not (
+            (UAVs[uav_index]["connection_allow"] or UAVs[uav_index]["status"]["connection_status"])
+            and UAVs[uav_index]["streaming_enable"]
+        ):
+            return
+        try:
             capture = {
                 "address": UAVs[uav_index]["streaming_address"],
                 "width": DEFAULT_STREAM_SIZE[0],
@@ -1722,4 +1765,5 @@ def run():
 
 
 if __name__ == "__main__":
+    run()
     run()

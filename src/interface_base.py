@@ -402,11 +402,11 @@ class Interface(QMainWindow):
                 f"{'- Mode:': <20}{mode_status : ^10}".strip(),
                 f"{'- Actuator:': <20}{actuator_status : ^10}".strip(),
                 f"{'- Altitude:': <20}".strip(),
-                f"{'-----Relative:': <20}{altitude_status[0] : ^10}m".strip(),
-                f"{'-----MSL:': <20}{altitude_status[1] : ^10}m".strip(),
+                f"{'-----Relative:': <20}{altitude_status[0] : ^16} m".strip(),
+                f"{'-----MSL:': <20}{altitude_status[1] : ^16} m".strip(),
                 f"{'- Position:': <20}".strip(),
-                f"{'-----Latitude:': <20}{position_status[0] : ^10} ".strip(),
-                f"{'-----Longitude:': <20}{position_status[1] : ^10}".strip(),
+                f"{'-----Latitude:': <20}{position_status[0] : ^16}".strip(),
+                f"{'-----Longitude:': <20}{position_status[1] : ^16}".strip(),
                 "================================",
             ]
         )
