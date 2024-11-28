@@ -137,7 +137,7 @@ SYSTEMS_ADDRESSES = [
 
 # Allow to connect, stream, detect, record
 connection_allows = [True, True, True, True, True, True]
-streaming_enables = [False, False, False, False, False, False]
+streaming_enables = [True, False, False, False, False, False]
 detection_enables = [False, False, False, False, False, False]
 recording_enables = [True, True, True, True, True, True]
 

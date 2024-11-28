@@ -1,14 +1,11 @@
 # cSpell:ignore imutils pyqt Pixmap ndarray,
-import math
 
 import cv2
-import imutils
-import numpy as np
 import pandas as pd
 
 # Pyqt5
 from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QHeaderView
 
@@ -23,10 +20,7 @@ def convert_cv2qt(cv_img, size=(640, 360)) -> QPixmap:
     Returns:
         image: RGB image with qt format
     """
-    (screen_width, screen_height) = size
-
-    # cv_img = imutils.resize(imutils.resize(cv_img, width=screen_width), height=screen_height)
-    cv_img = cv2.resize(cv_img, (screen_width, screen_height), interpolation=cv2.INTER_LINEAR)
+    cv_img = cv2.resize(src=cv_img, dsize=size, interpolation=cv2.INTER_LINEAR)
 
     rgb_image = cv2.cvtColor(
         cv_img,
@@ -36,7 +30,6 @@ def convert_cv2qt(cv_img, size=(640, 360)) -> QPixmap:
     h, w, c = rgb_image.shape
     byte_per_line = c * w
 
-    # print("convert_cv2qt", h, w, c, byte_per_line)
     qt_image = QtGui.QImage(
         rgb_image.data,
         w,
@@ -127,33 +120,3 @@ def refine_table(table) -> None:
     header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
     header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
     header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
-
-
-# ! Not used
-class QtThread(QThread):  # NOTE: slower than using Thread
-    change_image_signal = pyqtSignal(np.ndarray, int)
-
-    def __init__(self, cap, uav_index):
-        super().__init__()
-        self.isRunning = False
-        self.cap = cap
-        self.uav_index = uav_index
-
-    def run(self):
-        self.isRunning = True
-        while self.isRunning:
-            ret, frame = self.cap.read()
-            if ret:
-                self.change_image_signal.emit(frame, self.uav_index)
-            else:
-                self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-
-            if not self.isRunning:
-                break
-        self.cap.release()
-
-    def stop(self):
-        self.isRunning = False
-        # self.quit()
-        self.wait()
-        # self.terminate()

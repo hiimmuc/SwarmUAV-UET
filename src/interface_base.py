@@ -470,6 +470,7 @@ class Interface(QMainWindow):
             type_msg(str, optional): type of popup. Available: warning, error, information. Defaults to 'error'.
         """
         try:
+            logger.log(f"From: {src_msg}\n[!] Details: {msg}", level=type_msg.lower())
             self.popup = QMessageBox()
             if type_msg.lower() == "warning":
                 self.popup.setIcon(QMessageBox.Warning)
@@ -483,9 +484,6 @@ class Interface(QMainWindow):
             self.popup.setText(f"[{type_msg.upper()}] -> From: {src_msg}\nDetails: {msg}")
             self.popup.setStandardButtons(QMessageBox.Ok)
             self.popup.exec_()
-
-            logger.log(f"From: {src_msg}\n[!] Details: {msg}", level=type_msg.lower())
-
         except Exception as e:
             print("-> From: popup_msg", e)
 

@@ -288,64 +288,6 @@ async def uav_fn_control_gimbal(drone, control_value={"pitch": 0, "yaw": 0}):
     await drone["system"].gimbal.release_control()
 
 
-# cSpell:ignore fourcc dsize interpolation
-class Stream:
-    def __init__(self, capture: dict, writer: dict) -> None:
-        self.address = capture["address"]
-
-        self.capture = cv2.VideoCapture(capture["address"])
-
-        # Set capture properties
-        success_width = self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, int(capture["width"]))
-        success_height = self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(capture["height"]))
-        success_fps = self.capture.set(cv2.CAP_PROP_FPS, int(capture["fps"]))
-        success_buffersize = self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 3)
-
-        # Set writer properties
-        if writer["enable"]:
-            self.writer_frameSize = writer["frameSize"]
-            self.writer = cv2.VideoWriter(
-                filename=writer["filename"],
-                fourcc=cv2.VideoWriter_fourcc(*writer["fourcc"]),
-                fps=self.capture.get(cv2.CAP_PROP_FPS),
-                frameSize=writer["frameSize"],
-            )
-
-    def is_opened(self):
-        return self.capture.isOpened()
-
-    def is_video(self):
-        # Define common video file extensions
-        video_extensions = [".mp4", ".mov", ".avi", ".mkv", ".flv", ".wmv", ".webm"]
-        # Use regex to check for any of the video file extensions in the URL
-        return any(self.address.lower().endswith(ext) for ext in video_extensions)
-
-    def get_fps(self):
-        return self.capture.get(cv2.CAP_PROP_FPS)
-
-    def capture_reset(self):
-        self.capture.set(cv2.CAP_PROP_POS_FRAMES, 0)
-
-    def read(self):
-        return self.capture.read()
-
-    def write(self, frame):
-        if hasattr(self, "writer"):
-            self.writer.write(
-                cv2.resize(
-                    frame,
-                    dsize=self.writer_frameSize,
-                    interpolation=cv2.INTER_LINEAR,
-                )
-            )
-
-    def release(self) -> None:
-        self.capture.release()
-        if hasattr(self, "writer"):
-            self.writer.release()
-        return
-
-
 # * develop later
 def convert_points_to_gps(detected_pos, frame_shape, uav_gps) -> list:
     x, y = detected_pos

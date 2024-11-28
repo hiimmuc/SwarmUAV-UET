@@ -258,7 +258,7 @@ def draw_detected_frame(frame, results):
             thickness = 2
 
             cv2.putText(frame, classNames[cls], org, font, fontScale, color, thickness)
-    return frame
+    return frame, results
 
 
 def draw_tracking_frame(frame, results, history, track_frame_limit=90):
