@@ -154,12 +154,14 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
                     results = [track_ids, objects]
 
                 self.change_image_signal.emit(frame, [self.uav_index, *results])
+                self.msleep(int(1 / self.stream.get_fps() * 1000))
             else:
                 self.stream.capture_reset()
 
             if not self.isRunning:
                 break
         self.stream.capture.release()
+        self.stream.writer.release()
 
     def stop(self):
         self.isRunning = False

@@ -1334,9 +1334,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                         level="info",
                     )
                     self.ui.btn_toggle_camera.setStyleSheet("background-color : red")
-                self.uav_stream_threads[uav_index - 1].isRunning = UAVs[uav_index]["status"][
-                    "streaming_status"
-                ]
+
             except Exception as e:
                 logger.log(repr(e), level="error")
                 self.popup_msg(type_msg="Error", msg=repr(e), src_msg="uav_toggle_camera_callback")
@@ -1661,7 +1659,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 )
 
             self.update_uav_screen_view(uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN)
-
+            if UAVs[uav_index]["recording_enable"]:
+                self.uav_streams[uav_index - 1].write(frame)
         except Exception as e:
             UAVs[uav_index]["status"]["streaming_status"] = False
             self.popup_msg(
