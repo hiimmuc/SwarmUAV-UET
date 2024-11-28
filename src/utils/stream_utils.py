@@ -14,7 +14,7 @@ from .model_utils import *
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-# cspell: ignore BUFFERSIZE
+# cspell: ignore BUFFERSIZE msleep
 class Stream:
     def __init__(self, capture: dict, writer: dict) -> None:
         self.capture_params = capture
@@ -145,13 +145,14 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
             results = [None]
             if ret:
                 if self.model_config["enable"]:
-                    results = results = self.model.track(
-                        frame, classes=0, device=DEVICE, persist=True, verbose=False
-                    )
-                    frame, track_ids, objects = draw_tracking_frame(
-                        frame, results, self.track_histories, 90
-                    )
-                    results = [track_ids, objects]
+                    # results = results = self.model.track(
+                    #     frame, classes=0, device=DEVICE, persist=True, verbose=False
+                    # )
+                    # frame, track_ids, objects = draw_tracking_frame(
+                    #     frame, results, self.track_histories, 90
+                    # )
+                    # results = [track_ids, objects]
+                    pass
 
                 self.change_image_signal.emit(frame, [self.uav_index, *results])
                 self.msleep(int(1 / self.stream.get_fps() * 1000))
