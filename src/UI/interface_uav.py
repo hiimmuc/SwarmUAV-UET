@@ -4985,36 +4985,36 @@ class Ui_MainWindow(object):
         self.btn_control_grid = QtWidgets.QGridLayout()
         self.btn_control_grid.setContentsMargins(10, -1, 10, -1)
         self.btn_control_grid.setObjectName("btn_control_grid")
-        self.btn_pause = QtWidgets.QPushButton(self.MainScreen)
+        self.btn_pause_resume = QtWidgets.QPushButton(self.MainScreen)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_pause.sizePolicy().hasHeightForWidth())
-        self.btn_pause.setSizePolicy(sizePolicy)
-        self.btn_pause.setMaximumSize(QtCore.QSize(245, 100))
+        sizePolicy.setHeightForWidth(self.btn_pause_resume.sizePolicy().hasHeightForWidth())
+        self.btn_pause_resume.setSizePolicy(sizePolicy)
+        self.btn_pause_resume.setMaximumSize(QtCore.QSize(245, 100))
         font = QtGui.QFont()
         font.setFamily("Ubuntu Nerd Font")
         font.setPointSize(18)
         font.setBold(False)
         font.setItalic(False)
         font.setWeight(50)
-        self.btn_pause.setFont(font)
-        self.btn_pause.setMouseTracking(True)
-        self.btn_pause.setAutoFillBackground(False)
-        self.btn_pause.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
+        self.btn_pause_resume.setFont(font)
+        self.btn_pause_resume.setMouseTracking(True)
+        self.btn_pause_resume.setAutoFillBackground(False)
+        self.btn_pause_resume.setStyleSheet(
+            "QPushButton{background-color: rgb(114, 159, 207);}\n"
             "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
         )
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap("src/UI/icons/pauseMission.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
-        self.btn_pause.setIcon(icon)
-        self.btn_pause.setIconSize(QtCore.QSize(24, 24))
-        self.btn_pause.setObjectName("btn_pause")
-        self.btn_control_grid.addWidget(self.btn_pause, 3, 3, 1, 1)
+        self.btn_pause_resume.setIcon(icon)
+        self.btn_pause_resume.setIconSize(QtCore.QSize(24, 24))
+        self.btn_pause_resume.setObjectName("btn_pause_resume")
+        self.btn_control_grid.addWidget(self.btn_pause_resume, 3, 3, 1, 1)
         self.btn_arm = QtWidgets.QPushButton(self.MainScreen)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
@@ -5094,7 +5094,7 @@ class Ui_MainWindow(object):
         self.btn_mission.setMouseTracking(True)
         self.btn_mission.setAutoFillBackground(False)
         self.btn_mission.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
+            "QPushButton{background-color: rgb(114, 159, 207);}\n"
             "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
         )
         icon3 = QtGui.QIcon()
@@ -5125,7 +5125,7 @@ class Ui_MainWindow(object):
         )
         icon4 = QtGui.QIcon()
         icon4.addPixmap(
-            QtGui.QPixmap("src/UI/icons/toggle_camear.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
+            QtGui.QPixmap("src/UI/icons/toggle_camera.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
         )
         self.btn_toggle_camera.setIcon(icon4)
         self.btn_toggle_camera.setIconSize(QtCore.QSize(24, 24))
@@ -5210,32 +5210,30 @@ class Ui_MainWindow(object):
             "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
         )
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(
-            QtGui.QPixmap("src/UI/icons/trl.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
-        )
+        icon7.addPixmap(QtGui.QPixmap("src/UI/icons/rtl.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btn_rtl.setIcon(icon7)
         self.btn_rtl.setIconSize(QtCore.QSize(24, 24))
         self.btn_rtl.setObjectName("btn_rtl")
         self.btn_control_grid.addWidget(self.btn_rtl, 3, 4, 1, 1)
-        self.btn_takeOff = QtWidgets.QPushButton(self.MainScreen)
+        self.btn_take_off = QtWidgets.QPushButton(self.MainScreen)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_takeOff.sizePolicy().hasHeightForWidth())
-        self.btn_takeOff.setSizePolicy(sizePolicy)
-        self.btn_takeOff.setMaximumSize(QtCore.QSize(245, 100))
+        sizePolicy.setHeightForWidth(self.btn_take_off.sizePolicy().hasHeightForWidth())
+        self.btn_take_off.setSizePolicy(sizePolicy)
+        self.btn_take_off.setMaximumSize(QtCore.QSize(245, 100))
         font = QtGui.QFont()
         font.setFamily("Ubuntu Nerd Font")
         font.setPointSize(18)
         font.setBold(False)
         font.setItalic(False)
         font.setWeight(50)
-        self.btn_takeOff.setFont(font)
-        self.btn_takeOff.setMouseTracking(True)
-        self.btn_takeOff.setAutoFillBackground(False)
-        self.btn_takeOff.setStyleSheet(
+        self.btn_take_off.setFont(font)
+        self.btn_take_off.setMouseTracking(True)
+        self.btn_take_off.setAutoFillBackground(False)
+        self.btn_take_off.setStyleSheet(
             "QPushButton{background-color: rgb(243, 243, 243);}\n"
             "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
         )
@@ -5243,40 +5241,40 @@ class Ui_MainWindow(object):
         icon8.addPixmap(
             QtGui.QPixmap("src/UI/icons/takeOff.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
-        self.btn_takeOff.setIcon(icon8)
-        self.btn_takeOff.setIconSize(QtCore.QSize(24, 24))
-        self.btn_takeOff.setObjectName("btn_takeOff")
-        self.btn_control_grid.addWidget(self.btn_takeOff, 1, 2, 1, 1)
-        self.btn_pushMission = QtWidgets.QPushButton(self.MainScreen)
+        self.btn_take_off.setIcon(icon8)
+        self.btn_take_off.setIconSize(QtCore.QSize(24, 24))
+        self.btn_take_off.setObjectName("btn_take_off")
+        self.btn_control_grid.addWidget(self.btn_take_off, 1, 2, 1, 1)
+        self.btn_push_mission = QtWidgets.QPushButton(self.MainScreen)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_pushMission.sizePolicy().hasHeightForWidth())
-        self.btn_pushMission.setSizePolicy(sizePolicy)
-        self.btn_pushMission.setMaximumSize(QtCore.QSize(245, 100))
+        sizePolicy.setHeightForWidth(self.btn_push_mission.sizePolicy().hasHeightForWidth())
+        self.btn_push_mission.setSizePolicy(sizePolicy)
+        self.btn_push_mission.setMaximumSize(QtCore.QSize(245, 100))
         font = QtGui.QFont()
         font.setFamily("Ubuntu Nerd Font")
         font.setPointSize(18)
         font.setBold(False)
         font.setItalic(False)
         font.setWeight(50)
-        self.btn_pushMission.setFont(font)
-        self.btn_pushMission.setMouseTracking(True)
-        self.btn_pushMission.setAutoFillBackground(False)
-        self.btn_pushMission.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
+        self.btn_push_mission.setFont(font)
+        self.btn_push_mission.setMouseTracking(True)
+        self.btn_push_mission.setAutoFillBackground(False)
+        self.btn_push_mission.setStyleSheet(
+            "QPushButton{background-color: rgb(114, 159, 207);}\n"
             "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
         )
         icon9 = QtGui.QIcon()
         icon9.addPixmap(
             QtGui.QPixmap("src/UI/icons/pushMission.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
-        self.btn_pushMission.setIcon(icon9)
-        self.btn_pushMission.setIconSize(QtCore.QSize(24, 24))
-        self.btn_pushMission.setObjectName("btn_pushMission")
-        self.btn_control_grid.addWidget(self.btn_pushMission, 3, 2, 1, 1)
+        self.btn_push_mission.setIcon(icon9)
+        self.btn_push_mission.setIconSize(QtCore.QSize(24, 24))
+        self.btn_push_mission.setObjectName("btn_push_mission")
+        self.btn_control_grid.addWidget(self.btn_push_mission, 3, 2, 1, 1)
         self.btn_disarm = QtWidgets.QPushButton(self.MainScreen)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding
@@ -5880,7 +5878,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.tab_overview), _translate("MainWindow", "Overview")
         )
-        self.btn_pause.setText(_translate("MainWindow", "Pause Mission"))
+        self.btn_pause_resume.setText(_translate("MainWindow", "Pause/Resume"))
         self.btn_arm.setText(_translate("MainWindow", "Arm"))
         self.btn_connect.setText(_translate("MainWindow", "Connect"))
         self.btn_mission.setText(_translate("MainWindow", "Mission"))
@@ -5888,8 +5886,8 @@ class Ui_MainWindow(object):
         self.btn_return.setText(_translate("MainWindow", "Return"))
         self.btn_landing.setText(_translate("MainWindow", "Landing"))
         self.btn_rtl.setText(_translate("MainWindow", "RTL"))
-        self.btn_takeOff.setText(_translate("MainWindow", "Take off"))
-        self.btn_pushMission.setText(_translate("MainWindow", "Push Mission"))
+        self.btn_take_off.setText(_translate("MainWindow", "Take off"))
+        self.btn_push_mission.setText(_translate("MainWindow", "Push Mission"))
         self.btn_disarm.setText(_translate("MainWindow", "Disarm"))
         self.btn_open_close.setText(_translate("MainWindow", "Open/Close"))
         self.appTitle_2.setText(
@@ -5933,14 +5931,3 @@ class Ui_MainWindow(object):
         self.actionUAV_4_view.setText(_translate("MainWindow", "UAV 4 view"))
         self.actionUAV_5_view.setText(_translate("MainWindow", "UAV 5 view"))
         self.actionUAV_6_view.setText(_translate("MainWindow", "UAV 6 view"))
-
-
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())

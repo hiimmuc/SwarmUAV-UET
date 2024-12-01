@@ -226,13 +226,13 @@ class Interface(QMainWindow):
         self.ui.btn_disarm.setIcon(QtGui.QIcon(QtGui.QPixmap(disarm_icon_path)))
         self.ui.btn_open_close.setIcon(QtGui.QIcon(QtGui.QPixmap(open_close_icon_path)))
         self.ui.btn_landing.setIcon(QtGui.QIcon(QtGui.QPixmap(landing_icon_path)))
-        self.ui.btn_takeOff.setIcon(QtGui.QIcon(QtGui.QPixmap(takeoff_icon_path)))
-        self.ui.btn_pause.setIcon(QtGui.QIcon(QtGui.QPixmap(pause_icon_path)))
+        self.ui.btn_take_off.setIcon(QtGui.QIcon(QtGui.QPixmap(takeoff_icon_path)))
+        self.ui.btn_pause_resume.setIcon(QtGui.QIcon(QtGui.QPixmap(pause_icon_path)))
         self.ui.btn_connect.setIcon(QtGui.QIcon(QtGui.QPixmap(connect_icon_path)))
         self.ui.btn_rtl.setIcon(QtGui.QIcon(QtGui.QPixmap(rtl_icon_path)))
         self.ui.btn_return.setIcon(QtGui.QIcon(QtGui.QPixmap(return_icon_path)))
         self.ui.btn_mission.setIcon(QtGui.QIcon(QtGui.QPixmap(mission_icon_path)))
-        self.ui.btn_pushMission.setIcon(QtGui.QIcon(QtGui.QPixmap(push_mission_icon_path)))
+        self.ui.btn_push_mission.setIcon(QtGui.QIcon(QtGui.QPixmap(push_mission_icon_path)))
         self.ui.btn_toggle_camera.setIcon(QtGui.QIcon(QtGui.QPixmap(toggle_icon_path)))
 
         # screen view default image

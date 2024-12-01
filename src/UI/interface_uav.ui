@@ -9850,7 +9850,7 @@ background-color: rgb(252, 175, 62);</string>
              <number>10</number>
             </property>
             <item row="3" column="3">
-             <widget class="QPushButton" name="btn_pause">
+             <widget class="QPushButton" name="btn_pause_resume">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                 <horstretch>0</horstretch>
@@ -9879,11 +9879,11 @@ background-color: rgb(252, 175, 62);</string>
                <bool>false</bool>
               </property>
               <property name="styleSheet">
-               <string notr="true">QPushButton{background-color: rgb(243, 243, 243);}
+               <string notr="true">QPushButton{background-color: rgb(114, 159, 207);}
 QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               </property>
               <property name="text">
-               <string>Pause Mission</string>
+               <string>Pause/Resume</string>
               </property>
               <property name="icon">
                <iconset>
@@ -10026,7 +10026,7 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
                <bool>false</bool>
               </property>
               <property name="styleSheet">
-               <string notr="true">QPushButton{background-color: rgb(243, 243, 243);}
+               <string notr="true">QPushButton{background-color: rgb(114, 159, 207);}
 QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               </property>
               <property name="text">
@@ -10077,8 +10077,7 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               </property>
               <property name="icon">
                <iconset>
-                <selectedon>icons/toggle_camear.png</selectedon>
-               </iconset>
+                <normaloff>icons/toggle_camera.png</normaloff>icons/toggle_camera.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -10218,8 +10217,7 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               </property>
               <property name="icon">
                <iconset>
-                <selectedon>icons/trl.png</selectedon>
-               </iconset>
+                <normaloff>icons/rtl.png</normaloff>icons/rtl.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -10230,7 +10228,7 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
              </widget>
             </item>
             <item row="1" column="2">
-             <widget class="QPushButton" name="btn_takeOff">
+             <widget class="QPushButton" name="btn_take_off">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                 <horstretch>0</horstretch>
@@ -10279,7 +10277,7 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
              </widget>
             </item>
             <item row="3" column="2">
-             <widget class="QPushButton" name="btn_pushMission">
+             <widget class="QPushButton" name="btn_push_mission">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
                 <horstretch>0</horstretch>
@@ -10308,7 +10306,7 @@ QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
                <bool>false</bool>
               </property>
               <property name="styleSheet">
-               <string notr="true">QPushButton{background-color: rgb(243, 243, 243);}
+               <string notr="true">QPushButton{background-color: rgb(114, 159, 207);}
 QPushButton::pressed{background-color: rgb(255, 0, 0);}</string>
               </property>
               <property name="text">

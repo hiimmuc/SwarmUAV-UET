@@ -156,14 +156,8 @@ async def uav_fn_goto_location(drone, latitude, longitude, altitude=None, error=
         async for position in drone["system"].telemetry.position():
             altitude = position.relative_altitude_m
             break
-    async for position in drone["system"].telemetry.position():
-        current_latitude = position.latitude_deg
-        current_longitude = position.longitude_deg
-        if abs(current_latitude - latitude) < error and abs(current_longitude - longitude) < error:
-            print("Already at the location")
-            break
-        await drone["system"].action.goto_location(latitude, longitude, altitude, 0)
-        break
+    await drone["system"].action.goto_location(latitude, longitude, altitude, 0)
+
     return
 
 

@@ -1,41 +1,42 @@
 # PyQt5
 import datetime
 import sys
+from pathlib import Path
 
 from asyncqt import QEventLoop
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 
 # user-defined modules
 from config import *
 from interface_base import *
+from map.chuongtrinhcon_newUI import *
 from UI.interface_uav import *
 from utils.drone_utils import *
 from utils.map_folium import *
 from utils.map_utils import *
 from utils.qt_utils import *
-from PyQt5.QtCore import QTimer
 
-from pathlib import Path
-from map.chuongtrinhcon_newUI import *
 # from interface_wrapper import UAVs
 
 parent_dir = Path(__file__).parent.parent
 
 
-
 # Define the path to the assets/icons directory
-ICON_DIR = Path(__file__).parent.parent / 'assets' / 'icons'
-drone_icon_path = ICON_DIR / 'drone.png'
-dot_icon_path = ICON_DIR / 'Dot.png'
+ICON_DIR = Path(__file__).parent.parent / "assets" / "icons"
+drone_icon_path = ICON_DIR / "drone.png"
+dot_icon_path = ICON_DIR / "Dot.png"
 
 rotated_area_list = []
 grid_enabled = False
 grid_points = []
 final_grid = []
 
+
 class Map(Interface):
     position_list = []  # This is a class attribute
+
     def __init__(self):
         Interface.__init__(self)
         self._init_map()
@@ -71,7 +72,6 @@ class Map(Interface):
         self._update_timer.timeout.connect(self.update_uav_positions)
         self._updating_positions = False  # Flag to track if updates are active
 
-
     def _init_map_events(self):
         self.ui.btn_map_show_drones.clicked.connect(self.btn_show_drones_callback)
         self.ui.btn_map_show_points.clicked.connect(self.btn_show_points_callback)
@@ -81,8 +81,6 @@ class Map(Interface):
         self.ui.btn_map_split_area.clicked.connect(self.btn_split_area_callback)
         self.ui.btn_map_export_grid.clicked.connect(self.btn_export_grid_callback)
         self.ui.btn_map_toggle_route.clicked.connect(self.btn_toggle_route_callback)
-
-
 
     # -----------------------------< map event functions >--------------------------------
 
@@ -105,7 +103,6 @@ class Map(Interface):
         self._update_timer.stop()
         self._updating_positions = False
 
-
     def update_uav_positions(self):
         # Get GPS data from drones' gps.log file and update positions
         from interface_wrapper import UAVs  # Local import to avoid circular dependency
@@ -119,7 +116,7 @@ class Map(Interface):
                 if latitude != "No information" and longitude != "No information":
                     # Call updateUAVMarker function in JavaScript
                     js_code += f"updateUAVMarker({uav_index}, {latitude}, {longitude});"
-        
+
         # Execute the generated JavaScript code to update UAV markers on the map
         self.ui.MapWebView.page().runJavaScript(js_code)
 
@@ -147,33 +144,42 @@ class Map(Interface):
     def btn_show_points_callback(self):
         # read points from file and show on map
         # Read and parse the JSON file
-        filename = filedialog.askopenfilename(initialdir=f"{parent_dir}/logs/area/", title="Chọn file",
-                                              filetypes=(("Text files", "*.plan"), ("All files", "*.*")))
-        with open(filename, 'r') as file:
+        filename = filedialog.askopenfilename(
+            initialdir=f"{parent_dir}/logs/area/",
+            title="Chọn file",
+            filetypes=(("Text files", "*.plan"), ("All files", "*.*")),
+        )
+        with open(filename, "r") as file:
             data = json.load(file)
-        
+
         # Initialize an empty list to store (latitude, longitude) tuples
         position_file_list = []
 
         # Access the mission items to retrieve coordinates
-        items = data.get('mission', {}).get('items', [])
+        items = data.get("mission", {}).get("items", [])
 
         for item in items:
             # Extract latitude and longitude from the params field
-            params = item.get('params', [])
+            params = item.get("params", [])
             if len(params) >= 6:  # Ensure params has enough elements
                 latitude, longitude = params[4], params[5]  # Fifth and sixth elements
-                if latitude is not None and longitude is not None and (latitude, longitude) != (0, 0):
+                if (
+                    latitude is not None
+                    and longitude is not None
+                    and (latitude, longitude) != (0, 0)
+                ):
                     position_file_list.append([latitude, longitude])
                     self.position_list.append([latitude, longitude])
-
 
         # NOTE: draw to ui - positions_list
         # Draw each position on the map
         for latitude, longitude in position_file_list:
             # Assuming `type` is "Point" for all markers
             html = self.ovv_map_data.add_marker(
-                "Point", float(latitude), float(longitude), icon={"color": "blue", "icon": "map-pin"}
+                "Point",
+                float(latitude),
+                float(longitude),
+                icon={"color": "blue", "icon": "map-pin"},
             )
             self.ui.Overview_map_view.setHtml(html)
         print(self.position_list)
@@ -187,31 +193,24 @@ class Map(Interface):
         # Define the structure of the .plan file according to QGroundControl specifications
         plan_data = {
             "fileType": "Plan",
-            "geoFence": {
-                "circles": [],
-                "polygons": [],
-                "version": 2
-            },
+            "geoFence": {"circles": [], "polygons": [], "version": 2},
             "groundStation": "QGroundControl",
             "mission": {
                 "cruiseSpeed": 2,  # Set cruise speed in m/s
-                "hoverSpeed": None,    # Set hover speed in m/s
-                "firmwareType": 12, # Specify the firmware type (e.g., PX4)
+                "hoverSpeed": None,  # Set hover speed in m/s
+                "firmwareType": 12,  # Specify the firmware type (e.g., PX4)
                 "globalPlanAltitudeMode": 1,  # Altitude mode
                 "items": [],
                 "plannedHomePosition": [0, 0, 0],  # Placeholder for home position
                 "vehicleType": 2,  # Type of vehicle (e.g., 2 for fixed-wing)
-                "version": 2
+                "version": 2,
             },
-            "rallyPoints": {
-                "points": [],  # Initialize with empty points
-                "version": 2
-            },
-            "version": 1
+            "rallyPoints": {"points": [], "version": 2},  # Initialize with empty points
+            "version": 1,
         }
 
         # Populate mission items from area_grid waypoints
-       
+
         home_position = self.position_list[0]  # First point as the home position
         plan_data["mission"]["plannedHomePosition"] = [home_position[0], home_position[1], None]
         for y, pos in enumerate(self.position_list):
@@ -226,10 +225,10 @@ class Map(Interface):
                     "doJumpId": y + 1,
                     "frame": 3,
                     "params": [0, 0, 0, None, pos[0], pos[1], 3],
-                    "type": "SimpleItem"
+                    "type": "SimpleItem",
                 }
                 plan_data["mission"]["items"].append(waypoint)
-            
+
             # Last waypoint
             elif y == len(self.position_list) - 1:
                 waypoint = {
@@ -241,7 +240,7 @@ class Map(Interface):
                     "doJumpId": y + 1,
                     "frame": 3,
                     "params": [0, 0, 0, None, pos[0], pos[1], 3],
-                    "type": "SimpleItem"
+                    "type": "SimpleItem",
                 }
                 plan_data["mission"]["items"].append(waypoint)
                 waypoint = {
@@ -250,10 +249,10 @@ class Map(Interface):
                     "doJumpId": y + 2,
                     "frame": 2,
                     "params": [0, 0, 0, 0, 0, 0, 0],
-                    "type": "SimpleItem"
+                    "type": "SimpleItem",
                 }
                 plan_data["mission"]["items"].append(waypoint)
-            
+
             # Middle waypoints
             else:
                 waypoint = {
@@ -265,17 +264,20 @@ class Map(Interface):
                     "doJumpId": y + 1,
                     "frame": 3,
                     "params": [0, 0, 0, None, pos[0], pos[1], 3],
-                    "type": "SimpleItem"
+                    "type": "SimpleItem",
                 }
                 plan_data["mission"]["items"].append(waypoint)
-                
+
         # Define the path to save the .plan file
-        plan_file_path = filedialog.asksaveasfilename(defaultextension=".plan", title="Lưu file",
-                                                initialdir=f"{parent_dir}/logs/points/",
-                                                filetypes=(("Plan files", "*.plan"), ("All files", "*.*")))
+        plan_file_path = filedialog.asksaveasfilename(
+            defaultextension=".plan",
+            title="Lưu file",
+            initialdir=f"{parent_dir}/logs/points/",
+            filetypes=(("Plan files", "*.plan"), ("All files", "*.*")),
+        )
 
         # Save as JSON to .plan file with UTF-8 encoding
-        with open(plan_file_path, 'w', encoding='utf-8') as plan_file:
+        with open(plan_file_path, "w", encoding="utf-8") as plan_file:
             json.dump(plan_data, plan_file, indent=4)
 
         print(f"Mission plan exported to {plan_file_path}")
@@ -292,7 +294,8 @@ class Map(Interface):
                 html = self.ovv_map_data.add_polygon("Polygon", area_marker)
                 self.ui.Overview_map_view.setHtml(html)
                 print(
-                    f"Point {index + 1} set at latitude: {position[0]}, longitude: {position[1]}")
+                    f"Point {index + 1} set at latitude: {position[0]}, longitude: {position[1]}"
+                )
 
     def btn_export_grid_callback(self):
         # export grid to file
@@ -303,36 +306,34 @@ class Map(Interface):
         # Define the structure of the .plan file according to QGroundControl specifications
         plan_data = {
             "fileType": "Plan",
-            "geoFence": {
-                "circles": [],
-                "polygons": [],
-                "version": 2
-            },
+            "geoFence": {"circles": [], "polygons": [], "version": 2},
             "groundStation": "QGroundControl",
             "mission": {
                 "cruiseSpeed": 1,  # Set cruise speed in m/s
-                "hoverSpeed": 1,    # Set hover speed in m/s
-                "firmwareType": 12, # Specify the firmware type (e.g., PX4)
+                "hoverSpeed": 1,  # Set hover speed in m/s
+                "firmwareType": 12,  # Specify the firmware type (e.g., PX4)
                 "globalPlanAltitudeMode": 1,  # Altitude mode
                 "items": [],
                 "plannedHomePosition": [0, 0, 0],  # Placeholder for home position
                 "vehicleType": 2,  # Type of vehicle (e.g., 2 for fixed-wing)
-                "version": 2
+                "version": 2,
             },
-            "rallyPoints": {
-                "points": [],  # Initialize with empty points
-                "version": 2
-            },
-            "version": 1
+            "rallyPoints": {"points": [], "version": 2},  # Initialize with empty points
+            "version": 1,
         }
 
         # Populate mission items from area_grid waypoints
         for i, points in enumerate(final_grid):
             plan_data["mission"]["items"] = []
-            from interface_wrapper import UAVs  # Local import to avoid circular dependency
-            uav_index = i+1
-            lon, lat  = float(UAVs[uav_index]["status"]["position_status"][0]), float(UAVs[uav_index]["status"]["position_status"][1])
-        
+            from interface_wrapper import (
+                UAVs,  # Local import to avoid circular dependency
+            )
+
+            uav_index = i + 1
+            lon, lat = float(UAVs[uav_index]["status"]["position_status"][0]), float(
+                UAVs[uav_index]["status"]["position_status"][1]
+            )
+
             # if area_grid and area_grid[0]:
             #     home_position = area_grid[i][0]  # First point as the home position
             #     plan_data["mission"]["plannedHomePosition"] = [home_position[0], home_position[1], None]
@@ -353,10 +354,10 @@ class Map(Interface):
                         "doJumpId": y + 1,
                         "frame": 3,
                         "params": [0, 0, 0, None, pos[0], pos[1], 5 + i],
-                        "type": "SimpleItem"
+                        "type": "SimpleItem",
                     }
                     plan_data["mission"]["items"].append(waypoint)
-                
+
                 # Last waypoint
                 elif y == len(points) - 1:
                     waypoint = {
@@ -368,7 +369,7 @@ class Map(Interface):
                         "doJumpId": y + 1,
                         "frame": 3,
                         "params": [0, 0, 0, None, pos[0], pos[1], 5 + i],
-                        "type": "SimpleItem"
+                        "type": "SimpleItem",
                     }
                     plan_data["mission"]["items"].append(waypoint)
                     waypoint = {
@@ -377,10 +378,10 @@ class Map(Interface):
                         "doJumpId": y + 2,
                         "frame": 2,
                         "params": [0, 0, 0, 0, 0, 0, 0],
-                        "type": "SimpleItem"
+                        "type": "SimpleItem",
                     }
                     plan_data["mission"]["items"].append(waypoint)
-                
+
                 # Middle waypoints
                 else:
                     waypoint = {
@@ -392,26 +393,26 @@ class Map(Interface):
                         "doJumpId": y + 1,
                         "frame": 3,
                         "params": [0, 0, 0, None, pos[0], pos[1], 5 + i],
-                        "type": "SimpleItem"
+                        "type": "SimpleItem",
                     }
                     plan_data["mission"]["items"].append(waypoint)
-                    
+
             # Define the path to save the .plan file
             plan_file_path = f"{parent_dir}/src/logs/points/points{i+1}.plan"
 
             # Save as JSON to .plan file with UTF-8 encoding
-            with open(plan_file_path, 'w', encoding='utf-8') as plan_file:
+            with open(plan_file_path, "w", encoding="utf-8") as plan_file:
                 json.dump(plan_data, plan_file, indent=4)
 
             print(f"Mission plan exported to {plan_file_path}")
 
-
     def btn_toggle_route_callback(self):
         from interface_wrapper import UAVs  # Local import to avoid circular dependency
+
         global rotated_area_list, area_num, grid_enabled, grid_points, final_grid
         grid_points = []
 
-        if grid_enabled :
+        if grid_enabled:
             # # NOTE: If grid is enabled or the number of grid distance have not been inserted -> then clear all the grid marker on map
             # for grid_points_markers in grid_points_markers_list:
             #     for marker in grid_points_markers:
@@ -443,7 +444,7 @@ class Map(Interface):
             gps_uav_1 = UAVs[1]["status"]["position_status"]
             print("GPS UAV1", gps_uav_1)
             area_grid = process_grid_points(grid_points, gps_uav_1)
-            
+
             # NOTE: remove point
             points_sets = copy.deepcopy(area_grid)
             all_filtered_sets = []
@@ -467,7 +468,7 @@ class Map(Interface):
             for grid in all_filtered_sets:
                 htm = self.ovv_map_data.add_line("LineString", grid)
                 self.ui.Overview_map_view.setHtml(htm)
-            
+
             final_grid = copy.deepcopy(all_filtered_sets)
 
             # Enable grid
@@ -519,7 +520,6 @@ class Map(Interface):
                 html = self.ovv_map_data.add_polygon(type, points)
                 points.pop()
                 self.position_list = copy.deepcopy(points)
-                
 
             elif type == "LineString":
                 self.position_list = []
@@ -527,7 +527,6 @@ class Map(Interface):
                 html = self.ovv_map_data.add_line(type, points)
                 points.pop()
                 self.position_list = copy.deepcopy(points)
-                
 
             self.ui.Overview_map_view.setHtml(html)
         except Exception as e:

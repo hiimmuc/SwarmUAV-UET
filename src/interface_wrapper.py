@@ -60,6 +60,7 @@ try:
             "status": {
                 "connection_status": False,
                 "streaming_status": False,
+                "on_mission": False,
                 "arming_status": "No information",
                 "battery_status": "No information",
                 "gps_status": "No information",
@@ -143,12 +144,14 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             lambda: asyncio.create_task(self.uav_land_callback(self.active_tab_index))
         )
 
-        self.ui.btn_takeOff.clicked.connect(
+        self.ui.btn_take_off.clicked.connect(
             lambda: asyncio.create_task(self.uav_takeoff_callback(self.active_tab_index))
         )
 
-        self.ui.btn_pause.clicked.connect(
-            lambda: asyncio.create_task(self.uav_pause_mission_callback(self.active_tab_index))
+        self.ui.btn_pause_resume.clicked.connect(
+            lambda: asyncio.create_task(
+                self.uav_toggle_pause_mission_callback(self.active_tab_index)
+            )
         )
 
         self.ui.btn_connect.clicked.connect(
@@ -167,7 +170,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             lambda: asyncio.create_task(self.uav_mission_callback(self.active_tab_index))
         )
 
-        self.ui.btn_pushMission.clicked.connect(
+        self.ui.btn_push_mission.clicked.connect(
             lambda: asyncio.create_task(self.uav_push_mission_callback(self.active_tab_index))
         )
 
@@ -1077,7 +1080,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 self.update_terminal("Starting mission...", uav_index=uav_index)
                 fn_mission = UAVs[uav_index]["system"].mission.start_mission()
 
-                UAVs[uav_index]["status"]["mode_status"] = "Mission"
+                UAVs[uav_index]["status"]["on_mission"] = True
                 self.uav_information_views[uav_index - 1].setText(
                     self.template_information(uav_index, **UAVs[uav_index]["status"])
                 )
@@ -1194,7 +1197,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 src_msg="uav_push_mission_callback",
             )
 
-    async def uav_pause_mission_callback(self, uav_index) -> None:
+    async def uav_toggle_pause_mission_callback(self, uav_index) -> None:
         """
         Pauses the mission of a specified UAV or all UAVs if the index is 0.
 
@@ -1210,11 +1213,19 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             ):
                 return
             try:
-                self.update_terminal(f"[INFO] Sent PAUSE command to UAV {uav_index}")
+                if UAVs[uav_index]["status"]["on_mission"]:
+                    self.update_terminal(f"[INFO] Sent PAUSE command to UAV {uav_index}")
 
-                await UAVs[uav_index]["system"].mission.pause_mission()
-                #
-                UAVs[uav_index]["status"]["mode_status"] = "Mission paused"
+                    await UAVs[uav_index]["system"].mission.pause_mission()
+                    #
+                    UAVs[uav_index]["status"]["on_mission"] = False
+                else:
+                    self.update_terminal(f"[INFO] Sent RESUME command to UAV {uav_index}")
+
+                    await UAVs[uav_index]["system"].mission.start_mission()
+                    #
+                    UAVs[uav_index]["status"]["on_mission"] = True
+
                 self.uav_information_views[uav_index - 1].setText(
                     self.template_information(uav_index, **UAVs[uav_index]["status"])
                 )
@@ -1663,6 +1674,11 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                         if obj["detected"]:
                             # ======= replace with your function
                             # export frame
+                            UAVs[uav_index]["detection_enable"] = False
+                            cv2.imwrite(
+                                f"{SRC_DIR}/logs/images/UAV{uav_index}_locked_target_{track_id}.png",
+                                frame,
+                            )
                             # convert to gps
                             detected_pos = (obj["x"], obj["y"])
                             frame_shape = frame.shape
@@ -1701,7 +1717,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             None
         """
         global UAVs
-        # connect -> arm -> takeoff -> mission (goto pos) -> return -> disarm
+        # connect -> arm -> takeoff -> mission (goto pos) --> do some fn -> return -> disarm
         uav_index = RESCUE_UAV_INDEX
         if not (
             UAVs[uav_index]["status"]["connection_status"] and UAVs[uav_index]["connection_allow"]
@@ -1748,6 +1764,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             longitude=RESCUE_POS[1],
         )
         # NOTE: do something here
+        # toggle the actuator
 
         # do the rescue mission
         await self.uav_fn_get_status(uav_index)
