@@ -264,6 +264,7 @@ def draw_detected_frame(frame, results):
 def draw_tracking_frame(frame, results, history, track_frame_limit=90):
     # boxes attributes: cls, conf, data, id, is_track, orig_shape, xyxy, xywh
     (boxes, track_ids, objects) = ([], [], [])
+    detected = False
     annotated_frame = results[0].plot()
     track_results = results[0].boxes
     if track_results.is_track:
@@ -278,6 +279,8 @@ def draw_tracking_frame(frame, results, history, track_frame_limit=90):
             track.append((float(x), float(y)))  # x, y center point
             if len(track) > track_frame_limit:  # retain 90 tracks for 90 frames
                 track.pop(0)
+                if cls_name == "person":
+                    detected = True
 
             # Draw the tracking lines
             points = np.hstack(track).astype(np.int32).reshape((-1, 1, 2))
@@ -285,7 +288,17 @@ def draw_tracking_frame(frame, results, history, track_frame_limit=90):
                 annotated_frame, [points], isClosed=False, color=(225, 225, 0), thickness=3
             )
 
-            objects.append({"id": track_id, "class": cls_name, "x": x, "y": y, "w": w, "h": h})
+            objects.append(
+                {
+                    "id": track_id,
+                    "class": cls_name,
+                    "detected": detected,
+                    "x": x,
+                    "y": y,
+                    "w": w,
+                    "h": h,
+                }
+            )
 
     return annotated_frame, track_ids, objects
 

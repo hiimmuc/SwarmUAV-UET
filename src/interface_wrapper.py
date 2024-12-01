@@ -26,7 +26,7 @@ from utils.qt_utils import *
 from utils.serial_utils import *
 from utils.stream_utils import *
 
-# cspell: ignore UAVs mavsdk asyncqt offboard pixmap qgroundcontrol rtcm imwrite dsize fourcc imread
+# cspell: ignore UAVs mavsdk asyncqt ndarray offboard pixmap qgroundcontrol rtcm imwrite dsize fourcc imread
 
 __current_path__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -1318,13 +1318,21 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     logger.log(f"UAV-{uav_index} streaming thread is starting...", level="info")
                     self.ui.btn_toggle_camera.setStyleSheet("background-color : green")
                 else:
-                    UAVs[uav_index]["status"]["streaming_status"] = False
                     self.uav_stream_threads[uav_index - 1].stop()
+                    UAVs[uav_index]["status"]["streaming_status"] = False
                     logger.log(
                         f"UAV-{uav_index} streaming thread is stopping...",
                         level="info",
                     )
                     self.ui.btn_toggle_camera.setStyleSheet("background-color : red")
+                    # pause the stream
+                    self.update_uav_screen_view(
+                        uav_index, frame=None, screen_name=DEFAULT_STREAM_SCREEN
+                    )
+
+                self.uav_stream_threads[uav_index - 1].isRunning = UAVs[uav_index]["status"][
+                    "streaming_status"
+                ]
 
             except Exception as e:
                 logger.log(repr(e), level="error")
@@ -1636,22 +1644,45 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         global UAVs
         uav_index, detected_results = results
         uav_index = int(uav_index)
+
         if not (
             (UAVs[uav_index]["connection_allow"] or UAVs[uav_index]["status"]["connection_status"])
             and UAVs[uav_index]["streaming_enable"]
         ):
             return
         try:
-            if (frame is None) or (not UAVs[uav_index]["status"]["streaming_status"]):
-                # reset the screen to the pause screen
-                pause_frame = cv2.imread(pause_img_paths[DEFAULT_STREAM_SCREEN])
-                self.update_uav_screen_view(
-                    uav_index, pause_frame, screen_name=DEFAULT_STREAM_SCREEN
-                )
 
             self.update_uav_screen_view(uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN)
             if UAVs[uav_index]["recording_enable"]:
                 self.uav_streams[uav_index - 1].write(frame)
+
+            if UAVs[uav_index]["detection_enable"]:
+                track_ids, objects = detected_results
+                for track_id, obj in zip(track_ids, objects):
+                    if obj["class"] == "person":
+                        if obj["detected"]:
+                            # ======= replace with your function
+                            # export frame
+                            # convert to gps
+                            detected_pos = (obj["x"], obj["y"])
+                            frame_shape = frame.shape
+                            uav_lat, uav_long = UAVs[uav_index]["status"]["position_status"]
+                            uav_alt = UAVs[uav_index]["status"]["altitude_status"][0]
+                            uav_gps = [uav_lat, uav_long, uav_alt]
+                            self.update_terminal(
+                                f"UAV-{uav_index} at gps ({uav_gps[0]}, {uav_gps[1]}, {uav_gps[2]}) detect {obj['class']} at X: {detected_pos[0]} Y: {detected_pos[1]} with frame size: {frame_shape}",
+                                0,
+                            )
+                            print(
+                                convert_points_to_gps(
+                                    detected_pos=detected_pos,
+                                    frame_shape=frame_shape,
+                                    uav_gps=uav_gps,
+                                )
+                            )
+                            # =======
+                            pass
+
         except Exception as e:
             UAVs[uav_index]["status"]["streaming_status"] = False
             self.popup_msg(

@@ -434,7 +434,7 @@ class Interface(QMainWindow):
             )
             self.uav_status_views[uav_index - 1].appendPlainText(text)
 
-    def update_uav_screen_view(self, uav_index, frame, screen_name="all") -> None:
+    def update_uav_screen_view(self, uav_index, frame=None, screen_name="all") -> None:
         """
         Starts streaming video from the specified UAV to the screen view.
 
@@ -452,6 +452,9 @@ class Interface(QMainWindow):
 
         try:
             if screen_name != "all":
+                if frame is None:  # show pause image
+                    frame = cv2.imread(pause_img_paths[screen_name])
+
                 width, height = screen_sizes[screen_name]
                 screen_views[screen_name].setPixmap(convert_cv2qt(frame, size=(width, height)))
             else:  # all types of screen

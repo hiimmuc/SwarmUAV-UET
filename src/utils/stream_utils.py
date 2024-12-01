@@ -20,20 +20,24 @@ class Stream:
         self.capture_params = capture
         self.writer_params = writer
 
-        self.address = self.capture_params["address"]
         self.capture = None
         self.writer = None
-        self.writer_frameSize = None
         self.connect()
 
     def connect(self):
+        if self.capture is not None:
+            self.capture.release()
+        if hasattr(self, "writer"):
+            if self.writer is not None:
+                self.writer.release()
+
         self.capture = cv2.VideoCapture(self.capture_params["address"])
 
         # Set capture properties
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, int(self.capture_params["width"]))
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(self.capture_params["height"]))
         self.capture.set(cv2.CAP_PROP_FPS, int(self.capture_params["fps"]))
-        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 5)
+        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 3)
 
         # Set writer properties
         if self.writer_params["enable"]:
@@ -45,6 +49,8 @@ class Stream:
                 frameSize=self.writer_params["frameSize"],
             )
 
+        return self.is_opened()
+
     def is_opened(self):
         return self.capture.isOpened()
 
@@ -52,7 +58,9 @@ class Stream:
         # Define common video file extensions
         video_extensions = [".mp4", ".mov", ".avi", ".mkv", ".flv", ".wmv", ".webm"]
         # Use regex to check for any of the video file extensions in the URL
-        return any(self.address.lower().endswith(ext) for ext in video_extensions)
+        return any(
+            self.capture_params["address"].lower().endswith(ext) for ext in video_extensions
+        )
 
     def get_fps(self):
         return self.capture.get(cv2.CAP_PROP_FPS)
@@ -121,14 +129,13 @@ class StreamThread:
         self.stream.release()
 
 
-# ! Not used
 class StreamQtThread(QThread):  # NOTE: slower than using Thread
     change_image_signal = pyqtSignal(np.ndarray, list)
 
     def __init__(self, uav_index, stream, model_config=None, **kwargs):
         super().__init__()
         self.uav_index = uav_index
-        self.track_histories = defaultdict(lambda: [])
+        self.track_history = defaultdict(lambda: [])
         self.isRunning = False
         self.stream = stream
         self.model_config = model_config
@@ -140,27 +147,35 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
 
     def run(self):
         self.isRunning = True
-        while self.isRunning and self.stream.is_opened():
-            ret, frame = self.stream.read()
-            results = [None]
-            if ret:
-                if self.model_config["enable"]:
-                    # results = results = self.model.track(
-                    #     frame, classes=0, device=DEVICE, persist=True, verbose=False
-                    # )
-                    # frame, track_ids, objects = draw_tracking_frame(
-                    #     frame, results, self.track_histories, 90
-                    # )
-                    # results = [track_ids, objects]
-                    pass
+        while self.isRunning:
+            if not self.stream.connect():
+                print(">>> Lost streaming signal, try to reconnect ...")
+                self.msleep(1000)
+                continue
 
-                self.change_image_signal.emit(frame, [self.uav_index, *results])
-                self.msleep(int(1 / self.stream.get_fps() * 1000))
-            else:
-                self.stream.capture_reset()
+            while self.stream.is_opened():
+                ret, frame = self.stream.read()
+                results = [None]
+                if ret:
+                    if self.model_config["enable"]:
+                        results = self.model.track(
+                            frame, classes=0, device=DEVICE, persist=True, verbose=False
+                        )
+                        frame, track_ids, objects = draw_tracking_frame(
+                            frame, results, self.track_history, 90
+                        )
+                        results = [track_ids, objects]
+                        pass
 
-            if not self.isRunning:
-                break
+                    self.change_image_signal.emit(frame, [self.uav_index, results])
+                    self.msleep(int(1 / self.stream.get_fps() * 1000))
+                else:
+                    self.stream.capture_reset()
+
+                if not self.isRunning:
+                    break
+
+            break
         self.stream.capture.release()
         self.stream.writer.release()
 
