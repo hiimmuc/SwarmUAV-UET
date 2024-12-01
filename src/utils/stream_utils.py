@@ -170,14 +170,19 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
                     self.change_image_signal.emit(frame, [self.uav_index, results])
                     self.msleep(int(1 / self.stream.get_fps() * 1000))
                 else:
-                    self.stream.capture_reset()
+                    if self.stream.is_video():
+                        self.stream.capture_reset()
+                    else:
+                        print(">>> No frame received, signal may lost ...")
+                        self.stream.release()
+                        break
 
                 if not self.isRunning:
                     break
 
-            break
-        self.stream.capture.release()
-        self.stream.writer.release()
+            if not self.isRunning:
+                break
+        self.stream.release()
 
     def stop(self):
         self.isRunning = False
