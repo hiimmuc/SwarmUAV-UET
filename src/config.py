@@ -172,4 +172,11 @@ DEFAULT_STREAM_VIDEO_LOG_PATHS = [
 os.makedirs(f"{SRC_DIR}/logs/videos", exist_ok=True)
 
 # YOLO settings
-model_path = f"{SRC_DIR}/model/checkpoints/YOLO/yolov8n.pt"  # YOLO model path
+model_uav_paths = {
+    1: f"{SRC_DIR}/model/checkpoints/YOLO/yolov8n.pt",
+    2: f"{SRC_DIR}/model/checkpoints/YOLO/yolov8n.pt",
+    3: f"{SRC_DIR}/model/checkpoints/YOLO/yolov8n.pt",
+    4: f"{SRC_DIR}/model/checkpoints/YOLO/yolov8n.pt",
+    5: f"{SRC_DIR}/model/checkpoints/YOLO/yolov8n.pt",
+    6: f"{SRC_DIR}/model/checkpoints/YOLO/yolov8n.pt",
+}  # YOLO model paths

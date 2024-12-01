@@ -348,7 +348,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
                 model_config = {
                     "enable": UAVs[uav_index]["detection_enable"],
-                    "path": model_path,
+                    "path": model_uav_paths[uav_index],
                     "task": "track",
                     "verbose": False,
                 }
