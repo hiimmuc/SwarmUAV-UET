@@ -1098,7 +1098,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     f"Error: {repr(e)}", src_msg="uav_mission_callback", type_msg="Error"
                 )
         elif uav_index == RESCUE_UAV_INDEX:
-            await self.uav_rescue_mission()
+            await self.uav_fn_rescue()
 
         else:
             # mission all except the rescue UAV
