@@ -1,6 +1,7 @@
 import asyncio
 import json
 import math
+from pathlib import Path
 
 import cv2
 from mavsdk.gimbal import ControlMode, GimbalMode
@@ -13,6 +14,7 @@ from mavsdk.offboard import (
 from tqdm import tqdm
 
 # cSpell:ignore asyncio, asyncgen tqdm offboard mavsdk
+SRC_DIR = Path(__file__).resolve().parent.parent
 
 
 def calculate_distance(lat1, lon1, lat2, lon2) -> float:
@@ -288,7 +290,9 @@ def convert_points_to_gps(detected_pos, frame_shape, uav_gps) -> list:
     h, w, c = frame_shape
     lat, lon, alt = uav_gps
     # * ===== Modify here =============================
-
+    rescue_filepath = f"{SRC_DIR}/logs/rescue_pos/rescue_pos.log"
+    with open(rescue_filepath, "w") as f:
+        f.write(f"{lat}, {lon}\n")
     # * ================================================
     return lat, lon
 

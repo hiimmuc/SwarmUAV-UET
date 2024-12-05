@@ -1623,7 +1623,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 )
         else:
             get_status_all_UAVs = [
-                self.uav_fn_get_status(uav_index) for uav_index in AVAIL_UAV_INDEXES
+                self.uav_fn_get_status(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
             ]
             await asyncio.gather(*get_status_all_UAVs)
 
@@ -1680,6 +1680,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     if obj["class"] == "person":
                         if obj["detected"]:
                             # ======= replace with your function
+                            # do something with the detected object
+
                             # export frame
                             UAVs[uav_index]["detection_enable"] = False
                             cv2.imwrite(
@@ -1734,60 +1736,61 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         await UAVs[uav_index]["system"].connect(system_address=UAVs[uav_index]["system_address"])
 
         print("Waiting for drone to connect...")
-        async for state in drone.core.connection_state():
+        async for state in UAVs[uav_index]["system"].core.connection_state():
             if state.is_connected:
                 print(f"-- Connected to drone!")
                 break
 
         print("Waiting for drone to have a global position estimate...")
-        async for health in drone.telemetry.health():
+        async for health in UAVs[uav_index]["system"].telemetry.health():
             if health.is_global_position_ok and health.is_home_position_ok:
                 print("-- Global position estimate OK")
                 break
-
-        # 1 check if rescue position is available
         while True:
-            if os.path.exists(rescue_filepath):
-                break
-            await asyncio.sleep(1)
-        # 2 set maximum speed --> arm --> takeoff --> goto rescue position
-        await UAVs[uav_index]["system"].action.set_maximum_speed(1.0)
-        await UAVs[uav_index]["system"].action.arm()
-        await UAVs[uav_index]["system"].action.set_takeoff_altitude(
-            UAVs[uav_index]["init_params"]["altitude"]
-        )
-        await UAVs[uav_index]["system"].action.takeoff()
-        # # update initial position of UAV
-        UAVs[uav_index]["init_params"]["latitude"] = float(
-            UAVs[uav_index]["status"]["position_status"][0]
-        )
-        UAVs[uav_index]["init_params"]["longitude"] = float(
-            UAVs[uav_index]["status"]["position_status"][1]
-        )
-        # update UAV information
-        UAVs[uav_index]["status"]["connection_status"] = True
-        # Go to the detected position
-        with open(rescue_filepath, "r") as file:
-            line = file.readline()
-            if not line:
-                return
-            RESCUE_POS = list(map(float, line.strip().split(", ")))
-        await uav_fn_goto_location(
-            drone=UAVs[uav_index],
-            latitude=RESCUE_POS[0],
-            longitude=RESCUE_POS[1],
-        )
-        # NOTE: do something here
-        # toggle the actuator
-        await uav_fn_control_gimbal(drone=UAVs[uav_index], control_value={"pitch": 90, "yaw": 0})
-        # do the rescue mission
-        await UAVs[uav_index]["system"].action.set_return_to_launch_altitude(
-            UAVs[uav_index]["init_params"]["altitude"]
-        )
-        await UAVs[uav_index]["system"].action.set_current_speed(2.0)
-        await UAVs[uav_index]["system"].action.return_to_launch()
-        await self.uav_fn_get_status(uav_index)
-        pass
+            # 1 check if rescue position is available
+            while True:
+                if os.path.exists(rescue_filepath):
+                    break
+                await asyncio.sleep(1)
+            # 2 set maximum speed --> arm --> takeoff --> goto rescue position
+            await UAVs[uav_index]["system"].action.set_maximum_speed(1.0)
+            await UAVs[uav_index]["system"].action.arm()
+            await UAVs[uav_index]["system"].action.set_takeoff_altitude(
+                UAVs[uav_index]["init_params"]["altitude"]
+            )
+            await UAVs[uav_index]["system"].action.takeoff()
+            # # update initial position of UAV
+            UAVs[uav_index]["init_params"]["latitude"] = float(
+                UAVs[uav_index]["status"]["position_status"][0]
+            )
+            UAVs[uav_index]["init_params"]["longitude"] = float(
+                UAVs[uav_index]["status"]["position_status"][1]
+            )
+            # update UAV information
+            UAVs[uav_index]["status"]["connection_status"] = True
+            # Go to the detected position
+            with open(rescue_filepath, "r") as file:
+                line = file.readline()
+                if not line:
+                    return
+                RESCUE_POS = list(map(float, line.strip().split(", ")))
+            await uav_fn_goto_location(
+                drone=UAVs[uav_index],
+                latitude=RESCUE_POS[0],
+                longitude=RESCUE_POS[1],
+            )
+            # NOTE: do something here
+            # toggle the actuator
+            await uav_fn_control_gimbal(
+                drone=UAVs[uav_index], control_value={"pitch": 90, "yaw": 0}
+            )
+            # do the rescue mission
+            await UAVs[uav_index]["system"].action.set_return_to_launch_altitude(
+                UAVs[uav_index]["init_params"]["altitude"]
+            )
+            await UAVs[uav_index]["system"].action.set_current_speed(2.0)
+            await UAVs[uav_index]["system"].action.return_to_launch()
+            pass
 
 
 # ------------------------------------< Main Application Class >-----------------------------
