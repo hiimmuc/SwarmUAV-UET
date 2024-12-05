@@ -16,10 +16,16 @@ from mavsdk.mission import MissionItem, MissionPlan
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 
-# user-defined modules
-from config import *
+# user-defined configuration
+from config.interface_config import *
+from config.stream_config import *
+from config.uav_config import *
+
+# user-defined interface
 from interface_base import *
 from interface_map import *
+
+# user-defined utils
 from utils.drone_utils import *
 from utils.mavsdk_server_utils import *
 from utils.qt_utils import *
@@ -29,6 +35,7 @@ from utils.stream_utils import *
 # cspell: ignore UAVs mavsdk asyncqt ndarray offboard pixmap qgroundcontrol rtcm imwrite dsize fourcc imread
 
 __current_path__ = os.path.dirname(os.path.abspath(__file__))
+print(f"Working on path: {__current_path__}")
 
 # UAVs object
 try:
@@ -55,7 +62,7 @@ try:
             "init_params": {
                 "longitude": INIT_LON,
                 "latitude": INIT_LAT,
-                "altitude": INIT_ALT + uav_index * 1,
+                "altitude": INIT_ALT[uav_index - 1],
             },
             "status": {
                 "connection_status": False,
@@ -82,7 +89,6 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         super().__init__()
         # UAVs
         self.uav_stream_threads = [None for _ in range(1, MAX_UAV_COUNT + 1)]
-        self.uav_streams_locks = [None for _ in range(1, MAX_UAV_COUNT + 1)]
         self.uav_streams = [None for _ in range(1, MAX_UAV_COUNT + 1)]
 
         #
@@ -620,7 +626,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 UAVs[uav_index]["status"]["connection_status"] = False
                 self.set_connection_display(uav_index, UAVs[uav_index]["status"])
 
-                # init server
+                # 1 init server
                 if UAVs[uav_index]["server"]["start"]:
                     UAVs[uav_index]["server"]["shell"].stop()
                     UAVs[uav_index]["server"]["start"] = False
@@ -630,13 +636,13 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 UAVs[uav_index]["server"]["start"] = True
 
                 await asyncio.sleep(5)
-
+                # 2 connect to system
                 await UAVs[uav_index]["system"].connect(
                     system_address=UAVs[uav_index]["system_address"]
                 )
 
                 logger.log(f"Waiting for drone {uav_index} to connect...", level="info")
-
+                # 3 check connection status
                 async for state in UAVs[uav_index]["system"].core.connection_state():
                     if state.is_connected:
                         logger.log(f"UAV-{uav_index} -- Connected", level="info")
@@ -651,18 +657,23 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                         )
                         UAVs[uav_index]["status"]["connection_status"] = False
                     break
-
-                await UAVs[uav_index]["system"].action.set_maximum_speed(1.0)
-
+                # 4 update connection status
                 self.set_connection_display(uav_index, UAVs[uav_index]["status"])
-
+                # 5 overwrite params file
+                await uav_fn_overwrite_params(
+                    UAVs[uav_index], parameters=OVERWRITE_PARAMS[uav_index]
+                )
+                # # 5 export params file
+                # await uav_fn_export_params(
+                #     drone=UAVs[uav_index], save_path=parameter_data_files[uav_index - 1]
+                # )
+                # 6 continuously update status
                 await self.uav_fn_get_status(uav_index)
 
             except Exception as e:
                 UAVs[uav_index]["status"]["connection_status"] = False
                 self.set_connection_display(uav_index, UAVs[uav_index]["status"])
-
-                -logger.log(f"Connection error to uav {uav_index} :{repr(e)}", level="error")
+                logger.log(f"Connection error to uav {uav_index} :{repr(e)}", level="error")
                 self.popup_msg(
                     f"Connection error to uav {uav_index} :{repr(e)}",
                     src_msg="uav_connect_callback",
@@ -800,9 +811,6 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     system_address=UAVs[uav_index]["system_address"]
                 )
                 await UAVs[uav_index]["system"].action.arm()
-                await UAVs[uav_index]["system"].action.set_takeoff_altitude(
-                    UAVs[uav_index]["init_params"]["altitude"]
-                )
                 await UAVs[uav_index]["system"].action.takeoff()
 
                 # # update initial position of UAV
@@ -896,7 +904,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 init_longitude = UAVs[uav_index]["init_params"]["longitude"]
                 current_latitude = UAVs[uav_index]["status"]["position_status"][0]
                 current_longitude = UAVs[uav_index]["status"]["position_status"][1]
-                # print(init_latitude, init_longitude, current_latitude, current_longitude)
+
                 if rtl:
                     self.update_terminal(f"[INFO] Sent RTL command to UAV {uav_index}")
                     if (init_latitude, init_longitude) == (current_latitude, current_longitude):
@@ -905,14 +913,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                         )
                         await UAVs[uav_index]["system"].action.land()
                     else:
-                        await UAVs[uav_index]["system"].action.set_return_to_launch_altitude(
-                            UAVs[uav_index]["init_params"]["altitude"]
-                        )
-                        await UAVs[uav_index]["system"].action.set_current_speed(2.0)
-
-                        fn_rtl = UAVs[uav_index]["system"].action.return_to_launch()
-
-                        await asyncio.gather(*[fn_rtl, self.uav_fn_get_status(uav_index)])
+                        await UAVs[uav_index]["system"].action.return_to_launch()
 
                     UAVs[uav_index]["status"]["mode_status"] = "RTL"
                     self.uav_information_views[uav_index - 1].setText(
@@ -923,13 +924,11 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                         f"[INFO] Sent RETURN command to UAV {uav_index} to lat: {init_latitude} long: {init_longitude}"
                     )
 
-                    fn_return = uav_fn_goto_location(
+                    await uav_fn_goto_location(
                         drone=UAVs[uav_index],
                         latitude=init_latitude,
                         longitude=init_longitude,
                     )
-
-                    await asyncio.gather(*[fn_return, self.uav_fn_get_status(uav_index)])
 
                     UAVs[uav_index]["status"]["mode_status"] = "RETURN"
                     self.uav_information_views[uav_index - 1].setText(
@@ -976,94 +975,6 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             ):
                 return
             try:
-                self.update_terminal(f"[INFO] Sent MISSION command to UAV {uav_index}")
-
-                # create tasks for monitoring mission progress and observing if the UAV is in the air
-                print_mission_progress_task = asyncio.ensure_future(
-                    print_mission_progress(UAVs[uav_index])
-                )
-                running_tasks = [print_mission_progress_task]
-                termination_task = asyncio.ensure_future(
-                    observe_is_in_air(UAVs[uav_index], running_tasks)
-                )
-
-                # NOTE: 1. push mission
-
-                mission_items = []
-                # Assign hight for mission
-                height = UAVs[uav_index]["init_params"]["altitude"]
-
-                # ? option 1: using mission raw
-                # convert_pointsFile_to_missionPlan(f"{SRC_DIR}/logs/points/points{uav_index}.txt", height)
-                # out = await drone.mission_raw.import_qgroundcontrol_mission(f"{SRC_DIR}/data/mission.plan")
-                # await drone.mission_raw.upload_mission(out.mission_items)
-                # Import the mission from the QGroundControl .plan file
-                # out = None  # Initialize out variable
-                # try:
-                #     out = await UAVs[uav_index][
-                #         "system"
-                #     ].mission_raw.import_qgroundcontrol_mission(
-                #         f"{SRC_DIR}/logs/points/points{uav_index}.plan"
-                #     )
-                # except Exception as e:
-                #     print(f"Error importing mission: {e}")
-                #     self.popup_msg(
-                #         f"Mission error: {e}", src_msg="uav_fn_mission", type_msg="error"
-                #     )
-                #     return
-
-                # print(
-                #     f"{len(out.mission_items)} mission items and "
-                #     f"{len(out.rally_items)} rally items imported."
-                # )
-
-                # ? this is option 2
-                # read mission points from file
-                with open(f"{SRC_DIR}/logs/points/points{uav_index}.txt", "r") as file:
-                    for line in file:
-                        latitude, longitude = map(float, line.strip().split(", "))
-                        mission_items.append(
-                            MissionItem(
-                                latitude_deg=latitude,
-                                longitude_deg=longitude,
-                                relative_altitude_m=height,
-                                speed_m_s=1.0,  # Speed to use after this mission item (in metres/second)
-                                is_fly_through=False,  # True for fly through, False for reach
-                                gimbal_pitch_deg=float("nan"),
-                                gimbal_yaw_deg=float("nan"),
-                                loiter_time_s=10,
-                                acceptance_radius_m=float("nan"),
-                                yaw_deg=float("nan"),
-                                camera_action=MissionItem.CameraAction.NONE,
-                                camera_photo_distance_m=float("nan"),
-                                camera_photo_interval_s=float("nan"),
-                                vehicle_action=MissionItem.VehicleAction.NONE,
-                            )
-                        )
-
-                mission_plan = MissionPlan(mission_items)
-
-                # Set return to launch altitude and speed
-                rtl_altitude = 15 + uav_index - 1  # Adjust as necessary
-                await UAVs[uav_index]["system"].action.set_return_to_launch_altitude(rtl_altitude)
-                print(f"-- RTL altitude set to {rtl_altitude} meters")
-
-                rtl_speed = 2  # Speed in meters per second
-                await UAVs[uav_index]["system"].action.set_maximum_speed(rtl_speed)
-                print(f"-- RTL speed set to {rtl_speed} m/s")
-
-                # set return to launch after mission
-                await UAVs[uav_index]["system"].mission.set_return_to_launch_after_mission(True)
-
-                # upload mission
-                self.update_terminal("Uploading mission...", uav_index=uav_index)
-
-                await UAVs[uav_index]["system"].mission.upload_mission(mission_plan)
-                # Upload the mission and rally points
-                # await UAVs[uav_index]["system"].mission_raw.upload_mission(out.mission_items)
-                # await UAVs[uav_index]["system"].mission_raw.upload_rally_points(out.rally_items)
-                print("Mission uploaded")
-
                 # Health check before mission
                 self.update_terminal(
                     "Waiting for drone to have a global position estimate...", uav_index=uav_index
@@ -1075,23 +986,18 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                         )
                         break
 
-                # NOTE: 2. Perform mission
-                self.update_terminal("Arming before starting mission ...", uav_index=uav_index)
-                await UAVs[uav_index]["system"].action.arm()
-
-                self.update_terminal("Starting mission...", uav_index=uav_index)
-                fn_mission = UAVs[uav_index]["system"].mission.start_mission()
+                self.update_terminal(f"[INFO] Sent MISSION command to UAV {uav_index}")
 
                 UAVs[uav_index]["status"]["on_mission"] = True
+                await uav_fn_do_mission(
+                    drone=UAVs[uav_index],
+                    mission_plan_file=f"{__current_path__}/logs/points/points{uav_index}.txt",
+                )
+
                 self.uav_information_views[uav_index - 1].setText(
                     self.template_information(uav_index, **UAVs[uav_index]["status"])
                 )
 
-                await asyncio.gather(
-                    *[fn_mission, self.uav_fn_get_status(uav_index)]
-                )  # mission and get status at the same time
-                # wait for mission to complete
-                await termination_task
             except Exception as e:
                 logger.log(f"Error: {repr(e)}", level="error")
                 self.popup_msg(
@@ -1145,46 +1051,14 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 fpath = QFileDialog.getOpenFileName(
                     parent=self,
                     caption="Open file",
-                    directory=str(SRC_DIR),
+                    directory=str(__current_path__),
                     initialFilter="Files (*.TXT *.txt)",
                 )[0]
 
-                mission_items = []
-                # Assign hight for mission
-                height = UAVs[uav_index]["init_params"]["altitude"]
+                mission_plan = uav_fn_upload_mission(
+                    drone=UAVs[uav_index], mission_plan_file=fpath
+                )
 
-                # ? option 1: using mission raw
-                # convert_pointsFile_to_missionPlan(f"{SRC_DIR}/logs/points/points{uav_index}.txt", height)
-                # out = await drone.mission_raw.import_qgroundcontrol_mission(f"{SRC_DIR}/data/mission.plan")
-                # await drone.mission_raw.upload_mission(out.mission_items)
-
-                # ? this is option 2
-                # read mission points from file
-                with open(fpath, "r") as file:
-                    for line in file:
-                        latitude, longitude = map(float, line.strip().split(", "))
-                        mission_items.append(
-                            MissionItem(
-                                latitude_deg=latitude,
-                                longitude_deg=longitude,
-                                relative_altitude_m=height,
-                                speed_m_s=1.0,  # Speed to use after this mission item (in metres/second)
-                                is_fly_through=False,  # True for fly through, False for reach
-                                gimbal_pitch_deg=float("nan"),
-                                gimbal_yaw_deg=float("nan"),
-                                loiter_time_s=10,
-                                acceptance_radius_m=float("nan"),
-                                yaw_deg=float("nan"),
-                                camera_action=MissionItem.CameraAction.NONE,
-                                camera_photo_distance_m=float("nan"),
-                                camera_photo_interval_s=float("nan"),
-                                vehicle_action=MissionItem.VehicleAction.NONE,
-                            )
-                        )
-                mission_plan = MissionPlan(mission_items)
-
-                # set return to launch after mission
-                await UAVs[uav_index]["system"].mission.set_return_to_launch_after_mission(True)
                 # upload mission
                 await UAVs[uav_index]["system"].mission.upload_mission(mission_plan)
                 #
@@ -1538,7 +1412,10 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         """
         global UAVs
 
-        parameters = await uav_fn_get_params(UAVs[uav_index], parameter_list)
+        parameters = await uav_fn_get_params(
+            drone=UAVs[uav_index],
+            list_params=displayed_parameter_list,
+        )
         # update display fields
         for i, (_, value) in enumerate(parameters.items()):
             self.uav_param_displays[uav_index - 1].children()[i + 1].setText(str(round(value, 1)))
@@ -1573,11 +1450,15 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             )
         ):
             if new_value.text() == "":
-                parameters[parameter_list[i]] = value.text()
+                parameters[displayed_parameter_list[i]] = value.text()
             else:
-                parameters[parameter_list[i]] = float(new_value.text())
+                parameters[displayed_parameter_list[i]] = float(new_value.text())
 
-        await uav_fn_set_params(UAVs[uav_index], parameters)
+        await uav_fn_set_params(
+            drone=UAVs[uav_index],
+            parameters=parameters,
+            param_file=parameter_data_files[uav_index - 1],
+        )
 
         await self.uav_fn_get_flight_info(uav_index=uav_index, copy=False)
 
@@ -1685,7 +1566,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                             # export frame
                             UAVs[uav_index]["detection_enable"] = False
                             cv2.imwrite(
-                                f"{SRC_DIR}/logs/images/UAV{uav_index}_locked_target_{track_id}.png",
+                                f"{__current_path__}/logs/images/UAV{uav_index}_locked_target_{track_id}.png",
                                 frame,
                             )
                             # convert to gps
@@ -1727,69 +1608,41 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         """
         global UAVs
         # connect -> arm -> takeoff -> mission (goto pos) --> do some fn -> return -> disarm
-        uav_index = RESCUE_UAV_INDEX
-        rescue_filepath = f"{SRC_DIR}/logs/rescue_pos/rescue_pos.log"
+        uav_index = int(RESCUE_UAV_INDEX)
+        rescue_filepath = f"{__current_path__}/logs/rescue_pos/rescue_pos.log"
         if not (
             UAVs[uav_index]["status"]["connection_status"] and UAVs[uav_index]["connection_allow"]
         ):
             return
+
+        self.update_terminal(f"[INFO] Sent RESCUE command to UAV {uav_index}")
+
         await UAVs[uav_index]["system"].connect(system_address=UAVs[uav_index]["system_address"])
-
-        print("Waiting for drone to connect...")
-        async for state in UAVs[uav_index]["system"].core.connection_state():
-            if state.is_connected:
-                print(f"-- Connected to drone!")
-                break
-
-        print("Waiting for drone to have a global position estimate...")
+        # check health
         async for health in UAVs[uav_index]["system"].telemetry.health():
             if health.is_global_position_ok and health.is_home_position_ok:
-                print("-- Global position estimate OK")
+                logger.log(f"UAV-{uav_index} -- Global position for estimate OK", level="info")
                 break
+        # get initial position
+        async for position in UAVs[uav_index]["system"].telemetry.position():
+            UAVs[uav_index]["init_params"]["latitude"] = round(position.latitude_deg, 12)
+            UAVs[uav_index]["init_params"]["longitude"] = round(position.longitude_deg, 12)
+            break
+        # do the rescue mission
         while True:
             # 1 check if rescue position is available
-            while True:
-                if os.path.exists(rescue_filepath):
-                    break
+            while not os.path.exists(rescue_filepath):
                 await asyncio.sleep(1)
-            # 2 set maximum speed --> arm --> takeoff --> goto rescue position
-            await UAVs[uav_index]["system"].action.set_maximum_speed(1.0)
-            await UAVs[uav_index]["system"].action.arm()
-            await UAVs[uav_index]["system"].action.set_takeoff_altitude(
-                UAVs[uav_index]["init_params"]["altitude"]
-            )
-            await UAVs[uav_index]["system"].action.takeoff()
-            # # update initial position of UAV
-            UAVs[uav_index]["init_params"]["latitude"] = float(
-                UAVs[uav_index]["status"]["position_status"][0]
-            )
-            UAVs[uav_index]["init_params"]["longitude"] = float(
-                UAVs[uav_index]["status"]["position_status"][1]
-            )
-            # update UAV information
-            UAVs[uav_index]["status"]["connection_status"] = True
-            # Go to the detected position
-            with open(rescue_filepath, "r") as file:
-                line = file.readline()
-                if not line:
-                    return
-                RESCUE_POS = list(map(float, line.strip().split(", ")))
-            await uav_fn_goto_location(
-                drone=UAVs[uav_index],
-                latitude=RESCUE_POS[0],
-                longitude=RESCUE_POS[1],
-            )
+
+            UAVs[uav_index]["status"]["on_mission"] = True
+            await uav_fn_do_mission(drone=UAVs[uav_index], mission_plan_file=rescue_filepath)
+
             # NOTE: do something here
-            # toggle the actuator
-            await uav_fn_control_gimbal(
-                drone=UAVs[uav_index], control_value={"pitch": 90, "yaw": 0}
-            )
-            # do the rescue mission
-            await UAVs[uav_index]["system"].action.set_return_to_launch_altitude(
-                UAVs[uav_index]["init_params"]["altitude"]
-            )
-            await UAVs[uav_index]["system"].action.set_current_speed(2.0)
+            # toggle the actuator, do the rescue mission, ....
+            logger.log(f"Rescue mission completed", level="info")
+            #
             await UAVs[uav_index]["system"].action.return_to_launch()
+            # os.system(f"rm {rescue_filepath}") # remove the rescue file
             pass
 
 

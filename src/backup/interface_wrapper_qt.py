@@ -1816,7 +1816,7 @@ class App(QMainWindow):
         global UAVs
         try:
             parameters = {}
-            parameter_list = [
+            displayed_parameter_list = [
                 "MIS_TAKEOFF_ALT",
                 "COM_DISARM_LAND",
                 "MPC_TKO_SPEED",
@@ -1835,9 +1835,9 @@ class App(QMainWindow):
                 )
             ):
                 if new_value.text() == "":
-                    parameters[parameter_list[i]] = value.text()
+                    parameters[displayed_parameter_list[i]] = value.text()
                 else:
-                    parameters[parameter_list[i]] = float(new_value.text())
+                    parameters[displayed_parameter_list[i]] = float(new_value.text())
 
             await UAVs[uav_index]["system"].param.set_param_float(
                 "MPC_TKO_SPEED", parameters["MPC_TKO_SPEED"]

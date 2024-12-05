@@ -8,7 +8,7 @@ from pathlib import Path
 
 from mavsdk import System
 
-from config import *
+from config.interface_config import *
 
 # cspell: ignore mavsdk baudrate
 

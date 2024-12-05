@@ -1,16 +1,22 @@
 import logging
 
+from colorlog import ColoredFormatter
+
+# cspell: ignore levelname, asctime LOGFORMAT
+
+LOGFORMAT = "[{asctime}] - {levelname} - {message}"
+# formatter = ColoredFormatter(LOGFORMAT)
+
 
 class Logger:
+
     def __init__(self) -> None:
         self.logger = logging.getLogger("UAV-logger")
         self.console_handler = logging.StreamHandler()
         self.file_handler = logging.FileHandler("app.log", mode="w", encoding="utf-8")
         self.logger.addHandler(self.console_handler)
         self.logger.addHandler(self.file_handler)
-        self.formatter = logging.Formatter(
-            "[{asctime}] - {levelname} - {message}", style="{", datefmt="%Y-%m-%d %H:%M:%S"
-        )
+        self.formatter = logging.Formatter(fmt=LOGFORMAT, style="{", datefmt="%Y-%m-%d %H:%M:%S")
         self.console_handler.setFormatter(self.formatter)
         self.logger.setLevel(logging.DEBUG)
 

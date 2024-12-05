@@ -6,7 +6,7 @@ from pathlib import Path
 
 import psutil
 
-from config import ROOT_DIR
+from config.interface_config import ROOT_DIR
 
 # remember to assign subprocess to a variable
 CMD = f"{ROOT_DIR}/dependencies/MAVSDK-Python/mavsdk/bin/mavsdk_server"

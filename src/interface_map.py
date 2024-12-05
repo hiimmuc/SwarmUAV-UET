@@ -9,7 +9,9 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 
 # user-defined modules
-from config import *
+from config.interface_config import *
+from config.stream_config import *
+from config.uav_config import *
 from interface_base import *
 from map.chuongtrinhcon_newUI import *
 from UI.interface_uav import *

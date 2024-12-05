@@ -5,15 +5,15 @@ from pathlib import Path
 
 import cv2
 from mavsdk.gimbal import ControlMode, GimbalMode
+from mavsdk.mission import MissionItem, MissionPlan
 from mavsdk.offboard import (
     ActuatorControl,
     ActuatorControlGroup,
     Offboard,
     OffboardError,
 )
-from tqdm import tqdm
 
-# cSpell:ignore asyncio, asyncgen tqdm offboard mavsdk
+# cSpell:ignore asyncio, asyncgen  offboard mavsdk
 SRC_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -60,7 +60,58 @@ async def observe_is_in_air(drone, running_tasks) -> None:
             return
 
 
-async def uav_fn_get_params(drone, list_params=None, save_path=None) -> dict:
+async def uav_fn_export_params(drone, save_path) -> None:
+    if save_path is None:
+        return
+
+    param_plugin = drone["system"].param
+
+    params = await param_plugin.get_all_params()
+
+    int_params = params.int_params
+    float_params = params.float_params
+    custom_params = params.custom_params
+
+    int_param_names = [p.name for p in int_params]
+    float_param_names = [p.name for p in float_params]
+    custom_param_names = [p.name for p in custom_params]
+
+    int_param_values = [p.value for p in int_params]
+    float_param_values = [p.value for p in float_params]
+    custom_param_values = [p.value for p in custom_params]
+
+    with open(save_path, "w") as wf:
+        for i in range(len(int_param_names)):
+            wf.write(f"{int_param_names[i]}\t{int_param_values[i]}\n")
+        for i in range(len(float_param_names)):
+            wf.write(f"{float_param_names[i]}\t{float_param_values[i]}\n")
+        for i in range(len(custom_param_names)):
+            wf.write(f"{custom_param_names[i]}\t{custom_param_values[i]}\n")
+
+    return
+
+
+def uav_fn_import_params(load_path) -> dict:
+    if load_path is None:
+        return
+    parameters = {}
+
+    with open(load_path, "r") as rf:
+        for line in rf.readlines():
+            if line.startswith("#"):
+                continue
+
+            columns = line.strip().split("\t")
+            # columns: vehicle_id, component_id, name, value, type
+            name = columns[2]
+            value = columns[3]
+
+            parameters[name] = value
+
+    return parameters
+
+
+async def uav_fn_get_params(drone, list_params=None) -> dict:
     parameters = {}
 
     param_plugin = drone["system"].param
@@ -80,16 +131,6 @@ async def uav_fn_get_params(drone, list_params=None, save_path=None) -> dict:
         int_param_values = [p.value for p in int_params]
         float_param_values = [p.value for p in float_params]
         custom_param_values = [p.value for p in custom_params]
-
-        # write to file with .params format
-        if save_path is not None:
-            with open(save_path, "w") as wf:
-                for i in tqdm(range(len(int_param_names))):
-                    wf.write(f"{int_param_names[i]}\t{int_param_values[i]}\n")
-                for i in tqdm(range(len(float_param_names))):
-                    wf.write(f"{float_param_names[i]}\t{float_param_values[i]}\n")
-                for i in tqdm(range(len(custom_param_names))):
-                    wf.write(f"{custom_param_names[i]}\t{custom_param_values[i]}\n")
 
         param_names = int_param_names + float_param_names + custom_param_names
         param_values = int_param_values + float_param_values + custom_param_values
@@ -127,20 +168,7 @@ async def uav_fn_set_params(drone, parameters=None, param_file=None) -> None:
     if (parameters is None) and (
         param_file is not None
     ):  # if parameters is not provided, read from param_file
-        parameters = {}
-        with open(param_file, "r") as param_file:
-            print("Uploading Parameters... Please do not arm the vehicle!")
-            for line in tqdm(param_file, unit="lines"):
-                if line.startswith("#"):
-                    continue
-
-                columns = line.strip().split("\t")
-                # vehicle_id = columns[0]
-                # component_id = columns[1]
-                name = columns[2]
-                value = columns[3]
-                # type = columns[4]
-                parameters[name] = value
+        parameters = uav_fn_import_params(param_file)
 
     # set parameters from parameters
     for param_name, param_value in parameters.items():
@@ -155,12 +183,80 @@ async def uav_fn_set_params(drone, parameters=None, param_file=None) -> None:
 async def uav_fn_goto_location(drone, latitude, longitude, altitude=None, error=1e-10) -> None:
     # Go to location
     if altitude is None:
-        async for position in drone["system"].telemetry.position():
-            altitude = position.relative_altitude_m
+        async for position in drone["system"].telemetry.home():
+            altitude = position.absolute_altitude_m
             break
     await drone["system"].action.goto_location(latitude, longitude, altitude, 0)
 
     return
+
+
+def uav_fn_upload_mission(drone, mission_plan_file) -> MissionPlan:
+    if mission_plan_file is None:
+        return
+    elif Path(mission_plan_file).suffix == ".plan":
+        pass
+    else:
+        with open(mission_plan_file, "r") as f:
+            mission_data = [list(map(float, line.strip().split(", "))) for line in f.readlines()]
+    print(">>> LOADING MISSION")
+    height = drone["init_params"]["altitude"]
+    mission_items = []
+    for lat, lon in mission_data:
+        mission_items.append(
+            MissionItem(
+                latitude_deg=lat,
+                longitude_deg=lon,
+                relative_altitude_m=height,
+                speed_m_s=1.0,  # Speed to use after this mission item (in metres/second)
+                is_fly_through=False,  # True for fly through, False for reach
+                gimbal_pitch_deg=float("nan"),
+                gimbal_yaw_deg=float("nan"),
+                loiter_time_s=10,
+                acceptance_radius_m=float("nan"),
+                yaw_deg=float("nan"),
+                camera_action=MissionItem.CameraAction.NONE,
+                camera_photo_distance_m=float("nan"),
+                camera_photo_interval_s=float("nan"),
+                vehicle_action=MissionItem.VehicleAction.NONE,
+            )
+        )
+    mission_plan = MissionPlan(mission_items)
+    return mission_plan
+
+
+async def uav_fn_do_mission(drone, mission_plan_file) -> None:
+    # create tasks for monitoring mission progress and observing if the UAV is in the air
+    print_mission_progress_task = asyncio.ensure_future(print_mission_progress(drone))
+    running_tasks = [print_mission_progress_task]
+    termination_task = asyncio.ensure_future(observe_is_in_air(drone, running_tasks))
+    #
+    mission_plan = uav_fn_upload_mission(drone, mission_plan_file)
+    #
+    await drone["system"].mission.upload_mission(mission_plan)
+    await drone["system"].action.arm()
+    await drone["system"].action.takeoff()
+    # await drone["system"].action.set_current_speed(2.0)
+    #
+    await drone["system"].mission.start_mission()
+    #
+    await termination_task
+    return
+
+
+async def uav_fn_overwrite_params(drone, parameters) -> None:
+    # set return to launch after mission
+    await drone["system"].mission.set_return_to_launch_after_mission(parameters["RTL_AFTER_MS"])
+    # maximum speed
+    await drone["system"].action.set_maximum_speed(parameters["GND_SPEED_MAX"])
+    #
+    await drone["system"].action.set_takeoff_altitude(parameters["MIS_TAKEOFF_ALT"])
+    #
+    await drone["system"].action.set_return_to_launch_altitude(parameters["MIS_TAKEOFF_ALT"])
+    #
+    await drone["system"].action.set_current_speed(parameters["CURRENT_SPEED"])
+    #
+    # <...>
 
 
 async def uav_fn_goto_distance(drone, distance, direction):
