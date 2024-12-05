@@ -1542,8 +1542,6 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             None
         """
         global UAVs
-        uav_index, detected_results = results
-        uav_index = int(uav_index)
 
         if not (
             (UAVs[uav_index]["connection_allow"] or UAVs[uav_index]["status"]["connection_status"])
@@ -1551,45 +1549,51 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         ):
             return
         try:
+            uav_index, detected_results = results
+            uav_index = int(uav_index)
 
+            # update the UAV screen view
             self.update_uav_screen_view(uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN)
+
+            # write the frame to the stream file
             if UAVs[uav_index]["recording_enable"]:
                 self.uav_streams[uav_index - 1].write(frame)
 
-            if UAVs[uav_index]["detection_enable"]:
-                track_ids, objects = detected_results
-                for track_id, obj in zip(track_ids, objects):
-                    if obj["class"] == "person":
-                        if obj["detected"]:
-                            # ======= replace with your function
-                            # do something with the detected object
+            # check if detection is enabled
+            if not UAVs[uav_index]["detection_enable"]:
+                return
 
-                            # export frame
-                            UAVs[uav_index]["detection_enable"] = False
-                            cv2.imwrite(
-                                f"{__current_path__}/logs/images/UAV{uav_index}_locked_target_{track_id}.png",
-                                frame,
-                            )
-                            # convert to gps
-                            detected_pos = (obj["x"], obj["y"])
-                            frame_shape = frame.shape
-                            uav_lat, uav_long = UAVs[uav_index]["status"]["position_status"]
-                            uav_alt = UAVs[uav_index]["status"]["altitude_status"][0]
-                            uav_gps = [uav_lat, uav_long, uav_alt]
-                            self.update_terminal(
-                                f"UAV-{uav_index} at gps ({uav_gps[0]}, {uav_gps[1]}, {uav_gps[2]}) detect {obj['class']} at X: {detected_pos[0]} Y: {detected_pos[1]} with frame size: {frame_shape}",
-                                0,
-                            )
-                            print(
-                                convert_points_to_gps(
-                                    uav_index=uav_index,
-                                    detected_pos=detected_pos,
-                                    frame_shape=frame_shape,
-                                    uav_gps=uav_gps,
-                                )
-                            )
-                            # =======
-                            pass
+            track_ids, objects = detected_results
+            for track_id, obj in zip(track_ids, objects):
+                if obj["detected"] and obj["class"] == "person":
+                    # ======= replace with your function
+                    # do something with the detected object
+                    # export frame
+                    UAVs[uav_index]["detection_enable"] = False
+                    cv2.imwrite(
+                        f"{__current_path__}/logs/images/UAV{uav_index}_locked_target_{track_id}.png",
+                        frame,
+                    )
+                    # convert to gps
+                    detected_pos = (obj["x"], obj["y"])
+                    frame_shape = frame.shape
+                    uav_lat, uav_long = UAVs[uav_index]["status"]["position_status"]
+                    uav_alt = UAVs[uav_index]["status"]["altitude_status"][0]
+                    uav_gps = [uav_lat, uav_long, uav_alt]
+                    self.update_terminal(
+                        f"UAV-{uav_index} at gps ({uav_gps[0]}, {uav_gps[1]}, {uav_gps[2]}) detect {obj['class']} at X: {detected_pos[0]} Y: {detected_pos[1]} with frame size: {frame_shape}",
+                        0,
+                    )
+                    # ======================== Modify this function ========================
+                    print(
+                        convert_points_to_gps(
+                            uav_index=uav_index,
+                            detected_pos=detected_pos,
+                            frame_shape=frame_shape,
+                            uav_gps=uav_gps,
+                        )
+                    )
+                    # =========================================================================
 
         except Exception as e:
             UAVs[uav_index]["status"]["streaming_status"] = False
@@ -1609,7 +1613,6 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             None
         """
         global UAVs
-        # connect -> arm -> takeoff -> mission (goto pos) --> do some fn -> return -> disarm
         if not (
             UAVs[RESCUE_UAV_INDEX]["status"]["connection_status"]
             and UAVs[RESCUE_UAV_INDEX]["connection_allow"]
@@ -1633,6 +1636,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             UAVs[RESCUE_UAV_INDEX]["init_params"]["latitude"] = round(position.latitude_deg, 12)
             UAVs[RESCUE_UAV_INDEX]["init_params"]["longitude"] = round(position.longitude_deg, 12)
             break
+
         # do the rescue mission
         while True:
             # 1 check if rescue position is available
