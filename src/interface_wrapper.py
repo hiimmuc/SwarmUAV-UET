@@ -1,4 +1,5 @@
 import asyncio
+import glob
 import os
 import sys
 import time
@@ -1581,6 +1582,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                             )
                             print(
                                 convert_points_to_gps(
+                                    uav_index=uav_index,
                                     detected_pos=detected_pos,
                                     frame_shape=frame_shape,
                                     uav_gps=uav_gps,
@@ -1608,41 +1610,58 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         """
         global UAVs
         # connect -> arm -> takeoff -> mission (goto pos) --> do some fn -> return -> disarm
-        uav_index = int(RESCUE_UAV_INDEX)
-        rescue_filepath = f"{__current_path__}/logs/rescue_pos/rescue_pos.log"
         if not (
-            UAVs[uav_index]["status"]["connection_status"] and UAVs[uav_index]["connection_allow"]
+            UAVs[RESCUE_UAV_INDEX]["status"]["connection_status"]
+            and UAVs[RESCUE_UAV_INDEX]["connection_allow"]
         ):
             return
 
-        self.update_terminal(f"[INFO] Sent RESCUE command to UAV {uav_index}")
+        self.update_terminal(f"[INFO] Sent RESCUE command to UAV {RESCUE_UAV_INDEX}")
 
-        await UAVs[uav_index]["system"].connect(system_address=UAVs[uav_index]["system_address"])
+        await UAVs[RESCUE_UAV_INDEX]["system"].connect(
+            system_address=UAVs[RESCUE_UAV_INDEX]["system_address"]
+        )
         # check health
-        async for health in UAVs[uav_index]["system"].telemetry.health():
+        async for health in UAVs[RESCUE_UAV_INDEX]["system"].telemetry.health():
             if health.is_global_position_ok and health.is_home_position_ok:
-                logger.log(f"UAV-{uav_index} -- Global position for estimate OK", level="info")
+                logger.log(
+                    f"UAV-{RESCUE_UAV_INDEX} -- Global position for estimate OK", level="info"
+                )
                 break
         # get initial position
-        async for position in UAVs[uav_index]["system"].telemetry.position():
-            UAVs[uav_index]["init_params"]["latitude"] = round(position.latitude_deg, 12)
-            UAVs[uav_index]["init_params"]["longitude"] = round(position.longitude_deg, 12)
+        async for position in UAVs[RESCUE_UAV_INDEX]["system"].telemetry.position():
+            UAVs[RESCUE_UAV_INDEX]["init_params"]["latitude"] = round(position.latitude_deg, 12)
+            UAVs[RESCUE_UAV_INDEX]["init_params"]["longitude"] = round(position.longitude_deg, 12)
             break
         # do the rescue mission
         while True:
             # 1 check if rescue position is available
+            rescue_filepaths = glob.glob(
+                f"{__current_path__}/logs/rescue_pos/rescue_pos_uav_*.log"
+            )
+            print(len(rescue_filepaths))
+            if len(rescue_filepaths) == 0:
+                await asyncio.sleep(1)
+                continue
+
+            rescue_filepath = rescue_filepaths.pop(0)
             while not os.path.exists(rescue_filepath):
                 await asyncio.sleep(1)
-
-            UAVs[uav_index]["status"]["on_mission"] = True
-            await uav_fn_do_mission(drone=UAVs[uav_index], mission_plan_file=rescue_filepath)
-
-            # NOTE: do something here
-            # toggle the actuator, do the rescue mission, ....
+            # 2 stop the detected UAVs
+            uav_index = int(Path(rescue_filepath).stem.split("_")[-1])
+            UAVs[uav_index]["system"].mission.pause_mission()
+            # 3 read the rescue position
+            UAVs[RESCUE_UAV_INDEX]["status"]["on_mission"] = True
+            await uav_fn_do_mission(
+                drone=UAVs[RESCUE_UAV_INDEX], mission_plan_file=rescue_filepath
+            )
+            # 4 NOTE: do something here ==========================
+            await asyncio.sleep(10)
             logger.log(f"Rescue mission completed", level="info")
-            #
-            await UAVs[uav_index]["system"].action.return_to_launch()
-            # os.system(f"rm {rescue_filepath}") # remove the rescue file
+            # ====================================================
+            await UAVs[RESCUE_UAV_INDEX]["system"].action.return_to_launch()
+            await UAVs[uav_index]["system"].mission.start_mission()
+            os.system(f"rm {rescue_filepath}")  # remove the rescue file
             pass
 
 

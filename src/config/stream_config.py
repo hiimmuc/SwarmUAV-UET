@@ -11,9 +11,7 @@ NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 MAX_UAV_COUNT = 6
 #
 DEFAULT_STREAM_SCREEN = "general_screen"  # NOTE: Change between "general_screen" or "stream_screen" or "ovv_screen" or "all"
-DEFAULT_STREAM_SOURCE = (
-    "streams"  # NOTE: Change between "streams" or "rtsp" or "webcam" or "video"
-)
+DEFAULT_STREAM_SOURCE = "videos"  # NOTE: Change between "streams" or "rtsp" or "webcam" or "video"
 DEFAULT_STREAM_SIZE = (320, 180)  # NOTE Change for modify recording settings
 DEFAULT_STREAM_FPS = 30
 FOURCC = "XVID"
@@ -30,9 +28,9 @@ if DEFAULT_STREAM_SOURCE == "streams":
     DEFAULT_STREAM_VIDEO_PATHS = [
         f"{ROOT_DIR}/assets/streams/cam{i}.mp4" for i in range(1, MAX_UAV_COUNT + 1)
     ]
-elif DEFAULT_STREAM_SOURCE == "video":
+elif DEFAULT_STREAM_SOURCE == "videos":
     DEFAULT_STREAM_VIDEO_PATHS = [
-        f"{ROOT_DIR}/assets/videos/video{i}.mp4" for i in range(1, MAX_UAV_COUNT + 1)
+        f"{ROOT_DIR}/assets/videos/cam{i}.mp4" for i in range(1, MAX_UAV_COUNT + 1)
     ]
 elif DEFAULT_STREAM_SOURCE == "rtsp":
     DEFAULT_STREAM_VIDEO_PATHS = [
@@ -45,7 +43,8 @@ elif DEFAULT_STREAM_SOURCE == "rtsp":
     ]
 elif DEFAULT_STREAM_SOURCE == "webcam":
     DEFAULT_STREAM_VIDEO_PATHS = [f"/dev/video{i}" for i in range(0, MAX_UAV_COUNT)]
-
+else:
+    DEFAULT_STREAM_VIDEO_PATHS = []
 # Destination paths for recording videos
 DEFAULT_STREAM_VIDEO_LOG_PATHS = [
     f"{SRC_DIR}/logs/videos/stream_log_uav_{i}_{NOW}.avi" for i in range(1, MAX_UAV_COUNT + 1)

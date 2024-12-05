@@ -381,12 +381,12 @@ async def uav_fn_control_gimbal(drone, control_value={"pitch": 0, "yaw": 0}):
 
 
 # * develop later
-def convert_points_to_gps(detected_pos, frame_shape, uav_gps) -> list:
+def convert_points_to_gps(uav_index, detected_pos, frame_shape, uav_gps) -> list:
     x, y = detected_pos
     h, w, c = frame_shape
     lat, lon, alt = uav_gps
     # * ===== Modify here =============================
-    rescue_filepath = f"{SRC_DIR}/logs/rescue_pos/rescue_pos.log"
+    rescue_filepath = f"{SRC_DIR}/logs/rescue_pos/rescue_pos_uav_{uav_index}.log"
     with open(rescue_filepath, "w") as f:
         f.write(f"{lat}, {lon}\n")
     # * ================================================
