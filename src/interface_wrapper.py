@@ -1542,16 +1542,14 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             None
         """
         global UAVs
-
+        uav_index, detected_results = results
+        uav_index = int(uav_index)
         if not (
             (UAVs[uav_index]["connection_allow"] or UAVs[uav_index]["status"]["connection_status"])
             and UAVs[uav_index]["streaming_enable"]
         ):
             return
         try:
-            uav_index, detected_results = results
-            uav_index = int(uav_index)
-
             # update the UAV screen view
             self.update_uav_screen_view(uav_index, frame, screen_name=DEFAULT_STREAM_SCREEN)
 
