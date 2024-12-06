@@ -10,7 +10,6 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QHeaderView
 
 
-# @pyqtSlot(np.ndarray, tuple)
 def convert_cv2qt(cv_img, size=(640, 360)) -> QPixmap:
     """Convert cv image to qt image to display on gui
 

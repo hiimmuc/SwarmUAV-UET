@@ -26,36 +26,36 @@ OVERWRITE_PARAMS = {  # Overwrite parameters for each UAV
     1: {
         "MIS_TAKEOFF_ALT": 5,  # Take-off altitude
         "MPC_TKO_SPEED": 2,  # Takeoff climb rate
-        "GND_SPEED_MAX": 5,  # Maximum ground speed
-        "CURRENT_SPEED": 2,  # Current speed during a mission, reposition, and similar.
+        "GND_SPEED_MAX": 2,  # Maximum ground speed
+        "CURRENT_SPEED": 1,  # Current speed during a mission, reposition, and similar.
         "RTL_AFTER_MS": True,  # RTL after mission
     },
     2: {
         "MIS_TAKEOFF_ALT": 6,  # Take-off altitude
         "MPC_TKO_SPEED": 2,  # Takeoff climb rate
-        "GND_SPEED_MAX": 5,  # Maximum ground speed
-        "CURRENT_SPEED": 2,  # Current speed during a mission, reposition, and similar.
+        "GND_SPEED_MAX": 2,  # Maximum ground speed
+        "CURRENT_SPEED": 1,  # Current speed during a mission, reposition, and similar.
         "RTL_AFTER_MS": True,  # RTL after mission
     },
     3: {
         "MIS_TAKEOFF_ALT": 7,  # Take-off altitude
         "MPC_TKO_SPEED": 2,  # Takeoff climb rate
-        "GND_SPEED_MAX": 5,  # Maximum ground speed
-        "CURRENT_SPEED": 2,  # Current speed during a mission, reposition, and similar.
+        "GND_SPEED_MAX": 2,  # Maximum ground speed
+        "CURRENT_SPEED": 1,  # Current speed during a mission, reposition, and similar.
         "RTL_AFTER_MS": True,  # RTL after mission
     },
     4: {
         "MIS_TAKEOFF_ALT": 8,  # Take-off altitude
         "MPC_TKO_SPEED": 2,  # Takeoff climb rate
-        "GND_SPEED_MAX": 5,  # Maximum ground speed
-        "CURRENT_SPEED": 2,  # Current speed during a mission, reposition, and similar.
+        "GND_SPEED_MAX": 2,  # Maximum ground speed
+        "CURRENT_SPEED": 1,  # Current speed during a mission, reposition, and similar.
         "RTL_AFTER_MS": True,  # RTL after mission
     },
     5: {
         "MIS_TAKEOFF_ALT": 9,  # Take-off altitude
         "MPC_TKO_SPEED": 2,  # Takeoff climb rate
-        "GND_SPEED_MAX": 5,  # Maximum ground speed
-        "CURRENT_SPEED": 2,  # Current speed during a mission, reposition, and similar.
+        "GND_SPEED_MAX": 2,  # Maximum ground speed
+        "CURRENT_SPEED": 1,  # Current speed during a mission, reposition, and similar.
         "RTL_AFTER_MS": True,  # RTL after mission
     },
     6: {

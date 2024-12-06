@@ -8,6 +8,7 @@ import psutil
 
 from config.interface_config import ROOT_DIR
 
+# cspell: ignore MAVSDK pids
 # remember to assign subprocess to a variable
 CMD = f"{ROOT_DIR}/dependencies/MAVSDK-Python/mavsdk/bin/mavsdk_server"
 
@@ -49,6 +50,8 @@ class Server:
 
         self.process = None
 
+        self.exit_terminal = False
+
     def start(self):
         try:
             self.process = subprocess.Popen(
@@ -62,6 +65,7 @@ class Server:
             print(f"Exception {repr(e)} was thrown at command {self.command}")
 
     def stop(self):
-        # shell_pid = get_pids_by_script_name(shlex.split(self.shell)[2:-1])[0]
-        # kills(shell_pid)
+        if self.exit_terminal:
+            shell_pid = get_pids_by_script_name(shlex.split(self.shell)[2:-1])[0]
+            kills(shell_pid)
         pass

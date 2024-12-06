@@ -18,6 +18,19 @@ SRC_DIR = Path(__file__).resolve().parent.parent
 
 
 def calculate_distance(lat1, lon1, lat2, lon2) -> float:
+    """
+    Calculate the great-circle distance between two points on the Earth's surface.
+    This function uses the Haversine formula to calculate the distance between two points
+    specified by their latitude and longitude in decimal degrees.
+    Args:
+        lat1 (float): Latitude of the first point in decimal degrees.
+        lon1 (float): Longitude of the first point in decimal degrees.
+        lat2 (float): Latitude of the second point in decimal degrees.
+        lon2 (float): Longitude of the second point in decimal degrees.
+    Returns:
+        float: The distance between the two points in meters.
+    """
+
     R = 6378000  # radius of Earth in meters
     d_lat = math.radians(lat2 - lat1)
     d_lon = math.radians(lon2 - lon1)
@@ -61,6 +74,16 @@ async def observe_is_in_air(drone, running_tasks) -> None:
 
 
 async def uav_fn_export_params(drone, save_path) -> None:
+    """
+    Asynchronously exports UAV parameters to a specified file.
+    This function retrieves all parameters from the UAV's parameter plugin and writes them to a file at the specified save path. The parameters are categorized into integer, float, and custom parameters, and each category is written to the file with the parameter name and value.
+    Args:
+        drone (dict): A dictionary containing the UAV system and its plugins.
+        save_path (str): The file path where the parameters will be saved. If None, the function will return immediately.
+    Returns:
+        None
+    """
+
     if save_path is None:
         return
 
@@ -92,6 +115,19 @@ async def uav_fn_export_params(drone, save_path) -> None:
 
 
 def uav_fn_import_params(load_path) -> dict:
+    """
+    Imports UAV parameters from a file.
+    Args:
+        load_path (str): The path to the file containing the UAV parameters.
+    Returns:
+        dict: A dictionary containing the UAV parameters with parameter names as keys and their corresponding values.
+            Returns an empty dictionary if the file is empty or None if the load_path is None.
+    Notes:
+        - The file should be a tab-separated values file.
+        - Lines starting with '#' are considered comments and are ignored.
+        - Each line in the file should contain the following columns: vehicle_id, component_id, name, value, type.
+    """
+
     if load_path is None:
         return
     parameters = {}
@@ -112,6 +148,18 @@ def uav_fn_import_params(load_path) -> dict:
 
 
 async def uav_fn_get_params(drone, list_params=None) -> dict:
+    """
+    Asynchronously retrieves UAV parameters.
+    This function fetches parameters from a UAV system, either all parameters or a specified list of parameters.
+    Args:
+        drone (dict): A dictionary containing the UAV system, with the key "system" pointing to the system object.
+        list_params (list, optional): A list of parameter names to retrieve. If None, all parameters are retrieved.
+    Returns:
+        dict: A dictionary where the keys are parameter names and the values are the corresponding parameter values.
+    Raises:
+        Exception: If there is an issue retrieving the parameters from the UAV system.
+    """
+
     parameters = {}
 
     param_plugin = drone["system"].param
@@ -153,6 +201,18 @@ async def uav_fn_get_params(drone, list_params=None) -> dict:
 
 
 async def uav_fn_set_params(drone, parameters=None, param_file=None) -> None:
+    """
+    Asynchronously sets parameters for a UAV using the provided drone system.
+    Parameters:
+    - drone (dict): A dictionary containing the drone system, which includes the parameter plugin.
+    - parameters (dict, optional): A dictionary of parameters to set. If not provided, parameters will be read from the param_file.
+    - param_file (str, optional): Path to a file containing parameters. Used if parameters are not provided.
+    Returns:
+    - None
+    This function retrieves all current parameters from the drone system and sets new parameters based on the provided
+    parameters dictionary or the parameter file. It supports setting integer, float, and custom parameters.
+    """
+
     param_plugin = drone["system"].param
 
     params = await param_plugin.get_all_params()
@@ -180,7 +240,18 @@ async def uav_fn_set_params(drone, parameters=None, param_file=None) -> None:
             await param_plugin.set_param_custom(param_name, param_value)
 
 
-async def uav_fn_goto_location(drone, latitude, longitude, altitude=None, error=1e-10) -> None:
+async def uav_fn_goto_location(drone, latitude, longitude, altitude=None) -> None:
+    """
+    Asynchronously commands the UAV to go to a specified location.
+    Parameters:
+        drone (dict): A dictionary containing the UAV system.
+        latitude (float): The latitude of the target location.
+        longitude (float): The longitude of the target location.
+        altitude (float, optional): The absolute altitude of the target location. If not provided, the UAV's home altitude is used.
+    Returns:
+        None
+    """
+
     # Go to location
     if altitude is None:
         async for position in drone["system"].telemetry.home():
@@ -191,7 +262,21 @@ async def uav_fn_goto_location(drone, latitude, longitude, altitude=None, error=
     return
 
 
-def uav_fn_upload_mission(drone, mission_plan_file) -> MissionPlan:
+async def uav_fn_upload_mission(drone, mission_plan_file) -> None:
+    """
+    Uploads a mission plan to the UAV.
+    Args:
+        drone (dict): A dictionary containing drone parameters, including initial parameters such as altitude.
+        mission_plan_file (str): The path to the mission plan file. The file can be a .plan file or a text file
+                                containing latitude and longitude coordinates separated by commas.
+    Returns:
+        MissionPlan: An instance of the MissionPlan class containing the mission items to be uploaded to the UAV.
+                    Returns None if the mission_plan_file is None.
+    Raises:
+        FileNotFoundError: If the mission_plan_file does not exist.
+        ValueError: If the mission_plan_file contains invalid data.
+    """
+
     if mission_plan_file is None:
         return
     elif Path(mission_plan_file).suffix == ".plan":
@@ -199,7 +284,7 @@ def uav_fn_upload_mission(drone, mission_plan_file) -> MissionPlan:
     else:
         with open(mission_plan_file, "r") as f:
             mission_data = [list(map(float, line.strip().split(", "))) for line in f.readlines()]
-    print(">>> LOADING MISSION")
+
     height = drone["init_params"]["altitude"]
     mission_items = []
     for lat, lon in mission_data:
@@ -222,20 +307,37 @@ def uav_fn_upload_mission(drone, mission_plan_file) -> MissionPlan:
             )
         )
     mission_plan = MissionPlan(mission_items)
-    return mission_plan
+    await drone["system"].mission.upload_mission(mission_plan)
+    return
 
 
 async def uav_fn_do_mission(drone, mission_plan_file) -> None:
+    """
+    Executes a mission plan for a UAV (Unmanned Aerial Vehicle).
+    This function uploads a mission plan to the UAV, arms the UAV, takes off,
+    and starts the mission. It also creates tasks to monitor mission progress
+    and observe if the UAV is in the air.
+    Args:
+        drone (dict): A dictionary containing the UAV system components.
+        mission_plan_file (str): The file path to the mission plan.
+    Returns:
+        None
+    """
+
     # create tasks for monitoring mission progress and observing if the UAV is in the air
     print_mission_progress_task = asyncio.ensure_future(print_mission_progress(drone))
     running_tasks = [print_mission_progress_task]
     termination_task = asyncio.ensure_future(observe_is_in_air(drone, running_tasks))
     #
-    mission_plan = uav_fn_upload_mission(drone, mission_plan_file)
+    await uav_fn_upload_mission(drone, mission_plan_file)
+    await asyncio.sleep(1)
     #
-    await drone["system"].mission.upload_mission(mission_plan)
+    await drone["system"].connect(drone["system_address"])
+    await asyncio.sleep(1)
     await drone["system"].action.arm()
+    await asyncio.sleep(2)
     await drone["system"].action.takeoff()
+    await asyncio.sleep(3)
     # await drone["system"].action.set_current_speed(2.0)
     #
     await drone["system"].mission.start_mission()
@@ -245,6 +347,20 @@ async def uav_fn_do_mission(drone, mission_plan_file) -> None:
 
 
 async def uav_fn_overwrite_params(drone, parameters) -> None:
+    """
+    Overwrites the UAV parameters with the provided values.
+    Args:
+        drone (dict): A dictionary containing the drone system.
+        parameters (dict): A dictionary containing the parameters to be set.
+            Expected keys:
+                - "RTL_AFTER_MS": Return to launch after mission (int or float).
+                - "GND_SPEED_MAX": Maximum ground speed (int or float).
+                - "MIS_TAKEOFF_ALT": Takeoff altitude (int or float).
+                - "CURRENT_SPEED": Current speed (int or float).
+    Returns:
+        None
+    """
+
     # set return to launch after mission
     await drone["system"].mission.set_return_to_launch_after_mission(parameters["RTL_AFTER_MS"])
     # maximum speed
@@ -380,7 +496,10 @@ async def uav_fn_control_gimbal(drone, control_value={"pitch": 0, "yaw": 0}):
     await drone["system"].gimbal.release_control()
 
 
-# * develop later
+# -----------------------------------------------------
+
+
+# ? In development...
 def convert_points_to_gps(uav_index, detected_pos, frame_shape, uav_gps) -> list:
     x, y = detected_pos
     h, w, c = frame_shape
@@ -391,9 +510,6 @@ def convert_points_to_gps(uav_index, detected_pos, frame_shape, uav_gps) -> list
         f.write(f"{lat}, {lon}\n")
     # * ================================================
     return lat, lon
-
-
-# -----------------------------------------------------
 
 
 # ! Not used
