@@ -82,19 +82,19 @@ ROS-Noetic / ROS-Foxy
 ### 1. Run all:
 
    ```
-   python src/runs/simulation_updated.py
+   python src/main.py
    ```
 
-   or
-
-   ```
-   python src/runs/real.py
-   ```
 ### 2. Run only UI
    ```
-   python src/runner.py
+   python src/app.py
    ```
-
+   ```
+   python src/interface_base.py
+   ```
+      ```
+   python src/interface_map.py
+   ```
 ## Debug
 
 1. Check opening ports
@@ -117,7 +117,7 @@ ROS-Noetic / ROS-Foxy
    ```
 2. Debug programs
    ```Interface
-      gdb --agrs python src/runner.py
+      gdb --agrs python src/app.py
    ```
 
 

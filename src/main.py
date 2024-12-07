@@ -23,7 +23,7 @@ def run_commands():
         # f"python3 src/mavsdk_server_shell.py {PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 3} -p {DEFAULT_PORT + 3}",
         # f"python3 src/mavsdk_server_shell.py {PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 4} -p {DEFAULT_PORT + 4}",
         # f"python3 src/mavsdk_server_shell.py {PROTO}://{SERVER_HOST}:{DEFAULT_BIND_PORT + 5} -p {DEFAULT_PORT + 5}",
-        "python3 src/runner.py",
+        "python3 src/app.py",
         # "python3 src/map/DG5.py",
         # "dependencies/QGroundControl.AppImage",
         "watch -n 0.5 netstat -lunp",
