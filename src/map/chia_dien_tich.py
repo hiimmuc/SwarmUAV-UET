@@ -1,10 +1,12 @@
+import copy
 import math
 import sys
-import copy
-from scipy.spatial import ConvexHull
-import numpy as np
-from .calculation_helpers import *
 from pathlib import Path
+
+import numpy as np
+from scipy.spatial import ConvexHull
+
+from ..utils.calculation_helpers import *
 
 parent_dir = Path(__file__).parent.parent
 
@@ -61,6 +63,7 @@ def generate_grid(vertices, spacing_m):
                 points.append((x, y))
 
     return points
+
 
 # def ray_casting_point_in_polygon(point, polygon, tolerance=1e-4):
 #     """
@@ -135,8 +138,11 @@ def does_line_intersect_polygon(mid, slope, intercept, vertices, tolerance=1e-6)
             else:
                 intersect_x = x1
                 intersect_y = slope * intersect_x + intercept
-                if min(y1, y2) <= intersect_y <= max(y1, y2) and \
-                   abs(intersect_x - mid[0]) > tolerance and abs(intersect_y - mid[1]) > tolerance:
+                if (
+                    min(y1, y2) <= intersect_y <= max(y1, y2)
+                    and abs(intersect_x - mid[0]) > tolerance
+                    and abs(intersect_y - mid[1]) > tolerance
+                ):
                     return intersect_x, intersect_y
 
         else:  # Non-vertical edge
@@ -147,17 +153,24 @@ def does_line_intersect_polygon(mid, slope, intercept, vertices, tolerance=1e-6)
             if slope is None:
                 intersect_x = intercept
                 intersect_y = edge_slope * intersect_x + edge_intercept
-                if min(x1, x2) <= intersect_x <= max(x1, x2) and \
-                   abs(intersect_y - mid[1]) > tolerance:
+                if (
+                    min(x1, x2) <= intersect_x <= max(x1, x2)
+                    and abs(intersect_y - mid[1]) > tolerance
+                ):
                     return intersect_x, intersect_y
 
             elif slope != edge_slope:  # The line is not vertical and not parallel to the edge
-                intersect_x = (edge_intercept - intercept) / \
-                    (slope - edge_slope)
+                intersect_x = (edge_intercept - intercept) / (slope - edge_slope)
                 intersect_y = slope * intersect_x + intercept
 
-                if min(x1, x2) <= intersect_x <= max(x1, x2) and min(y1, y2) <= intersect_y <= max(y1, y2) and \
-                   (abs(intersect_x - mid[0]) > tolerance or abs(intersect_y - mid[1]) > tolerance):
+                if (
+                    min(x1, x2) <= intersect_x <= max(x1, x2)
+                    and min(y1, y2) <= intersect_y <= max(y1, y2)
+                    and (
+                        abs(intersect_x - mid[0]) > tolerance
+                        or abs(intersect_y - mid[1]) > tolerance
+                    )
+                ):
                     return intersect_x, intersect_y
     return None
 
@@ -201,7 +214,9 @@ def split_area(area, perp, tolerance=1e-6):
             elif i == len(perp) - 1:
                 previous_perp_y = perp[i - 1][1]
                 for point in area:
-                    if y_geq_with_tolerance(point[1], previous_perp_y) and y_leq_with_tolerance(point[1], perp_y):
+                    if y_geq_with_tolerance(point[1], previous_perp_y) and y_leq_with_tolerance(
+                        point[1], perp_y
+                    ):
                         one_area.append(point)
                 area_list.append(one_area)
                 one_area = []
@@ -212,7 +227,9 @@ def split_area(area, perp, tolerance=1e-6):
             else:
                 previous_perp_y = perp[i - 1][1]
                 for point in area:
-                    if y_geq_with_tolerance(point[1], previous_perp_y) and y_leq_with_tolerance(point[1], perp_y):
+                    if y_geq_with_tolerance(point[1], previous_perp_y) and y_leq_with_tolerance(
+                        point[1], perp_y
+                    ):
                         one_area.append(point)
 
             area_list.append(one_area)
@@ -221,6 +238,7 @@ def split_area(area, perp, tolerance=1e-6):
 
 
 def chia_dien_tich(positions, number_of_part):
+
     global angle
     global min_lat
     global min_lon
@@ -246,14 +264,20 @@ def chia_dien_tich(positions, number_of_part):
     print(f"\nGPS Midpoint: {new}")
 
     # Find line equation of largest edge (to figure out the slope of it)
-    slope, intercept = line_equation_from_points(
-        longest_edge_point[0], longest_edge_point[1])
+    slope, intercept = line_equation_from_points(longest_edge_point[0], longest_edge_point[1])
     print(f"\nSlope: {slope}")
     angle = angle_with_x_axis(slope)
     print(f"\nAngle: {angle}")
 
     new_point = rotate_and_shift_point(
-        midpoint[0], midpoint[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1]))
+        midpoint[0],
+        midpoint[1],
+        (-angle),
+        midpoint[0],
+        midpoint[1],
+        (-midpoint[0]),
+        (-midpoint[1]),
+    )
     print(f"ROTATED MIDPOINT{new_point}")
 
     # Find the perpendicular's line equation (perpendicular of largest edge)
@@ -262,10 +286,10 @@ def chia_dien_tich(positions, number_of_part):
 
     # Find the other intersection of the perpendicular with the polygon
     intersect_point = does_line_intersect_polygon(
-        midpoint, perp_slope, perp_intercept, cartesian_coordinates)
+        midpoint, perp_slope, perp_intercept, cartesian_coordinates
+    )
     print(f"\nIntersect: {intersect_point[0]},{intersect_point[1]}")
-    new = calculate_new_lat_lon(
-        min_lat, min_lon, intersect_point[1], intersect_point[0])
+    new = calculate_new_lat_lon(min_lat, min_lon, intersect_point[1], intersect_point[0])
     print(f"\nGPS Intersect: {new}")
 
     # ---------------------------------
@@ -273,7 +297,8 @@ def chia_dien_tich(positions, number_of_part):
     # ---------------------------------
     # Divide the perpendicular into equal parts
     perpendicular_points = divide_line_into_segments(
-        midpoint[0], midpoint[1], intersect_point[0], intersect_point[1], number_of_part)
+        midpoint[0], midpoint[1], intersect_point[0], intersect_point[1], number_of_part
+    )
 
     per_GPS_list = []
     for point in perpendicular_points:
@@ -281,21 +306,20 @@ def chia_dien_tich(positions, number_of_part):
         per_GPS_list.append(new)
         print(f"{point}")
     p_filename = f"{parent_dir}/data/per.txt"  # Set the filename
-    with open(p_filename, 'w') as file:
+    with open(p_filename, "w") as file:
         for pos in per_GPS_list:
             file.write(f"{pos[0]}, {pos[1]}\n")
 
     # Find the divide point on the polygon edge
     div_GPS_list = []
-    div_points = divide_points(
-        perpendicular_points, cartesian_coordinates, perp_slope, slope)
+    div_points = divide_points(perpendicular_points, cartesian_coordinates, perp_slope, slope)
     for point in div_points:
         new = calculate_new_lat_lon(min_lat, min_lon, point[1], point[0])
         div_GPS_list.append(new)
         print(f"{new}")
 
     div_filename = f"{parent_dir}/data/div.txt"  # Set the filename
-    with open(div_filename, 'w') as file:
+    with open(div_filename, "w") as file:
         for pos in div_GPS_list:
             file.write(f"{pos[0]}, {pos[1]}\n")
 
@@ -304,7 +328,8 @@ def chia_dien_tich(positions, number_of_part):
     print(f"DIV_ROTATED")
     for point in div_points:
         new_point = rotate_and_shift_point(
-            point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1]))
+            point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1])
+        )
         rotated_div_points.append(new_point)
         print(f"{new_point}")
 
@@ -312,7 +337,8 @@ def chia_dien_tich(positions, number_of_part):
     print(f"PERP_ROTATED")
     for point in perpendicular_points:
         new_point = rotate_and_shift_point(
-            point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1]))
+            point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1])
+        )
         rotated_perpendicular_points.append(new_point)
         print(f"{new_point}")
 
@@ -324,7 +350,8 @@ def chia_dien_tich(positions, number_of_part):
     rotated_cartesian_coordinates = []
     for point in cartesian_coordinates:
         new_point = rotate_and_shift_point(
-            point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1]))
+            point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1])
+        )
         rotated_cartesian_coordinates.append(new_point)
         print(f"{new_point}")
     print(f"POLYGON_UNROTATED")
@@ -343,7 +370,15 @@ def chia_dien_tich(positions, number_of_part):
     for point in rotated_cartesian_coordinates:
         # convert back in previous coordinate
         new_point = revert_rotate_and_shift_point(
-            point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1]), clockwise=True)
+            point[0],
+            point[1],
+            (-angle),
+            midpoint[0],
+            midpoint[1],
+            (-midpoint[0]),
+            (-midpoint[1]),
+            clockwise=True,
+        )
         print(f"{new_point}")
 
     for i in range(len(rotated_area)):
@@ -353,7 +388,15 @@ def chia_dien_tich(positions, number_of_part):
         for point in area:
             # convert back in previous coordinate
             new_point = revert_rotate_and_shift_point(
-                point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1]), clockwise=True)
+                point[0],
+                point[1],
+                (-angle),
+                midpoint[0],
+                midpoint[1],
+                (-midpoint[0]),
+                (-midpoint[1]),
+                clockwise=True,
+            )
             unrotated_area.append(new_point)
         per_GPS_list = []
         for point in unrotated_area:
@@ -374,7 +417,7 @@ def chia_dien_tich(positions, number_of_part):
         points = [tuple(point) for point in hull_vertices]
         final_area.append(points)
         area_filename = f"{parent_dir}/data/area{i+1}.txt"  # Set the filename
-        with open(area_filename, 'w') as file:
+        with open(area_filename, "w") as file:
             for pos in points:
                 file.write(f"{pos[0]}, {pos[1]}\n")
 
@@ -417,7 +460,15 @@ def chia_luoi(rotated_area, distance):
         for point in area:
             # convert back in previous coordinate
             new_point = revert_rotate_and_shift_point(
-                point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1]), clockwise=True)
+                point[0],
+                point[1],
+                (-angle),
+                midpoint[0],
+                midpoint[1],
+                (-midpoint[0]),
+                (-midpoint[1]),
+                clockwise=True,
+            )
             unrotated_area.append(new_point)
         per_GPS_list = []
         for point in unrotated_area:
@@ -453,8 +504,7 @@ def chia_luoi_one(area, distance):
     print(f"\nGPS Midpoint: {new}")
 
     # Find line equation of largest edge (to figure out the slope of it)
-    slope, intercept = line_equation_from_points(
-        longest_edge_point[0], longest_edge_point[1])
+    slope, intercept = line_equation_from_points(longest_edge_point[0], longest_edge_point[1])
     print(f"\nSlope: {slope}")
     angle = angle_with_x_axis(slope)
     print(f"\nAngle: {angle}")
@@ -462,7 +512,8 @@ def chia_luoi_one(area, distance):
     rotated = []
     for point in cartesian_coordinates:
         new_point = rotate_and_shift_point(
-            point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1]))
+            point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1])
+        )
         rotated.append(new_point)
         print(f"{new_point}")
 
@@ -483,7 +534,15 @@ def chia_luoi_one(area, distance):
     for point in grid_points:
         # convert back in previous coordinate
         new_point = revert_rotate_and_shift_point(
-            point[0], point[1], (-angle), midpoint[0], midpoint[1], (-midpoint[0]), (-midpoint[1]), clockwise=True)
+            point[0],
+            point[1],
+            (-angle),
+            midpoint[0],
+            midpoint[1],
+            (-midpoint[0]),
+            (-midpoint[1]),
+            clockwise=True,
+        )
         unrotated_area.append(new_point)
     per_GPS_list = []
     for point in unrotated_area:

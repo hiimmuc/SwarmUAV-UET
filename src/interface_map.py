@@ -1,4 +1,5 @@
 # PyQt5
+import copy
 import datetime
 import sys
 from pathlib import Path
@@ -13,12 +14,17 @@ from config.interface_config import *
 from config.stream_config import *
 from config.uav_config import *
 from interface_base import *
-from map.chuongtrinhcon_newUI import *
-from UI.interface_uav import *
+from Qt.interface_uav import *
+
+#
 from utils.drone_utils import *
 from utils.map_folium import *
+from utils.map_helpers import *
 from utils.map_utils import *
 from utils.qt_utils import *
+
+# from tkinter import filedialog
+
 
 # from interface_wrapper import UAVs
 
@@ -271,12 +277,18 @@ class Map(Interface):
                 plan_data["mission"]["items"].append(waypoint)
 
         # Define the path to save the .plan file
-        plan_file_path = filedialog.asksaveasfilename(
-            defaultextension=".plan",
-            title="Lưu file",
-            initialdir=f"{parent_dir}/logs/points/",
-            filetypes=(("Plan files", "*.plan"), ("All files", "*.*")),
-        )
+        plan_file_path = QFileDialog.getOpenFileName(
+            parent=self,
+            caption="Open save file",
+            directory=f"{parent_dir}/logs/points/",
+            initialFilter="Files (*.TXT *.txt *.plan)",
+        )[0]
+        # plan_file_path = filedialog.asksaveasfilename(
+        #     defaultextension=".plan",
+        #     title="Lưu file",
+        #     initialdir=f"{parent_dir}/logs/points/",
+        #     filetypes=(("Plan files", "*.plan"), ("All files", "*.*")),
+        # )
 
         # Save as JSON to .plan file with UTF-8 encoding
         with open(plan_file_path, "w", encoding="utf-8") as plan_file:
@@ -288,7 +300,7 @@ class Map(Interface):
         # split area to grid
         global rotated_area_list, area_num
         area_num = int(self.ui.noArea_value.toPlainText())
-        areas, rotated_area_list = chia_dien_tich(self.position_list, area_num)
+        areas, rotated_area_list = split_area(self.position_list, area_num)
 
         for i, area in enumerate(areas):
             for index, position in enumerate(area):
@@ -436,7 +448,7 @@ class Map(Interface):
                 grid_points = chia_luoi_one(position_area, distance)
                 print("FALSE 2")
             else:
-                grid_points = chia_luoi(rotated_area_list, distance)
+                grid_points = split_grid(rotated_area_list, distance)
                 print("TRUE")
 
             # NOTE: path optimization

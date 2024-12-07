@@ -17,7 +17,7 @@ import tkintermapview
 from PIL import Image, ImageTk
 from tkintermapview import TkinterMapView
 
-from .calculation_helpers import *
+from ..utils.calculation_helpers import *
 from .chia_dien_tich import chia_dien_tich, chia_luoi, chia_luoi_one
 from .chia_luoi import find_path
 from .inoutfile import read_number_from_file, read_points_from_file

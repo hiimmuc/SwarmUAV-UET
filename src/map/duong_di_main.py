@@ -1,9 +1,10 @@
 import math
 from tkinter import filedialog
-import math
+
 import numpy as np
 from scipy.spatial import ConvexHull, Delaunay
-from calculation_helpers import *
+
+from utils.calculation_helpers import *
 
 x_coords = []
 y_coords = []
@@ -69,7 +70,7 @@ def generate_grid(vertices, spacing_m):
 
 def read_points_from_file(filename):
     try:
-        with open(filename, 'r') as file:
+        with open(filename, "r") as file:
             lines = file.readlines()
             x_coords = []
             y_coords = []
@@ -83,8 +84,11 @@ def read_points_from_file(filename):
 
 
 def open_file(position_list):
-    filename = filedialog.askopenfilename(initialdir="src/logs/points", title="Chọn file",
-                                          filetypes=(("Text files", "*.txt"), ("All files", "*.*")))
+    filename = filedialog.askopenfilename(
+        initialdir="src/logs/points",
+        title="Chọn file",
+        filetypes=(("Text files", "*.txt"), ("All files", "*.*")),
+    )
     if filename:
         x_coords_file, y_coords_file = read_points_from_file(filename)
         x_coords.clear()
@@ -125,8 +129,8 @@ def calculate_angle(a, b, c):
     # Dot product
     dot_prod = ba[0] * bc[0] + ba[1] * bc[1]
     # Magnitude of vector AB and BC
-    mag_ab = math.sqrt(ba[0]**2 + ba[1]**2)
-    mag_bc = math.sqrt(bc[0]**2 + bc[1]**2)
+    mag_ab = math.sqrt(ba[0] ** 2 + ba[1] ** 2)
+    mag_bc = math.sqrt(bc[0] ** 2 + bc[1] ** 2)
 
     if mag_ab == 0 or mag_bc == 0:
         # Return an angle of 0 or handle it as needed
@@ -153,14 +157,20 @@ def check_and_move_points(edge_points, rest_points, tolerance=10):
 
     for rp in rest_points:
         for i in range(len(new_edge_points) - 1):
-            if new_edge_points[i] == (21.04004113210685, 105.7986763205447) and new_edge_points[i+1] == (21.04004113210685, 105.79578882254137):
+            if new_edge_points[i] == (21.04004113210685, 105.7986763205447) and new_edge_points[
+                i + 1
+            ] == (21.04004113210685, 105.79578882254137):
                 print("YES")
 
-            angle_with_rp = calculate_angle(
-                new_edge_points[i+1], new_edge_points[i], rp)
-            angle_2 = calculate_angle(
-                new_edge_points[i+1], rp, new_edge_points[i])
-            if (rp == (21.04004113210685, 105.79771382121027) or rp == (21.04004113210685, 105.79675132187582)) and (new_edge_points[i] == (21.04004113210685, 105.7986763205447) and new_edge_points[i+1] == (21.04004113210685, 105.79578882254137)):
+            angle_with_rp = calculate_angle(new_edge_points[i + 1], new_edge_points[i], rp)
+            angle_2 = calculate_angle(new_edge_points[i + 1], rp, new_edge_points[i])
+            if (
+                rp == (21.04004113210685, 105.79771382121027)
+                or rp == (21.04004113210685, 105.79675132187582)
+            ) and (
+                new_edge_points[i] == (21.04004113210685, 105.7986763205447)
+                and new_edge_points[i + 1] == (21.04004113210685, 105.79578882254137)
+            ):
                 print(f"{angle_with_rp}")
                 print(f"{angle_2}")
             if angle_with_rp < tolerance or (angle_2 > 350 and angle_2 < 360):
@@ -180,8 +190,7 @@ def reorder_list(start_point, list1):
     distances = []
     # Calculate the distance from start_point to each point in list1
     for point in list1:
-        distance = haversine(
-            start_point[0], start_point[1], point[0], point[1])
+        distance = haversine(start_point[0], start_point[1], point[0], point[1])
         distances.append((point, distance))
 
     # Find the nearest point and its index
@@ -189,22 +198,24 @@ def reorder_list(start_point, list1):
     nearest_index = list1.index(nearest_point)
 
     # Reorder the list starting with the nearest point
-    reordered_list = list1[int(nearest_index):] + list1[:int(nearest_index)]
+    reordered_list = list1[int(nearest_index) :] + list1[: int(nearest_index)]
 
     return reordered_list
 
 
 def split_at_farthest_point(start_position, reordered_points, list_2):
     # Calculate the distance of each point from the start position
-    distances = [haversine(start_position[0], start_position[1],
-                           point[0], point[1]) for point in reordered_points]
+    distances = [
+        haversine(start_position[0], start_position[1], point[0], point[1])
+        for point in reordered_points
+    ]
 
     # Find the index of the farthest point
     farthest_index = distances.index(max(distances))
 
     # Split the reordered list at the farthest point, including the farthest point in the first part
-    keep_points = reordered_points[:farthest_index+1]
-    move_to_list_2 = reordered_points[farthest_index+1:]
+    keep_points = reordered_points[: farthest_index + 1]
+    move_to_list_2 = reordered_points[farthest_index + 1 :]
     list_2.extend(move_to_list_2)
 
     # Duplicate the last point in keep_points
@@ -218,16 +229,17 @@ def split_at_farthest_point(start_position, reordered_points, list_2):
 
 def find_nearest_to_A(points, point_A):
     # Calculate distances to point A and find the minimum
-    distances = [haversine(point[0], point[1], point_A[0],
-                           point_A[1]) for point in points]
+    distances = [haversine(point[0], point[1], point_A[0], point_A[1]) for point in points]
     min_distance_index = distances.index(min(distances))
     return points[min_distance_index]
 
 
 def find_shortest_path(start_position, points_list):
     # Calculate the distance from point A to all other points
-    distances_to_A = [haversine(
-        start_position[0], start_position[1], point[0], point[1]) for point in points_list]
+    distances_to_A = [
+        haversine(start_position[0], start_position[1], point[0], point[1])
+        for point in points_list
+    ]
 
     # Identify the nearest point to point A (to be the last point)
     nearest_to_A_index = distances_to_A.index(min(distances_to_A))
@@ -240,8 +252,12 @@ def find_shortest_path(start_position, points_list):
     # Use a modified nearest neighbor algorithm to construct the path
     while points_list:
         last_point = path[-1]
-        nearest_index = min(range(len(points_list)), key=lambda i: haversine(
-            last_point[0], last_point[1], points_list[i][0], points_list[i][1]))
+        nearest_index = min(
+            range(len(points_list)),
+            key=lambda i: haversine(
+                last_point[0], last_point[1], points_list[i][0], points_list[i][1]
+            ),
+        )
         nearest_point = points_list.pop(nearest_index)
         path.append(nearest_point)
 
@@ -280,8 +296,11 @@ def find_path(points, point_A):
 
 
 def open_file(position_list):
-    filename = filedialog.askopenfilename(initialdir="./", title="Chọn file",
-                                          filetypes=(("Text files", "*.txt"), ("All files", "*.*")))
+    filename = filedialog.askopenfilename(
+        initialdir="./",
+        title="Chọn file",
+        filetypes=(("Text files", "*.txt"), ("All files", "*.*")),
+    )
     if filename:
         x_coords_file, y_coords_file = read_points_from_file(filename)
         x_coords.clear()
@@ -363,7 +382,7 @@ def main():
         (21.04454017043741, 105.79675132187582),
         (21.04454017043741, 105.79771382121027),
         (21.0436403627713, 105.79771382121027),
-        (21.045439978103524, 105.79193882520359)
+        (21.045439978103524, 105.79193882520359),
     ]
 
     # Starting point A
@@ -393,18 +412,18 @@ def main():
     open_file(position_list1)
     grid_points = generate_grid(position_list1, int(100))
 
-    with open('src/data/drone_path_all.txt', 'w') as file:
+    with open("src/data/drone_path_all.txt", "w") as file:
         for pos in grid_points:
             file.write(f"{pos[0]}, {pos[1]}\n")
 
     Listx, Listy = find_path(grid_points, start_position)
     # Write the result to a text file
-    with open('src/data/drone_path_A.txt', 'w') as file:
+    with open("src/data/drone_path_A.txt", "w") as file:
         for pos in Listx:
             file.write(f"{pos[0]}, {pos[1]}\n")
 
     # Write the result to a text file
-    with open('src/data/drone_path_B.txt', 'w') as file:
+    with open("src/data/drone_path_B.txt", "w") as file:
         for pos in Listy:
             file.write(f"{pos[0]}, {pos[1]}\n")
 

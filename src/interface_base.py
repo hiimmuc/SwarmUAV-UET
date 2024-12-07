@@ -1,3 +1,4 @@
+# cspell: ignore asyncqt
 import asyncio
 import sys
 
@@ -8,7 +9,7 @@ from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 from config.interface_config import *
 from config.stream_config import *
 from config.uav_config import *
-from UI.interface_uav import *
+from Qt.interface_uav import *
 from utils.logger import *
 from utils.qt_utils import *
 

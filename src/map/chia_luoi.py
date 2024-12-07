@@ -1,9 +1,10 @@
 import math
 from tkinter import filedialog
-import math
+
 import numpy as np
 from scipy.spatial import ConvexHull, Delaunay
-from .calculation_helpers import *
+
+from ..utils.calculation_helpers import *
 
 x_coords = []
 y_coords = []
@@ -11,7 +12,7 @@ y_coords = []
 
 def read_points_from_file(filename):
     try:
-        with open(filename, 'r') as file:
+        with open(filename, "r") as file:
             lines = file.readlines()
             x_coords = []
             y_coords = []
@@ -47,8 +48,8 @@ def calculate_angle(a, b, c):
     ba = (a[0] - b[0], a[1] - b[1])
     bc = (c[0] - b[0], c[1] - b[1])
     dot_prod = ba[0] * bc[0] + ba[1] * bc[1]
-    mag_ab = math.sqrt(ba[0]**2 + ba[1]**2)
-    mag_bc = math.sqrt(bc[0]**2 + bc[1]**2)
+    mag_ab = math.sqrt(ba[0] ** 2 + ba[1] ** 2)
+    mag_bc = math.sqrt(bc[0] ** 2 + bc[1] ** 2)
     if mag_ab == 0 or mag_bc == 0:
         return 0
     # Clamping value to the valid range of acos
@@ -85,7 +86,7 @@ def check_and_move_points(list_A, list_B):
 
     for point in list_B:
         for i in range(len(list_A) - 1):
-            if point_on_line(list_A[i], point, list_A[i+1]):
+            if point_on_line(list_A[i], point, list_A[i + 1]):
                 updated_list_A.append(point)
                 updated_list_B.remove(point)
                 break  # Move to the next point after finding its place
@@ -97,8 +98,7 @@ def reorder_list(start_point, list1):
     distances = []
     # Calculate the distance from start_point to each point in list1
     for point in list1:
-        distance = haversine(
-            start_point[0], start_point[1], point[0], point[1])
+        distance = haversine(start_point[0], start_point[1], point[0], point[1])
         distances.append((point, distance))
 
     # Find the nearest point and its index
@@ -107,23 +107,24 @@ def reorder_list(start_point, list1):
     nearest_index = list1.index(nearest_point)
 
     # Reorder the list starting with the nearest point
-    reordered_list = list1[int(nearest_index):] + list1[:int(nearest_index)]
+    reordered_list = list1[int(nearest_index) :] + list1[: int(nearest_index)]
 
     return reordered_list
 
 
 def split_at_farthest_point(start_position, reordered_points, list_2):
     # Calculate the distance of each point from the start position
-    distances = [haversine(start_position[0], start_position[1],
-                           point[0], point[1]) for point in reordered_points]
+    distances = [
+        haversine(start_position[0], start_position[1], point[0], point[1])
+        for point in reordered_points
+    ]
 
     # Find the index of the farthest point
-    farthest_index = distances.index(
-        max(distances))  # TÌM ĐIỂM XA NHẤT VỚI DRONE
+    farthest_index = distances.index(max(distances))  # TÌM ĐIỂM XA NHẤT VỚI DRONE
 
     # Split the reordered list at the farthest point, including the farthest point in the first part
-    keep_points = reordered_points[:farthest_index+1]
-    move_to_list_2 = reordered_points[farthest_index+1:]
+    keep_points = reordered_points[: farthest_index + 1]
+    move_to_list_2 = reordered_points[farthest_index + 1 :]
     list_2.extend(move_to_list_2)
 
     # Duplicate the last point in keep_points
@@ -137,16 +138,17 @@ def split_at_farthest_point(start_position, reordered_points, list_2):
 
 def find_nearest_to_A(points, point_A):
     # Calculate distances to point A and find the minimum
-    distances = [haversine(point[0], point[1], point_A[0],
-                           point_A[1]) for point in points]
+    distances = [haversine(point[0], point[1], point_A[0], point_A[1]) for point in points]
     min_distance_index = distances.index(min(distances))
     return points[min_distance_index]
 
 
 def find_shortest_path(start_position, points_list):
     # Calculate the distance from point A to all other points
-    distances_to_A = [haversine(
-        start_position[0], start_position[1], point[0], point[1]) for point in points_list]
+    distances_to_A = [
+        haversine(start_position[0], start_position[1], point[0], point[1])
+        for point in points_list
+    ]
 
     # Identify the nearest point to point A (to be the last point)
     nearest_to_A_index = distances_to_A.index(min(distances_to_A))
@@ -159,8 +161,12 @@ def find_shortest_path(start_position, points_list):
     # Use a modified nearest neighbor algorithm to construct the path
     while points_list:
         last_point = path[-1]
-        nearest_index = min(range(len(points_list)), key=lambda i: haversine(
-            last_point[0], last_point[1], points_list[i][0], points_list[i][1]))
+        nearest_index = min(
+            range(len(points_list)),
+            key=lambda i: haversine(
+                last_point[0], last_point[1], points_list[i][0], points_list[i][1]
+            ),
+        )
         nearest_point = points_list.pop(nearest_index)
         path.append(nearest_point)
 

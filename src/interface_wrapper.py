@@ -2,20 +2,17 @@ import asyncio
 import glob
 import os
 import sys
-import time
-from threading import Thread
 
 import cv2
-import mavsdk.mission_raw
+import pyfiglet
 from asyncqt import QEventLoop
 
 # mavsdk
 from mavsdk import System
-from mavsdk.mission import MissionItem, MissionPlan
 
 # PyQt5
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QFileDialog
 
 # user-defined configuration
 from config.interface_config import *
@@ -33,10 +30,11 @@ from utils.qt_utils import *
 from utils.serial_utils import *
 from utils.stream_utils import *
 
-# cspell: ignore UAVs mavsdk asyncqt ndarray offboard pixmap qgroundcontrol rtcm imwrite dsize fourcc imread
-__version__ = "0.12.6"
+# cspell: ignore UAVs mavsdk asyncqt figlet ndarray offboard pixmap qgroundcontrol rtcm imwrite dsize fourcc imread
+__version__ = "0.12.7"
 __current_path__ = os.path.dirname(os.path.abspath(__file__))
-print("APP VERSION:", __version__, "\nWorking directory:", __current_path__)
+print("APP VERSION:", __version__, "\nWorking directory:", __current_path__, "\n", "*" * 50)
+print(pyfiglet.figlet_format("UAV SWARM CONTROL APP"))
 
 # UAVs object
 try:
