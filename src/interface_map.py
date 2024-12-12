@@ -152,11 +152,13 @@ class Map(Interface):
     def btn_show_points_callback(self):
         # read points from file and show on map
         # Read and parse the JSON file
-        filename = filedialog.askopenfilename(
-            initialdir=f"{parent_dir}/logs/area/",
-            title="Chọn file",
-            filetypes=(("Text files", "*.plan"), ("All files", "*.*")),
-        )
+        filename = QFileDialog.getOpenFileName(
+            parent=self,
+            caption="Open map file",
+            directory=f"{parent_dir}/src/logs/area/",
+            initialFilter="Files (*.TXT *.txt *.plan)",
+        )[0]
+
         with open(filename, "r") as file:
             data = json.load(file)
 
@@ -197,104 +199,111 @@ class Map(Interface):
         pass
 
     def btn_export_points_callback(self):
-        # export points to file
-        # Define the structure of the .plan file according to QGroundControl specifications
-        plan_data = {
-            "fileType": "Plan",
-            "geoFence": {"circles": [], "polygons": [], "version": 2},
-            "groundStation": "QGroundControl",
-            "mission": {
-                "cruiseSpeed": 2,  # Set cruise speed in m/s
-                "hoverSpeed": None,  # Set hover speed in m/s
-                "firmwareType": 12,  # Specify the firmware type (e.g., PX4)
-                "globalPlanAltitudeMode": 1,  # Altitude mode
-                "items": [],
-                "plannedHomePosition": [0, 0, 0],  # Placeholder for home position
-                "vehicleType": 2,  # Type of vehicle (e.g., 2 for fixed-wing)
-                "version": 2,
-            },
-            "rallyPoints": {"points": [], "version": 2},  # Initialize with empty points
-            "version": 1,
-        }
+        try:
+            # Define the path to save the .plan file
+            plan_file_path = QFileDialog.getOpenFileName(
+                parent=self,
+                caption="Open save file",
+                directory=f"{parent_dir}/src/logs/points/",
+                initialFilter="Files (*.TXT *.txt *.plan)",
+            )[0]
+            print("Export to:", plan_file_path)
+            # export points to file
+            # Define the structure of the .plan file according to QGroundControl specifications
+            plan_data = {
+                "fileType": "Plan",
+                "geoFence": {"circles": [], "polygons": [], "version": 2},
+                "groundStation": "QGroundControl",
+                "mission": {
+                    "cruiseSpeed": 2,  # Set cruise speed in m/s
+                    "hoverSpeed": None,  # Set hover speed in m/s
+                    "firmwareType": 12,  # Specify the firmware type (e.g., PX4)
+                    "globalPlanAltitudeMode": 1,  # Altitude mode
+                    "items": [],
+                    "plannedHomePosition": [0, 0, 0],  # Placeholder for home position
+                    "vehicleType": 2,  # Type of vehicle (e.g., 2 for fixed-wing)
+                    "version": 2,
+                },
+                "rallyPoints": {"points": [], "version": 2},  # Initialize with empty points
+                "version": 1,
+            }
 
-        # Populate mission items from area_grid waypoints
+            # Populate mission items from area_grid waypoints
+            home_position = self.position_list[0]  # First point as the home position
+            plan_data["mission"]["plannedHomePosition"] = [
+                home_position[0],
+                home_position[1],
+                None,
+            ]
+            for y, pos in enumerate(self.position_list):
+                # First waypoint
+                if y == 0:
+                    waypoint = {
+                        "AMSLAltAboveTerrain": None,
+                        "Altitude": 3,
+                        "AltitudeMode": 1,
+                        "autoContinue": True,
+                        "command": 22,  # MAV_CMD_NAV_TAKEOFF
+                        "doJumpId": y + 1,
+                        "frame": 3,
+                        "params": [0, 0, 0, None, pos[0], pos[1], 3],
+                        "type": "SimpleItem",
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
 
-        home_position = self.position_list[0]  # First point as the home position
-        plan_data["mission"]["plannedHomePosition"] = [home_position[0], home_position[1], None]
-        for y, pos in enumerate(self.position_list):
-            # First waypoint
-            if y == 0:
-                waypoint = {
-                    "AMSLAltAboveTerrain": None,
-                    "Altitude": 3,
-                    "AltitudeMode": 1,
-                    "autoContinue": True,
-                    "command": 22,  # MAV_CMD_NAV_TAKEOFF
-                    "doJumpId": y + 1,
-                    "frame": 3,
-                    "params": [0, 0, 0, None, pos[0], pos[1], 3],
-                    "type": "SimpleItem",
-                }
-                plan_data["mission"]["items"].append(waypoint)
+                # Last waypoint
+                elif y == len(self.position_list) - 1:
+                    waypoint = {
+                        "AMSLAltAboveTerrain": None,
+                        "Altitude": 3,
+                        "AltitudeMode": 1,
+                        "autoContinue": True,
+                        "command": 16,  # MAV_CMD_NAV_LAND or equivalent end command
+                        "doJumpId": y + 1,
+                        "frame": 3,
+                        "params": [0, 0, 0, None, pos[0], pos[1], 3],
+                        "type": "SimpleItem",
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
+                    waypoint = {
+                        "autoContinue": True,
+                        "command": 20,  # MAV_CMD_NAV_LAND or equivalent end command
+                        "doJumpId": y + 2,
+                        "frame": 2,
+                        "params": [0, 0, 0, 0, 0, 0, 0],
+                        "type": "SimpleItem",
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
 
-            # Last waypoint
-            elif y == len(self.position_list) - 1:
-                waypoint = {
-                    "AMSLAltAboveTerrain": None,
-                    "Altitude": 3,
-                    "AltitudeMode": 1,
-                    "autoContinue": True,
-                    "command": 16,  # MAV_CMD_NAV_LAND or equivalent end command
-                    "doJumpId": y + 1,
-                    "frame": 3,
-                    "params": [0, 0, 0, None, pos[0], pos[1], 3],
-                    "type": "SimpleItem",
-                }
-                plan_data["mission"]["items"].append(waypoint)
-                waypoint = {
-                    "autoContinue": True,
-                    "command": 20,  # MAV_CMD_NAV_LAND or equivalent end command
-                    "doJumpId": y + 2,
-                    "frame": 2,
-                    "params": [0, 0, 0, 0, 0, 0, 0],
-                    "type": "SimpleItem",
-                }
-                plan_data["mission"]["items"].append(waypoint)
+                # Middle waypoints
+                else:
+                    waypoint = {
+                        "AMSLAltAboveTerrain": None,
+                        "Altitude": 3,
+                        "AltitudeMode": 1,
+                        "autoContinue": True,
+                        "command": 16,  # MAV_CMD_NAV_WAYPOINT
+                        "doJumpId": y + 1,
+                        "frame": 3,
+                        "params": [0, 0, 0, None, pos[0], pos[1], 3],
+                        "type": "SimpleItem",
+                    }
+                    plan_data["mission"]["items"].append(waypoint)
 
-            # Middle waypoints
-            else:
-                waypoint = {
-                    "AMSLAltAboveTerrain": None,
-                    "Altitude": 3,
-                    "AltitudeMode": 1,
-                    "autoContinue": True,
-                    "command": 16,  # MAV_CMD_NAV_WAYPOINT
-                    "doJumpId": y + 1,
-                    "frame": 3,
-                    "params": [0, 0, 0, None, pos[0], pos[1], 3],
-                    "type": "SimpleItem",
-                }
-                plan_data["mission"]["items"].append(waypoint)
+            # plan_file_path = filedialog.asksaveasfilename(
+            #     defaultextension=".plan",
+            #     title="Lưu file",
+            #     initialdir=f"{parent_dir}/logs/points/",
+            #     filetypes=(("Plan files", "*.plan"), ("All files", "*.*")),
+            # )
 
-        # Define the path to save the .plan file
-        plan_file_path = QFileDialog.getOpenFileName(
-            parent=self,
-            caption="Open save file",
-            directory=f"{parent_dir}/logs/points/",
-            initialFilter="Files (*.TXT *.txt *.plan)",
-        )[0]
-        # plan_file_path = filedialog.asksaveasfilename(
-        #     defaultextension=".plan",
-        #     title="Lưu file",
-        #     initialdir=f"{parent_dir}/logs/points/",
-        #     filetypes=(("Plan files", "*.plan"), ("All files", "*.*")),
-        # )
+            # Save as JSON to .plan file with UTF-8 encoding
+            with open(plan_file_path, "w", encoding="utf-8") as plan_file:
+                json.dump(plan_data, plan_file, indent=4)
 
-        # Save as JSON to .plan file with UTF-8 encoding
-        with open(plan_file_path, "w", encoding="utf-8") as plan_file:
-            json.dump(plan_data, plan_file, indent=4)
-
-        print(f"Mission plan exported to {plan_file_path}")
+            print(f"Mission plan exported to {plan_file_path}")
+        except Exception as e:
+            print(repr(e))
 
     def btn_split_area_callback(self):
         # split area to grid

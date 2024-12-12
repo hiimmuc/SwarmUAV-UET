@@ -2,18 +2,23 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-# cSpell:ignore baudrate, uav, rtl, opencv, cv2, fourcc, rtsp, uet, YOLO, nosignal, XVID
+import torch
+
+from .uav_config import MAX_UAV_COUNT
+
+# cSpell:ignore baudrate, uav, yolov, rtl, opencv, cv2, fourcc, rtsp, uet, YOLO, nosignal, XVID
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Do not change
 SRC_DIR = Path(__file__).parent.parent
 ROOT_DIR = SRC_DIR.parent
 NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-MAX_UAV_COUNT = 6
+
 #
 DEFAULT_STREAM_SCREEN = "general_screen"  # NOTE: Change between "general_screen" or "stream_screen" or "ovv_screen" or "all"
 DEFAULT_STREAM_SOURCE = "videos"  # NOTE: Change between "streams" or "rtsp" or "webcam" or "video"
 DEFAULT_STREAM_SIZE = (320, 180)  # NOTE Change for modify recording settings
-DEFAULT_STREAM_FPS = 30
+DEFAULT_STREAM_FPS = 30  # NOTE Change for modify frame rate of streaming
 FOURCC = "XVID"
 
 # Path settings

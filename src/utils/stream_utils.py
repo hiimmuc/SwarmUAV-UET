@@ -5,16 +5,14 @@ from threading import Lock, Thread
 
 import cv2
 import numpy as np
-import torch
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
-from ultralytics import YOLO
+
+from config.stream_config import *
 
 from .model_utils import *
 
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-
-# cspell: ignore BUFFERSIZE msleep
+# cspell: ignore BUFFERSIZE msleep ndarray
 class Stream:
     def __init__(self, capture: dict, writer: dict) -> None:
         self.capture_params = capture
@@ -130,17 +128,15 @@ class StreamThread:
 
 
 class StreamQtThread(QThread):  # NOTE: slower than using Thread
-    change_image_signal = pyqtSignal(np.ndarray, list)
+    change_image_signal = pyqtSignal(np.ndarray, np.ndarray, list)
 
-    def __init__(self, uav_index, stream, model_config=None, **kwargs):
+    def __init__(self, uav_index: int, stream: Stream, detection_model, **kwargs):
         super().__init__()
         self.uav_index = uav_index
         self.track_history = defaultdict(lambda: [])
         self.isRunning = False
         self.stream = stream
-        self.model_config = model_config
-        self.model = YOLO(model_config["path"]).to(DEVICE)
-        print(f">>> Model loaded successfully for UAV-{uav_index} on {DEVICE}!")
+        self.model = detection_model
 
     def is_alive(self):
         return self.isRunning
@@ -155,18 +151,30 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
 
             while self.stream.is_opened():
                 ret, frame = self.stream.read()
+                annotated_frame = np.zeros_like(frame)
                 results = [None]
                 if ret:
-                    if self.model_config["enable"]:
+                    if self.model is not None:
                         results = self.model.track(
-                            frame, classes=0, device=DEVICE, persist=True, verbose=False
+                            source=frame,
+                            classes=0,  # 0: person
+                            conf=0.5,
+                            iou=0.5,
+                            device=DEVICE,
+                            persist=True,
+                            verbose=False,
                         )
-                        frame, track_ids, objects = draw_tracking_frame(
-                            frame, results, self.track_history, 90
+                        annotated_frame, track_ids, objects = draw_tracking_frame(
+                            frame, results, self.track_history, int(self.stream.get_fps()) * 3
                         )
                         results = [track_ids, objects]
 
-                    self.change_image_signal.emit(frame, [self.uav_index, results])
+                    self.change_image_signal.emit(
+                        frame,
+                        annotated_frame,
+                        [self.uav_index, int(self.stream.get_fps()), results],
+                    )
+
                     self.msleep(int(1 / self.stream.get_fps() * 1000))
                 else:
                     if self.stream.is_video():

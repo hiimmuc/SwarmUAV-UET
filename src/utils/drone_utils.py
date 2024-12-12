@@ -1,9 +1,11 @@
 import asyncio
 import json
 import math
+import time
 from pathlib import Path
 
 import cv2
+from geographiclib.geodesic import Geodesic
 from mavsdk.gimbal import ControlMode, GimbalMode
 from mavsdk.mission import MissionItem, MissionPlan
 from mavsdk.offboard import (
@@ -51,6 +53,15 @@ async def print_mission_progress(drone) -> None:
         )
 
 
+async def uav_fn_is_on_mission(drone) -> bool:
+    """Check if the UAV is on a mission."""
+    async for mission_progress in drone["system"].mission.mission_progress():
+        if mission_progress.current < mission_progress.total:
+            return True
+        else:
+            return False
+
+
 async def observe_is_in_air(drone, running_tasks) -> None:
     """Monitors whether the drone is flying or not and
     returns after landing"""
@@ -71,6 +82,96 @@ async def observe_is_in_air(drone, running_tasks) -> None:
             await asyncio.get_event_loop().shutdown_asyncgens()
 
             return
+
+
+async def uav_fn_upload_mission(drone, mission_plan_file) -> None:
+    """
+    Uploads a mission plan to the UAV.
+    Args:
+        drone (dict): A dictionary containing drone parameters, including initial parameters such as altitude.
+        mission_plan_file (str): The path to the mission plan file. The file can be a .plan file or a text file
+                                containing latitude and longitude coordinates separated by commas.
+    Returns:
+        MissionPlan: An instance of the MissionPlan class containing the mission items to be uploaded to the UAV.
+                    Returns None if the mission_plan_file is None.
+    Raises:
+        FileNotFoundError: If the mission_plan_file does not exist.
+        ValueError: If the mission_plan_file contains invalid data.
+    """
+
+    if mission_plan_file is None:
+        return
+    elif Path(mission_plan_file).suffix == ".plan":
+        pass
+    else:
+        with open(mission_plan_file, "r") as f:
+            mission_data = [list(map(float, line.strip().split(", "))) for line in f.readlines()]
+
+    height = drone["init_params"]["altitude"]
+    mission_items = []
+    for lat, lon in mission_data:
+        mission_items.append(
+            MissionItem(
+                latitude_deg=lat,
+                longitude_deg=lon,
+                relative_altitude_m=height,
+                speed_m_s=1.0,  # Speed to use after this mission item (in metres/second)
+                is_fly_through=False,  # True for fly through, False for reach
+                gimbal_pitch_deg=float("nan"),
+                gimbal_yaw_deg=float("nan"),
+                loiter_time_s=10,
+                acceptance_radius_m=float("nan"),
+                yaw_deg=float("nan"),
+                camera_action=MissionItem.CameraAction.NONE,
+                camera_photo_distance_m=float("nan"),
+                camera_photo_interval_s=float("nan"),
+                vehicle_action=MissionItem.VehicleAction.NONE,
+            )
+        )
+    mission_plan = MissionPlan(mission_items)
+    await drone["system"].mission.upload_mission(mission_plan)
+    return
+
+
+async def uav_fn_do_mission(drone, mission_plan_file) -> None:
+    """
+    Executes a mission plan for a UAV (Unmanned Aerial Vehicle).
+    This function uploads a mission plan to the UAV, arms the UAV, takes off,
+    and starts the mission. It also creates tasks to monitor mission progress
+    and observe if the UAV is in the air.
+    Args:
+        drone (dict): A dictionary containing the UAV system components.
+        mission_plan_file (str): The file path to the mission plan.
+    Returns:
+        None
+    """
+    # check if uav is on mission
+    if await uav_fn_is_on_mission(drone):
+        print(f"UAV-{drone['ID']} is already on a mission. Aborting...")
+        await drone["system"].mission.pause_mission()
+        await drone["system"].mission.clear_mission()
+        print(f"Mission paused and cleared for UAV-{drone['ID']}. Resuming...")
+
+    # create tasks for monitoring mission progress and observing if the UAV is in the air
+    print_mission_progress_task = asyncio.ensure_future(print_mission_progress(drone))
+    running_tasks = [print_mission_progress_task]
+    termination_task = asyncio.ensure_future(observe_is_in_air(drone, running_tasks))
+    #
+    await uav_fn_upload_mission(drone, mission_plan_file)
+    await asyncio.sleep(1)
+    #
+    await drone["system"].connect(drone["system_address"])
+    await asyncio.sleep(1)
+    await drone["system"].action.arm()
+    await asyncio.sleep(2)
+    await drone["system"].action.takeoff()
+    await asyncio.sleep(3)
+    # await drone["system"].action.set_current_speed(2.0)
+    #
+    await drone["system"].mission.start_mission()
+    #
+    await termination_task
+    return
 
 
 async def uav_fn_export_params(drone, save_path) -> None:
@@ -240,7 +341,7 @@ async def uav_fn_set_params(drone, parameters=None, param_file=None) -> None:
             await param_plugin.set_param_custom(param_name, param_value)
 
 
-async def uav_fn_goto_location(drone, latitude, longitude, altitude=None) -> None:
+async def uav_fn_goto_location(drone, latitude=None, longitude=None, altitude=None) -> None:
     """
     Asynchronously commands the UAV to go to a specified location.
     Parameters:
@@ -252,127 +353,14 @@ async def uav_fn_goto_location(drone, latitude, longitude, altitude=None) -> Non
         None
     """
 
-    # Go to location
-    if altitude is None:
-        async for position in drone["system"].telemetry.home():
-            altitude = position.absolute_altitude_m
-            break
-    await drone["system"].action.goto_location(latitude, longitude, altitude, 0)
-
+    async for position in drone["system"].telemetry.position():
+        lat = latitude if latitude is not None else position.latitude_deg
+        lon = longitude if longitude is not None else position.longitude_deg
+        alt = altitude if altitude is not None else position.absolute_altitude_m
+        # go to the new position
+        await drone["system"].action.goto_location(lat, lon, alt, 0)
+        break
     return
-
-
-async def uav_fn_upload_mission(drone, mission_plan_file) -> None:
-    """
-    Uploads a mission plan to the UAV.
-    Args:
-        drone (dict): A dictionary containing drone parameters, including initial parameters such as altitude.
-        mission_plan_file (str): The path to the mission plan file. The file can be a .plan file or a text file
-                                containing latitude and longitude coordinates separated by commas.
-    Returns:
-        MissionPlan: An instance of the MissionPlan class containing the mission items to be uploaded to the UAV.
-                    Returns None if the mission_plan_file is None.
-    Raises:
-        FileNotFoundError: If the mission_plan_file does not exist.
-        ValueError: If the mission_plan_file contains invalid data.
-    """
-
-    if mission_plan_file is None:
-        return
-    elif Path(mission_plan_file).suffix == ".plan":
-        pass
-    else:
-        with open(mission_plan_file, "r") as f:
-            mission_data = [list(map(float, line.strip().split(", "))) for line in f.readlines()]
-
-    height = drone["init_params"]["altitude"]
-    mission_items = []
-    for lat, lon in mission_data:
-        mission_items.append(
-            MissionItem(
-                latitude_deg=lat,
-                longitude_deg=lon,
-                relative_altitude_m=height,
-                speed_m_s=1.0,  # Speed to use after this mission item (in metres/second)
-                is_fly_through=False,  # True for fly through, False for reach
-                gimbal_pitch_deg=float("nan"),
-                gimbal_yaw_deg=float("nan"),
-                loiter_time_s=10,
-                acceptance_radius_m=float("nan"),
-                yaw_deg=float("nan"),
-                camera_action=MissionItem.CameraAction.NONE,
-                camera_photo_distance_m=float("nan"),
-                camera_photo_interval_s=float("nan"),
-                vehicle_action=MissionItem.VehicleAction.NONE,
-            )
-        )
-    mission_plan = MissionPlan(mission_items)
-    await drone["system"].mission.upload_mission(mission_plan)
-    return
-
-
-async def uav_fn_do_mission(drone, mission_plan_file) -> None:
-    """
-    Executes a mission plan for a UAV (Unmanned Aerial Vehicle).
-    This function uploads a mission plan to the UAV, arms the UAV, takes off,
-    and starts the mission. It also creates tasks to monitor mission progress
-    and observe if the UAV is in the air.
-    Args:
-        drone (dict): A dictionary containing the UAV system components.
-        mission_plan_file (str): The file path to the mission plan.
-    Returns:
-        None
-    """
-
-    # create tasks for monitoring mission progress and observing if the UAV is in the air
-    print_mission_progress_task = asyncio.ensure_future(print_mission_progress(drone))
-    running_tasks = [print_mission_progress_task]
-    termination_task = asyncio.ensure_future(observe_is_in_air(drone, running_tasks))
-    #
-    await uav_fn_upload_mission(drone, mission_plan_file)
-    await asyncio.sleep(1)
-    #
-    await drone["system"].connect(drone["system_address"])
-    await asyncio.sleep(1)
-    await drone["system"].action.arm()
-    await asyncio.sleep(2)
-    await drone["system"].action.takeoff()
-    await asyncio.sleep(3)
-    # await drone["system"].action.set_current_speed(2.0)
-    #
-    await drone["system"].mission.start_mission()
-    #
-    await termination_task
-    return
-
-
-async def uav_fn_overwrite_params(drone, parameters) -> None:
-    """
-    Overwrites the UAV parameters with the provided values.
-    Args:
-        drone (dict): A dictionary containing the drone system.
-        parameters (dict): A dictionary containing the parameters to be set.
-            Expected keys:
-                - "RTL_AFTER_MS": Return to launch after mission (int or float).
-                - "GND_SPEED_MAX": Maximum ground speed (int or float).
-                - "MIS_TAKEOFF_ALT": Takeoff altitude (int or float).
-                - "CURRENT_SPEED": Current speed (int or float).
-    Returns:
-        None
-    """
-
-    # set return to launch after mission
-    await drone["system"].mission.set_return_to_launch_after_mission(parameters["RTL_AFTER_MS"])
-    # maximum speed
-    await drone["system"].action.set_maximum_speed(parameters["GND_SPEED_MAX"])
-    #
-    await drone["system"].action.set_takeoff_altitude(parameters["MIS_TAKEOFF_ALT"])
-    #
-    await drone["system"].action.set_return_to_launch_altitude(parameters["MIS_TAKEOFF_ALT"])
-    #
-    await drone["system"].action.set_current_speed(parameters["CURRENT_SPEED"])
-    #
-    # <...>
 
 
 async def uav_fn_goto_distance(drone, distance, direction):
@@ -435,6 +423,35 @@ async def uav_fn_goto_distance(drone, distance, direction):
         await drone["system"].action.goto_location(lat, lon, alt, 0)
         break
     return
+
+
+async def uav_fn_overwrite_params(drone, parameters) -> None:
+    """
+    Overwrites the UAV parameters with the provided values.
+    Args:
+        drone (dict): A dictionary containing the drone system.
+        parameters (dict): A dictionary containing the parameters to be set.
+            Expected keys:
+                - "RTL_AFTER_MS": Return to launch after mission (int or float).
+                - "GND_SPEED_MAX": Maximum ground speed (int or float).
+                - "MIS_TAKEOFF_ALT": Takeoff altitude (int or float).
+                - "CURRENT_SPEED": Current speed (int or float).
+    Returns:
+        None
+    """
+
+    # set return to launch after mission
+    await drone["system"].mission.set_return_to_launch_after_mission(parameters["RTL_AFTER_MS"])
+    # maximum speed
+    await drone["system"].action.set_maximum_speed(parameters["GND_SPEED_MAX"])
+    #
+    await drone["system"].action.set_takeoff_altitude(parameters["MIS_TAKEOFF_ALT"])
+    #
+    await drone["system"].action.set_return_to_launch_altitude(parameters["MIS_TAKEOFF_ALT"])
+    #
+    await drone["system"].action.set_current_speed(parameters["CURRENT_SPEED"])
+    #
+    # <...>
 
 
 async def uav_fn_offboard_set_actuator(drone, group, controls):
@@ -500,16 +517,53 @@ async def uav_fn_control_gimbal(drone, control_value={"pitch": 0, "yaw": 0}):
 
 
 # ? In development...
-def convert_points_to_gps(uav_index, detected_pos, frame_shape, uav_gps) -> list:
-    x, y = detected_pos
-    h, w, c = frame_shape
-    lat, lon, alt = uav_gps
+def export_points_to_gps_log(uav_index, detected_pos, frame_shape, uav_gps) -> list:
+    target_pixel_x, target_pixel_y = detected_pos
+    image_height, image_width, image_depth = frame_shape
+    uav_lat, uav_lon, uav_alt = uav_gps
+    if any(type(value) != float for value in uav_gps):
+        print("Invalid GPS coordinates")
+        return
     # * ===== Modify here =============================
+    fov_horizontal = 80.0  # horizontal field of view in degrees
+    aspect_ratio = image_height / image_width
+    fov_vertical = 2 * math.degrees(
+        math.atan(math.tan(math.radians(fov_horizontal) / 2) * aspect_ratio)
+    )
+    # physical size of a pixel in the image
+    fov_rad_horizontal = math.radians(fov_horizontal)
+    ground_width = (
+        2 * uav_alt * math.tan(fov_rad_horizontal / 2)
+    )  # width of zone covered by camera
+    pixel_size = ground_width / image_width  # size of pixels in meters
+    # center pixel
+    center_pixel = (image_width / 2, image_height / 2)
+    # distance from center pixel
+    dx = (target_pixel_x - center_pixel[0]) * pixel_size
+    dy = (target_pixel_y - center_pixel[1]) * pixel_size
+    distance = math.sqrt(dx**2 + dy**2)
+    # angle of target from UAV
+    angle = math.atan2(dy, dx)
+    angle_deg = math.degrees(angle)
+    # calculate new GPS coordinates
+    geod = Geodesic.WGS84
+    gps_result = geod.Direct(uav_lat, uav_lon, angle_deg, distance)
+
+    gps_lat = gps_result["lat2"]
+    gps_lon = gps_result["lon2"]
+    # * ================================================
     rescue_filepath = f"{SRC_DIR}/logs/rescue_pos/rescue_pos_uav_{uav_index}.log"
     with open(rescue_filepath, "w") as f:
-        f.write(f"{lat}, {lon}\n")
-    # * ================================================
-    return lat, lon
+        f.write(
+            f"{gps_lat}, {gps_lon}\n"
+        )  # change to uav_lat, uav_lon to go to the detected uav_position
+    time_stamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    detection_filepath = f"{SRC_DIR}/logs/detected_pos/detection_pos_uav_{uav_index}.log"
+    with open(detection_filepath, "a") as f:
+        f.write(
+            f"{time_stamp}, {target_pixel_x}, {target_pixel_y}, {uav_lat}, {uav_lon}, {uav_alt}\n"
+        )
+    return
 
 
 # ! Not used
