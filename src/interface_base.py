@@ -28,7 +28,7 @@ tabWidget_indexes = {
 }
 logger = Logger()
 
-# cSpell:ignore uavs pixmap
+# cSpell:ignore uavs pixmap imread
 
 
 class Interface(QMainWindow):

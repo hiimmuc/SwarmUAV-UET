@@ -180,5 +180,7 @@ cache/*.
 assets/videos/*
 assets/streams/*
 dependencies/
-src/logs/videos/*
+src/logs/recording/*
+src/logs/images/*
+src/logs/**/*
 src/logs/gps/*.txt

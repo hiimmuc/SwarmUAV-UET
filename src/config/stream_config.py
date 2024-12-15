@@ -16,7 +16,9 @@ NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 #
 DEFAULT_STREAM_SCREEN = "general_screen"  # NOTE: Change between "general_screen" or "stream_screen" or "ovv_screen" or "all"
-DEFAULT_STREAM_SOURCE = "videos"  # NOTE: Change between "streams" or "rtsp" or "webcam" or "video"
+DEFAULT_STREAM_SOURCE = (
+    "videos"  # NOTE: Change between "streams" or "rtsp" or "webcam" or "videos"
+)
 DEFAULT_STREAM_SIZE = (320, 180)  # NOTE Change for modify recording settings
 DEFAULT_STREAM_FPS = 30  # NOTE Change for modify frame rate of streaming
 FOURCC = "XVID"
@@ -52,10 +54,12 @@ else:
     DEFAULT_STREAM_VIDEO_PATHS = []
 # Destination paths for recording videos
 DEFAULT_STREAM_VIDEO_LOG_PATHS = [
-    f"{SRC_DIR}/logs/videos/stream_log_uav_{i}_{NOW}.avi" for i in range(1, MAX_UAV_COUNT + 1)
+    f"{SRC_DIR}/logs/recordings/stream_log_uav_{i}_{NOW}.avi" for i in range(1, MAX_UAV_COUNT + 1)
 ]
 
-os.makedirs(f"{SRC_DIR}/logs/videos", exist_ok=True)
+os.makedirs(f"{SRC_DIR}/logs/images", exist_ok=True)
+os.makedirs(f"{SRC_DIR}/logs/recordings", exist_ok=True)
+os.makedirs(f"{SRC_DIR}/logs/stream_properties", exist_ok=True)
 
 # YOLO settings
 model_uav_paths = {
@@ -65,4 +69,4 @@ model_uav_paths = {
     4: f"{SRC_DIR}/model/checkpoints/YOLO/yolov8n.pt",
     5: f"{SRC_DIR}/model/checkpoints/YOLO/yolov8n.pt",
     6: f"{SRC_DIR}/model/checkpoints/YOLO/yolov8n.pt",
-}  # YOLO model paths
+}  # NOTE: Change to different detection models

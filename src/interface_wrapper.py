@@ -34,7 +34,7 @@ from utils.serial_utils import *
 from utils.stream_utils import *
 
 # cspell: ignore UAVs mavsdk asyncqt figlet ndarray offboard pixmap qgroundcontrol rtcm imwrite dsize fourcc imread
-__version__ = "0.12.7"
+__version__ = "0.12.15"
 __current_path__ = os.path.dirname(os.path.abspath(__file__))
 print("APP VERSION:", __version__, "\nWorking directory:", __current_path__, "\n", "*" * 50)
 print(pyfiglet.figlet_format("UAV SWARM CONTROL APP"))
@@ -365,6 +365,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                         -- Save recording to {os.path.relpath(DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1], __current_path__) if UAVs[uav_index]['recording_enable'] else 'None'}",
                     level="info",
                 )
+
                 detection_model = (
                     self.uav_detection_models[uav_index - 1]
                     if UAVs[uav_index]["detection_enable"]
@@ -1020,8 +1021,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 self.uav_information_views[uav_index - 1].setText(
                     self.template_information(uav_index, **UAVs[uav_index]["status"])
                 )
-
-                # return to launch and clear logs after mission
+                # TODO: clear logs after mission
                 if await UAVs[uav_index]["system"].mission.is_mission_finished():
                     await UAVs[uav_index]["system"].action.return_to_launch()
                     # remove rescue file and detected files
@@ -1071,11 +1071,11 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         global UAVs
 
         if uav_index in range(1, MAX_UAV_COUNT + 1):
-            # if not (
-            #     UAVs[uav_index]["status"]["connection_status"]
-            #     and UAVs[uav_index]["connection_allow"]
-            # ):
-            #     return
+            if not (
+                UAVs[uav_index]["status"]["connection_status"]
+                and UAVs[uav_index]["connection_allow"]
+            ):
+                return
             try:
                 self.update_terminal(f"[INFO] Sent PUSH MISSION command to UAV {uav_index}")
 
@@ -1148,7 +1148,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
         else:
             pauseMission_all_UAVs = [
-                self.uav_pause_mission_callback(uav_index)
+                self.uav_toggle_pause_mission_callback(uav_index)
                 for uav_index in range(1, MAX_UAV_COUNT + 1)
             ]
             await asyncio.gather(*pauseMission_all_UAVs)
@@ -1592,9 +1592,6 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             return
         try:
             streaming_frame = annotated_frame if UAVs[uav_index]["detection_enable"] else frame
-            # write the frame to the stream file
-            if UAVs[uav_index]["recording_enable"]:
-                self.uav_streams[uav_index - 1].write(streaming_frame)
 
             # limit the frame rate of stream
             self.uav_stream_frame_cnt[uav_index - 1] += 1
@@ -1645,19 +1642,16 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
     async def uav_fn_rescue(self) -> None:
         """
-        Asynchronously handles the UAV rescue mission.
-        This function performs the following steps:
-        1. Checks if the rescue UAV is connected and allowed to connect.
-        2. Sends a RESCUE command to the designated rescue UAV.
-        3. Connects to the UAV system and checks its health status.
-        4. Retrieves the initial position of the UAV.
-        5. Continuously checks for available rescue positions.
-        6. Pauses the mission of the detected UAVs.
-        7. Reads the rescue position and initiates the rescue mission.
-        8. Waits for the mission to complete and logs the completion.
-        9. Returns the UAV to its launch position.
-        10. Resumes the mission of the detected UAVs.
-        11. Removes the rescue position file.
+        Perform a rescue mission using the specified UAV.
+        This function checks the connection status of the rescue UAV, connects to it,
+        verifies its health, and retrieves its initial position. It then performs the
+        rescue mission if certain conditions are met.
+        The rescue mission involves:
+        1. Checking if rescue position logs are available.
+        2. Selecting a mission plan from the available logs.
+        3. Performing the rescue mission and suspending detected UAVs.
+        4. Removing the rescue log file after the mission is completed.
+        If any error occurs during the mission, it logs the error and displays a popup message.
         Returns:
             None
         """
@@ -1691,7 +1685,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         try:
             # do the rescue mission
             while True:
-                # 1st time rescue mission or press mission btn 6
+                # NOTE 1st time rescue mission or press mission btn 6
                 if not UAVs[RESCUE_UAV_INDEX]["rescue_first_time"] or not (
                     self.ui.tabWidget.currentIndex() == RESCUE_UAV_INDEX
                 ):
@@ -1706,65 +1700,27 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     await asyncio.sleep(1)
                     continue
 
-                # 2 stop the detected UAVs
+                # get the detected UAVs
                 detected_uav_list = []
                 for rescue_filepath in rescue_filepaths:
                     uav_index = int(Path(rescue_filepath).stem.split("_")[-1])
-                    UAVs[uav_index][
-                        "detection_enable"
-                    ] = False  # stop detection until rescue mission is completed
-                    detected_uav_list.append(uav_index)
-
-                # pause detected UAVs
-                await asyncio.gather(
-                    *[
-                        UAVs[uav_index]["system"].mission.pause_mission()
-                        for uav_index in detected_uav_list
-                    ]
-                )
+                    detected_uav_list.append(UAVs[uav_index])
 
                 # get the rescue filepath
                 # NOTE: you can implement your own logic here
-                rescue_filepath = rescue_filepaths.pop(0)
+                rescue_filepath = select_mission_plan(rescue_filepaths)
 
-                # 3 read the rescue position
+                # 2 UAV Rescue do the rescue mission and the detected drones goes into suspend mode
                 UAVs[RESCUE_UAV_INDEX]["status"]["on_mission"] = True
-                # await uav_fn_do_mission(
-                #     drone=UAVs[RESCUE_UAV_INDEX], mission_plan_file=rescue_filepath
-                # )
-                with open(rescue_filepath, "r") as f:
-                    rescue_pos = f.read().split(",")
-                rescue_pos = list(map(float, rescue_pos))
-                await uav_fn_goto_location(
-                    drone=UAVs[RESCUE_UAV_INDEX],
-                    latitude=rescue_pos[0],
-                    longitude=rescue_pos[1],
+                await asyncio.gather(
+                    uav_rescue_process(
+                        drone=UAVs[RESCUE_UAV_INDEX], rescue_filepath=rescue_filepath
+                    ),
+                    uav_suspend_missions(drones=detected_uav_list, suspend_time=30),
                 )
-
-                # 4 NOTE: do something here ==========================
-                await asyncio.sleep(3)
-                # Change distance to go down here
-                await uav_fn_goto_distance(UAVs[RESCUE_UAV_INDEX], distance=5, direction="down")
-                await uav_fn_control_gimbal(
-                    UAVs[RESCUE_UAV_INDEX], control_value={"pitch": -90, "yaw": 0}
-                )
-                logger.log(f"Rescue mission completed", level="info")
-                # ====================================================
-                # 5 return to launch
-                await UAVs[RESCUE_UAV_INDEX]["system"].action.return_to_launch()
                 UAVs[RESCUE_UAV_INDEX]["status"]["on_mission"] = False
 
-                # resume mission of detected UAVs
-                await asyncio.gather(
-                    *[
-                        UAVs[uav_index]["system"].mission.start_mission()
-                        for uav_index in detected_uav_list
-                    ]
-                )
-                # # resume the detected UAVs
-                for uav_index in detected_uav_list:
-                    UAVs[uav_index]["detection_enable"] = True
-                # 6 remove the rescue file
+                # 3 remove the rescue file
                 os.rename(rescue_filepath)  # remove the rescue file
                 break
             logger.log(f"Rescue mission completed", level="info")

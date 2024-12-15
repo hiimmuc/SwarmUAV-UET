@@ -60,6 +60,7 @@ async def uav_fn_is_on_mission(drone) -> bool:
             return True
         else:
             return False
+        break
 
 
 async def observe_is_in_air(drone, running_tasks) -> None:
@@ -145,32 +146,35 @@ async def uav_fn_do_mission(drone, mission_plan_file) -> None:
     Returns:
         None
     """
-    # check if uav is on mission
-    if await uav_fn_is_on_mission(drone):
-        print(f"UAV-{drone['ID']} is already on a mission. Aborting...")
-        await drone["system"].mission.pause_mission()
-        await drone["system"].mission.clear_mission()
-        print(f"Mission paused and cleared for UAV-{drone['ID']}. Resuming...")
+    # # check if uav is on mission
+    # if drone["status"]["is_on_mission"]:
+    #     print(f"UAV-{drone['ID']} is already on a mission. Aborting...")
+    #     await drone["system"].mission.pause_mission()
+    #     await drone["system"].mission.clear_mission()
+    #     print(f"Mission paused and cleared for UAV-{drone['ID']}. Resuming...")
+    try:
+        # create tasks for monitoring mission progress and observing if the UAV is in the air
+        print_mission_progress_task = asyncio.ensure_future(print_mission_progress(drone))
+        running_tasks = [print_mission_progress_task]
+        termination_task = asyncio.ensure_future(observe_is_in_air(drone, running_tasks))
+        #
+        await uav_fn_upload_mission(drone, mission_plan_file)
+        await asyncio.sleep(1)
+        #
+        await drone["system"].connect(drone["system_address"])
+        await asyncio.sleep(1)
+        await drone["system"].action.arm()
+        await asyncio.sleep(2)
+        await drone["system"].action.takeoff()
+        await asyncio.sleep(3)
+        # await drone["system"].action.set_current_speed(2.0)
+        #
+        await drone["system"].mission.start_mission()
+        #
+        await termination_task
+    except Exception as e:
+        print(repr(e))
 
-    # create tasks for monitoring mission progress and observing if the UAV is in the air
-    print_mission_progress_task = asyncio.ensure_future(print_mission_progress(drone))
-    running_tasks = [print_mission_progress_task]
-    termination_task = asyncio.ensure_future(observe_is_in_air(drone, running_tasks))
-    #
-    await uav_fn_upload_mission(drone, mission_plan_file)
-    await asyncio.sleep(1)
-    #
-    await drone["system"].connect(drone["system_address"])
-    await asyncio.sleep(1)
-    await drone["system"].action.arm()
-    await asyncio.sleep(2)
-    await drone["system"].action.takeoff()
-    await asyncio.sleep(3)
-    # await drone["system"].action.set_current_speed(2.0)
-    #
-    await drone["system"].mission.start_mission()
-    #
-    await termination_task
     return
 
 
@@ -521,30 +525,37 @@ def export_points_to_gps_log(uav_index, detected_pos, frame_shape, uav_gps) -> l
     target_pixel_x, target_pixel_y = detected_pos
     image_height, image_width, image_depth = frame_shape
     uav_lat, uav_lon, uav_alt = uav_gps
+
     if any(type(value) != float for value in uav_gps):
         print("Invalid GPS coordinates")
         return
+
     # * ===== Modify here =============================
     fov_horizontal = 80.0  # horizontal field of view in degrees
     aspect_ratio = image_height / image_width
     fov_vertical = 2 * math.degrees(
         math.atan(math.tan(math.radians(fov_horizontal) / 2) * aspect_ratio)
     )
+
     # physical size of a pixel in the image
     fov_rad_horizontal = math.radians(fov_horizontal)
     ground_width = (
         2 * uav_alt * math.tan(fov_rad_horizontal / 2)
     )  # width of zone covered by camera
     pixel_size = ground_width / image_width  # size of pixels in meters
+
     # center pixel
     center_pixel = (image_width / 2, image_height / 2)
+
     # distance from center pixel
     dx = (target_pixel_x - center_pixel[0]) * pixel_size
     dy = (target_pixel_y - center_pixel[1]) * pixel_size
     distance = math.sqrt(dx**2 + dy**2)
+
     # angle of target from UAV
     angle = math.atan2(dy, dx)
     angle_deg = math.degrees(angle)
+
     # calculate new GPS coordinates
     geod = Geodesic.WGS84
     gps_result = geod.Direct(uav_lat, uav_lon, angle_deg, distance)
@@ -552,6 +563,7 @@ def export_points_to_gps_log(uav_index, detected_pos, frame_shape, uav_gps) -> l
     gps_lat = gps_result["lat2"]
     gps_lon = gps_result["lon2"]
     # * ================================================
+    # write to files
     rescue_filepath = f"{SRC_DIR}/logs/rescue_pos/rescue_pos_uav_{uav_index}.log"
     with open(rescue_filepath, "w") as f:
         f.write(
@@ -564,6 +576,46 @@ def export_points_to_gps_log(uav_index, detected_pos, frame_shape, uav_gps) -> l
             f"{time_stamp}, {target_pixel_x}, {target_pixel_y}, {uav_lat}, {uav_lon}, {uav_alt}\n"
         )
     return
+
+
+async def uav_rescue_process(drone, rescue_fpath):
+    # await uav_fn_do_mission(drone, rescue_fpath)
+    with open(rescue_fpath, "r") as rf:
+        rescue_pos = rf.read().strip().split(", ")
+    rescue_pos = list(map(float, rescue_pos))
+
+    await uav_fn_goto_location(
+        drone=drone,
+        latitude=rescue_pos[0],
+        longitude=rescue_pos[1],
+    )
+
+    # 4 NOTE: do something here ==========================
+    await asyncio.sleep(3)
+    # Change distance to go down here
+    await uav_fn_goto_distance(drone, distance=5, direction="down")
+    await uav_fn_control_gimbal(drone, control_value={"pitch": -90, "yaw": 0})
+    print("Rescue process completed.")
+    # ===================================================
+    await drone["system"].action.return_to_launch()
+    return
+
+
+async def uav_suspend_missions(drones, suspend_time: int = 30):
+    async def uav_suspend_mission(drone, suspend_time: int = 30):
+        drone["detection_enable"] = False
+        await drone["system"].mission.pause_mission()
+        await asyncio.sleep(suspend_time)
+        await drone["system"].mission.start_mission()
+        drone["detection_enable"] = True
+
+    await asyncio.gather(*[uav_suspend_mission(drone, suspend_time) for drone in drones])
+    return
+
+
+def select_mission_plan(mission_plan_files):
+    # NOTE: you can implement your own logic here
+    return mission_plan_files.pop(0)
 
 
 # ! Not used
