@@ -1233,11 +1233,9 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 return
             try:
                 if not UAVs[uav_index]["status"]["streaming_status"]:
-                    if (self.uav_stream_threads[uav_index - 1] is not None) and (
-                        not self.uav_stream_threads[uav_index - 1].is_alive()
-                    ):
+                    if self.uav_stream_threads[uav_index - 1] is None:
                         self._create_streaming_threads(uav_indexes=[uav_index])
-                        self.uav_stream_threads[uav_index - 1].start()
+                    self.uav_stream_threads[uav_index - 1].start()
                     UAVs[uav_index]["status"]["streaming_status"] = True
                     logger.log(f"UAV-{uav_index} streaming thread is starting...", level="info")
                     self.ui.btn_toggle_camera.setStyleSheet("background-color : green")
@@ -1607,14 +1605,13 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 track_ids, objects = detected_results
                 for track_id, obj in zip(track_ids, objects):
                     if obj["detected"] and obj["class"] == "person":
-                        # ======= replace with your function
                         # export frame
                         cv2.imwrite(
                             f"{__current_path__}/logs/images/UAV{uav_index}_locked_target_{track_id}.png",
                             annotated_frame,
                         )
                         detected_pos = (obj["x"], obj["y"])
-                        frame_shape = frame.shape
+                        frame_shape = annotated_frame.shape
                         uav_lat, uav_long = UAVs[uav_index]["status"]["position_status"]
                         uav_alt = UAVs[uav_index]["status"]["altitude_status"][0]
                         uav_gps = [uav_lat, uav_long, uav_alt]

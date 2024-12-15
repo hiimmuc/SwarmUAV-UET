@@ -13,7 +13,7 @@ from config.stream_config import *
 from .model_utils import *
 
 
-# cspell: ignore BUFFERSIZE msleep ndarray videowriter NSTRIPES FRAMEBYTES
+# cspell: ignore BUFFERSIZE msleep ndarray videowriter NSTRIPES FRAMEBYTES imwrite
 class Stream:
     def __init__(self, capture: dict, writer: dict) -> None:
         self.capture_params = capture
@@ -37,7 +37,7 @@ class Stream:
         # self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, int(self.capture_params["width"]))
         # self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(self.capture_params["height"]))
         # self.capture.set(cv2.CAP_PROP_FPS, int(self.capture_params["fps"]))
-        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 3)
 
         # Set writer properties
         if self.writer_params["enable"]:
@@ -70,7 +70,6 @@ class Stream:
                 cv2.resize(
                     frame,
                     dsize=self.writer_frameSize,
-                    interpolation=cv2.INTER_LINEAR,
                 )
             )
 
@@ -221,6 +220,7 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
                 results = [None]
                 if ret:
                     processing_start = time.time()
+                    # Use model to detect and track objects
                     if self.model is not None:
                         results = self.model.track(
                             source=frame,
@@ -234,20 +234,25 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
                         annotated_frame, track_ids, objects = draw_tracking_frame(
                             frame, results, self.track_history, int(self.stream.get_fps()) * 3
                         )
+
                         results = [track_ids, objects]
                     else:
                         annotated_frame = frame
+
                     processing_end = time.time()
                     elapsed_time = processing_end - processing_start
+
                     # write to saved video
                     if self.stream.is_writer_opened():
                         self.stream.write(annotated_frame)
+
                     # emit signal to update GUI
                     self.change_image_signal.emit(
                         frame,
                         annotated_frame,
                         [self.uav_index, int(self.stream.get_fps()), results],
                     )
+
                     # delay to match the FPS
                     adaptive_delay = max(self.stream.get_fps(), elapsed_time)
                     self.msleep(int(1000 * 1 / adaptive_delay))

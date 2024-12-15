@@ -53,131 +53,6 @@ async def print_mission_progress(drone) -> None:
         )
 
 
-async def uav_fn_is_on_mission(drone) -> bool:
-    """Check if the UAV is on a mission."""
-    async for mission_progress in drone["system"].mission.mission_progress():
-        if mission_progress.current < mission_progress.total:
-            return True
-        else:
-            return False
-        break
-
-
-async def observe_is_in_air(drone, running_tasks) -> None:
-    """Monitors whether the drone is flying or not and
-    returns after landing"""
-
-    was_in_air = False
-
-    async for is_in_air in drone["system"].telemetry.in_air():
-        if is_in_air:
-            was_in_air = is_in_air
-
-        if was_in_air and not is_in_air:
-            for task in running_tasks:
-                task.cancel()
-                try:
-                    await task
-                except asyncio.CancelledError:
-                    pass
-            await asyncio.get_event_loop().shutdown_asyncgens()
-
-            return
-
-
-async def uav_fn_upload_mission(drone, mission_plan_file) -> None:
-    """
-    Uploads a mission plan to the UAV.
-    Args:
-        drone (dict): A dictionary containing drone parameters, including initial parameters such as altitude.
-        mission_plan_file (str): The path to the mission plan file. The file can be a .plan file or a text file
-                                containing latitude and longitude coordinates separated by commas.
-    Returns:
-        MissionPlan: An instance of the MissionPlan class containing the mission items to be uploaded to the UAV.
-                    Returns None if the mission_plan_file is None.
-    Raises:
-        FileNotFoundError: If the mission_plan_file does not exist.
-        ValueError: If the mission_plan_file contains invalid data.
-    """
-
-    if mission_plan_file is None:
-        return
-    elif Path(mission_plan_file).suffix == ".plan":
-        pass
-    else:
-        with open(mission_plan_file, "r") as f:
-            mission_data = [list(map(float, line.strip().split(", "))) for line in f.readlines()]
-
-    height = drone["init_params"]["altitude"]
-    mission_items = []
-    for lat, lon in mission_data:
-        mission_items.append(
-            MissionItem(
-                latitude_deg=lat,
-                longitude_deg=lon,
-                relative_altitude_m=height,
-                speed_m_s=1.0,  # Speed to use after this mission item (in metres/second)
-                is_fly_through=False,  # True for fly through, False for reach
-                gimbal_pitch_deg=float("nan"),
-                gimbal_yaw_deg=float("nan"),
-                loiter_time_s=10,
-                acceptance_radius_m=float("nan"),
-                yaw_deg=float("nan"),
-                camera_action=MissionItem.CameraAction.NONE,
-                camera_photo_distance_m=float("nan"),
-                camera_photo_interval_s=float("nan"),
-                vehicle_action=MissionItem.VehicleAction.NONE,
-            )
-        )
-    mission_plan = MissionPlan(mission_items)
-    await drone["system"].mission.upload_mission(mission_plan)
-    return
-
-
-async def uav_fn_do_mission(drone, mission_plan_file) -> None:
-    """
-    Executes a mission plan for a UAV (Unmanned Aerial Vehicle).
-    This function uploads a mission plan to the UAV, arms the UAV, takes off,
-    and starts the mission. It also creates tasks to monitor mission progress
-    and observe if the UAV is in the air.
-    Args:
-        drone (dict): A dictionary containing the UAV system components.
-        mission_plan_file (str): The file path to the mission plan.
-    Returns:
-        None
-    """
-    # # check if uav is on mission
-    # if drone["status"]["is_on_mission"]:
-    #     print(f"UAV-{drone['ID']} is already on a mission. Aborting...")
-    #     await drone["system"].mission.pause_mission()
-    #     await drone["system"].mission.clear_mission()
-    #     print(f"Mission paused and cleared for UAV-{drone['ID']}. Resuming...")
-    try:
-        # create tasks for monitoring mission progress and observing if the UAV is in the air
-        print_mission_progress_task = asyncio.ensure_future(print_mission_progress(drone))
-        running_tasks = [print_mission_progress_task]
-        termination_task = asyncio.ensure_future(observe_is_in_air(drone, running_tasks))
-        #
-        await uav_fn_upload_mission(drone, mission_plan_file)
-        await asyncio.sleep(1)
-        #
-        await drone["system"].connect(drone["system_address"])
-        await asyncio.sleep(1)
-        await drone["system"].action.arm()
-        await asyncio.sleep(2)
-        await drone["system"].action.takeoff()
-        await asyncio.sleep(3)
-        # await drone["system"].action.set_current_speed(2.0)
-        #
-        await drone["system"].mission.start_mission()
-        #
-        await termination_task
-    except Exception as e:
-        print(repr(e))
-
-    return
-
-
 async def uav_fn_export_params(drone, save_path) -> None:
     """
     Asynchronously exports UAV parameters to a specified file.
@@ -517,6 +392,174 @@ async def uav_fn_control_gimbal(drone, control_value={"pitch": 0, "yaw": 0}):
     await drone["system"].gimbal.release_control()
 
 
+async def uav_fn_is_on_mission(drone) -> bool:
+    """Check if the UAV is on a mission."""
+    async for mission_progress in drone["system"].mission.mission_progress():
+        if mission_progress.current < mission_progress.total:
+            return True
+        else:
+            return False
+        break
+
+
+async def observe_is_in_air(drone, running_tasks) -> None:
+    """Monitors whether the drone is flying or not and
+    returns after landing"""
+
+    was_in_air = False
+
+    async for is_in_air in drone["system"].telemetry.in_air():
+        if is_in_air:
+            was_in_air = is_in_air
+
+        if was_in_air and not is_in_air:
+            for task in running_tasks:
+                task.cancel()
+                try:
+                    await task
+                except asyncio.CancelledError:
+                    pass
+            await asyncio.get_event_loop().shutdown_asyncgens()
+
+            return
+
+
+async def uav_fn_upload_mission(drone, mission_plan_file) -> None:
+    """
+    Uploads a mission plan to the UAV.
+    Args:
+        drone (dict): A dictionary containing drone parameters, including initial parameters such as altitude.
+        mission_plan_file (str): The path to the mission plan file. The file can be a .plan file or a text file
+                                containing latitude and longitude coordinates separated by commas.
+    Returns:
+        MissionPlan: An instance of the MissionPlan class containing the mission items to be uploaded to the UAV.
+                    Returns None if the mission_plan_file is None.
+    Raises:
+        FileNotFoundError: If the mission_plan_file does not exist.
+        ValueError: If the mission_plan_file contains invalid data.
+    """
+
+    if mission_plan_file is None:
+        return
+    elif Path(mission_plan_file).suffix == ".plan":
+        pass
+    else:
+        with open(mission_plan_file, "r") as f:
+            mission_data = [list(map(float, line.strip().split(", "))) for line in f.readlines()]
+
+    height = drone["init_params"]["altitude"]
+    mission_items = []
+    for lat, lon in mission_data:
+        mission_items.append(
+            MissionItem(
+                latitude_deg=lat,
+                longitude_deg=lon,
+                relative_altitude_m=height,
+                speed_m_s=1.0,  # Speed to use after this mission item (in metres/second)
+                is_fly_through=False,  # True for fly through, False for reach
+                gimbal_pitch_deg=float("nan"),
+                gimbal_yaw_deg=float("nan"),
+                loiter_time_s=10,
+                acceptance_radius_m=float("nan"),
+                yaw_deg=float("nan"),
+                camera_action=MissionItem.CameraAction.NONE,
+                camera_photo_distance_m=float("nan"),
+                camera_photo_interval_s=float("nan"),
+                vehicle_action=MissionItem.VehicleAction.NONE,
+            )
+        )
+    mission_plan = MissionPlan(mission_items)
+    await drone["system"].mission.upload_mission(mission_plan)
+    return
+
+
+async def uav_fn_do_mission(drone, mission_plan_file) -> None:
+    """
+    Executes a mission plan for a UAV (Unmanned Aerial Vehicle).
+    This function uploads a mission plan to the UAV, arms the UAV, takes off,
+    and starts the mission. It also creates tasks to monitor mission progress
+    and observe if the UAV is in the air.
+    Args:
+        drone (dict): A dictionary containing the UAV system components.
+        mission_plan_file (str): The file path to the mission plan.
+    Returns:
+        None
+    """
+    # # check if uav is on mission
+    # if drone["status"]["is_on_mission"]:
+    #     print(f"UAV-{drone['ID']} is already on a mission. Aborting...")
+    #     await drone["system"].mission.pause_mission()
+    #     await drone["system"].mission.clear_mission()
+    #     print(f"Mission paused and cleared for UAV-{drone['ID']}. Resuming...")
+    try:
+        # create tasks for monitoring mission progress and observing if the UAV is in the air
+        print_mission_progress_task = asyncio.ensure_future(print_mission_progress(drone))
+        running_tasks = [print_mission_progress_task]
+        termination_task = asyncio.ensure_future(observe_is_in_air(drone, running_tasks))
+        #
+        await uav_fn_upload_mission(drone, mission_plan_file)
+        await asyncio.sleep(1)
+        #
+        await drone["system"].connect(drone["system_address"])
+        await asyncio.sleep(1)
+        await drone["system"].action.arm()
+        await asyncio.sleep(2)
+        await drone["system"].action.takeoff()
+        await asyncio.sleep(3)
+        # await drone["system"].action.set_current_speed(2.0)
+        #
+        await drone["system"].mission.start_mission()
+        #
+        await termination_task
+    except Exception as e:
+        print(repr(e))
+
+    return
+
+
+async def uav_rescue_process(drone, rescue_fpath):
+    await asyncio.sleep(1)
+    print("Rescue process started.")
+    await uav_fn_do_mission(drone, rescue_fpath)
+    # with open(rescue_fpath, "r") as rf:
+    #     rescue_pos = rf.read().strip().split(", ")
+    # rescue_pos = list(map(float, rescue_pos))
+
+    # await uav_fn_goto_location(
+    #     drone=drone,
+    #     latitude=rescue_pos[0],
+    #     longitude=rescue_pos[1],
+    # )
+
+    # NOTE: do something here ==========================
+    await asyncio.sleep(3)
+    # NOTE: Change distance to go down here
+    await uav_fn_goto_distance(drone, distance=5, direction="down")
+    await uav_fn_control_gimbal(drone, control_value={"pitch": -90, "yaw": 0})
+    print("Rescue process completed.")
+    await asyncio.sleep(3)
+    # ===================================================
+    await drone["system"].action.return_to_launch()
+    return
+
+
+async def uav_suspend_missions(drones, suspend_time: int = 30):
+    async def uav_suspend_mission(drone, suspend_time: int = 30):
+        drone["detection_enable"] = False
+        await drone["system"].mission.pause_mission()
+        await asyncio.sleep(suspend_time)
+        await drone["system"].mission.start_mission()
+        drone["detection_enable"] = True
+
+    await asyncio.gather(*[uav_suspend_mission(drone, suspend_time) for drone in drones])
+    return
+
+
+def select_mission_plan(mission_plan_files):
+    # NOTE: you can implement your own logic here
+    return mission_plan_files.pop(0)
+
+
 # -----------------------------------------------------
 
 
@@ -576,46 +619,6 @@ def export_points_to_gps_log(uav_index, detected_pos, frame_shape, uav_gps) -> l
             f"{time_stamp}, {target_pixel_x}, {target_pixel_y}, {uav_lat}, {uav_lon}, {uav_alt}\n"
         )
     return
-
-
-async def uav_rescue_process(drone, rescue_fpath):
-    # await uav_fn_do_mission(drone, rescue_fpath)
-    with open(rescue_fpath, "r") as rf:
-        rescue_pos = rf.read().strip().split(", ")
-    rescue_pos = list(map(float, rescue_pos))
-
-    await uav_fn_goto_location(
-        drone=drone,
-        latitude=rescue_pos[0],
-        longitude=rescue_pos[1],
-    )
-
-    # 4 NOTE: do something here ==========================
-    await asyncio.sleep(3)
-    # Change distance to go down here
-    await uav_fn_goto_distance(drone, distance=5, direction="down")
-    await uav_fn_control_gimbal(drone, control_value={"pitch": -90, "yaw": 0})
-    print("Rescue process completed.")
-    # ===================================================
-    await drone["system"].action.return_to_launch()
-    return
-
-
-async def uav_suspend_missions(drones, suspend_time: int = 30):
-    async def uav_suspend_mission(drone, suspend_time: int = 30):
-        drone["detection_enable"] = False
-        await drone["system"].mission.pause_mission()
-        await asyncio.sleep(suspend_time)
-        await drone["system"].mission.start_mission()
-        drone["detection_enable"] = True
-
-    await asyncio.gather(*[uav_suspend_mission(drone, suspend_time) for drone in drones])
-    return
-
-
-def select_mission_plan(mission_plan_files):
-    # NOTE: you can implement your own logic here
-    return mission_plan_files.pop(0)
 
 
 # ! Not used
