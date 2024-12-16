@@ -34,10 +34,16 @@ from utils.serial_utils import *
 from utils.stream_utils import *
 
 # cspell: ignore UAVs mavsdk asyncqt figlet ndarray offboard pixmap qgroundcontrol rtcm imwrite dsize fourcc imread
-__version__ = "0.12.15"
+__version__ = "0.12.16.1"
+__current_time__ = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 __current_path__ = os.path.dirname(os.path.abspath(__file__))
+__system_info__ = get_system_information()
+print("*" * 50 + "\n" + "*" * 50)
+print("SYSTEM INFO:\n" + __system_info__)
 print("APP VERSION:", __version__, "\nWorking directory:", __current_path__, "\n", "*" * 50)
 print(pyfiglet.figlet_format("UAV SWARM CONTROL APP"))
+print("*" * 50)
+print("CURRENT TIME:", __current_time__)
 
 # UAVs object
 try:
@@ -94,7 +100,6 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         super().__init__()
         # UAVs
         self.uav_stream_threads = [None for _ in range(1, MAX_UAV_COUNT + 1)]
-        self.uav_streams = [None for _ in range(1, MAX_UAV_COUNT + 1)]
         self.uav_stream_frame_cnt = [0 for _ in range(1, MAX_UAV_COUNT + 1)]
         logger.log(f"Initialize detection model on {DEVICE}...", level="info")
         #
@@ -103,7 +108,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             YOLO(model_uav_paths[uav_index]) for uav_index in range(1, MAX_UAV_COUNT + 1)
         ]
         logger.log(
-            f"Detection model loaded successfully in {time.time() - start_time}s!", level="info"
+            f"Detection models loaded successfully in {time.time() - start_time}s!", level="info"
         )
         #
         self.init_application()
@@ -354,9 +359,21 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     "frameSize": DEFAULT_STREAM_SIZE,
                 }
 
-                self.uav_streams[uav_index - 1] = Stream(
-                    capture=capture,
-                    writer=writer,
+                stream_config = {
+                    "capture": capture,
+                    "writer": writer,
+                }
+
+                detection_model = (
+                    self.uav_detection_models[uav_index - 1]
+                    if UAVs[uav_index]["detection_enable"]
+                    else None
+                )
+
+                self.uav_stream_threads[uav_index - 1] = StreamQtThread(
+                    uav_index=uav_index,
+                    stream_config=stream_config,
+                    detection_model=detection_model,
                 )
 
                 logger.log(
@@ -364,17 +381,6 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                         -- Capture stream from {os.path.relpath(UAVs[uav_index]['streaming_address'], __current_path__)} \n\
                         -- Save recording to {os.path.relpath(DEFAULT_STREAM_VIDEO_LOG_PATHS[uav_index - 1], __current_path__) if UAVs[uav_index]['recording_enable'] else 'None'}",
                     level="info",
-                )
-
-                detection_model = (
-                    self.uav_detection_models[uav_index - 1]
-                    if UAVs[uav_index]["detection_enable"]
-                    else None
-                )
-                self.uav_stream_threads[uav_index - 1] = StreamQtThread(
-                    uav_index=uav_index,
-                    stream=self.uav_streams[uav_index - 1],
-                    detection_model=detection_model,
                 )
 
                 self.uav_stream_threads[uav_index - 1].change_image_signal.connect(

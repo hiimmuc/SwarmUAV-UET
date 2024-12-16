@@ -23,11 +23,6 @@ from utils.map_helpers import *
 from utils.map_utils import *
 from utils.qt_utils import *
 
-# from tkinter import filedialog
-
-
-# from interface_wrapper import UAVs
-
 parent_dir = Path(__file__).parent.parent
 
 

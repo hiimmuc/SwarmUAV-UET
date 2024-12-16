@@ -449,8 +449,8 @@ class Interface(QMainWindow):
         """
         screen_views = {
             "general_screen": self.uav_general_screen_views[uav_index - 1],
-            "ovv_screen": self.uav_ovv_screen_views[uav_index - 1],
             "stream_screen": self.uav_stream_screen_views[uav_index - 1],
+            "ovv_screen": self.uav_ovv_screen_views[uav_index - 1],
         }
 
         try:

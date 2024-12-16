@@ -1,5 +1,7 @@
 # cSpell:ignore imutils pyqt Pixmap ndarray,
 
+import platform
+
 import cv2
 import pandas as pd
 
@@ -19,11 +21,10 @@ def convert_cv2qt(cv_img, size=(640, 360)) -> QPixmap:
     Returns:
         image: RGB image with qt format
     """
-    cv_img = cv2.resize(src=cv_img, dsize=size, interpolation=cv2.INTER_LINEAR)
 
     rgb_image = cv2.cvtColor(
-        cv_img,
-        cv2.COLOR_BGR2RGB,
+        src=cv2.resize(src=cv_img, dsize=size, interpolation=cv2.INTER_NEAREST),
+        code=cv2.COLOR_BGR2RGB,
     )
 
     h, w, c = rgb_image.shape
@@ -119,3 +120,25 @@ def refine_table(table) -> None:
     header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
     header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
     header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+
+
+def get_system_information():
+    """
+    Get system information
+
+    Returns:
+        dict: System information
+    """
+    system_info = {
+        "System": platform.system(),
+        "Architecture": platform.architecture(),
+        "Node Name": platform.node(),
+        "Release": platform.release(),
+        "Version": platform.version(),
+        "Machine": platform.machine(),
+        "Processor": platform.processor(),
+    }
+    information = ""
+    for key, value in system_info.items():
+        information += f"{key}: {value}\n"
+    return information

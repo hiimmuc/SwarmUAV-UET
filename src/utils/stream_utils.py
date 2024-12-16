@@ -193,14 +193,17 @@ class Stream:
 class StreamQtThread(QThread):  # NOTE: slower than using Thread
     change_image_signal = pyqtSignal(np.ndarray, np.ndarray, list)
 
-    def __init__(self, uav_index: int, stream: Stream, detection_model: Any, **kwargs):
+    def __init__(self, uav_index: int, stream_config: dict, detection_model: Any, **kwargs):
         super().__init__()
         self.isRunning = False
         self.track_history = defaultdict(lambda: [])
 
-        self.stream = stream
         self.uav_index = uav_index
         self.model = detection_model
+        self.stream_config = stream_config
+        self.stream = Stream(
+            capture=self.stream_config["capture"], writer=self.stream_config["writer"]
+        )
 
     def is_alive(self):
         return self.isRunning
@@ -222,7 +225,7 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
                     processing_start = time.time()
                     # Use model to detect and track objects
                     if self.model is not None:
-                        results = self.model.track(
+                        tracking_results = self.model.track(
                             source=frame,
                             classes=0,  # 0: person
                             conf=0.5,
@@ -232,7 +235,10 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
                             verbose=False,
                         )
                         annotated_frame, track_ids, objects = draw_tracking_frame(
-                            frame, results, self.track_history, int(self.stream.get_fps()) * 3
+                            frame=frame,
+                            results=tracking_results,
+                            history=self.track_history,
+                            track_frame_limit=int(self.stream.get_fps()) * 3,  # 3 seconds history
                         )
 
                         results = [track_ids, objects]

@@ -14,6 +14,17 @@ from config.interface_config import *
 
 
 async def run(system_address, port, id, health_check=False):
+    """
+    Connects to a drone and optionally performs a health check.
+    Args:
+        system_address (str): The address of the drone system.
+        port (int): The port to connect to the drone.
+        id (int): The identifier for the drone.
+        health_check (bool, optional): If True, performs a health check to ensure the drone has a global position estimate. Defaults to False.
+    Returns:
+        None
+    """
+
     drone = System(port=port)
     await drone.connect(system_address=system_address)
 
