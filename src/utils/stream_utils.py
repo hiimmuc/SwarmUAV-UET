@@ -57,7 +57,7 @@ class Stream:
 
     def is_writer_opened(self):
         if hasattr(self, "writer"):
-            return self.writer.isOpened()
+            return self.writer.isOpened() if self.writer is not None else False
         else:
             return False
 

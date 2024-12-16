@@ -13,7 +13,7 @@ MODE = "simulation"  # "simulation" or "real"
 connection_allows = [True, True, True, True, True, True]
 streaming_enables = [True, False, False, False, False, False]
 detection_enables = [True, False, False, False, False, False]
-recording_enables = [True, True, True, True, True, True]
+recording_enables = [False, True, True, True, True, True]
 
 # 2. UAV settings
 AVAIL_UAV_INDEXES = [i for i in range(1, 7)]
