@@ -184,3 +184,5 @@ src/logs/recording/*
 src/logs/images/*
 src/logs/**/*
 src/logs/gps/*.txt
+src/backup/*
+!src/backup/.keep

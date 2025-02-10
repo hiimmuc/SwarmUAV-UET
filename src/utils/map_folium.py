@@ -3,21 +3,19 @@ import io
 from pathlib import Path
 
 import folium
-from folium import CustomIcon
 import folium.plugins
+from folium import CustomIcon, Map, Marker
+from folium.elements import MacroElement
 from folium.plugins import MarkerCluster
 from folium.plugins.draw import Draw
 from folium.raster_layers import TileLayer
 from jinja2 import Template
-from folium import Map, Marker
-from folium.elements import MacroElement
-
 
 NOW = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 _src_path = Path(__file__).resolve().parent.parent
 
-ICON_DIR = Path(__file__).parent.parent / 'assets' / 'icons'
-drone_icon_path = ICON_DIR / 'drone.png'
+ICON_DIR = Path(__file__).parent.parent / "assets" / "icons"
+drone_icon_path = ICON_DIR / "drone.png"
 
 titles = [
     TileLayer(
@@ -73,7 +71,8 @@ ICON = {
 
 
 class UpdateMarkerJs(MacroElement):
-    _template = Template("""
+    _template = Template(
+        """
         <script>
             // JavaScript code to update markers
             let droneMarkers = {};
@@ -91,7 +90,9 @@ class UpdateMarkerJs(MacroElement):
                 }
             }
         </script>
-    """)
+    """
+    )
+
 
 class MapFolium:
     def __init__(
@@ -106,7 +107,6 @@ class MapFolium:
         self.maker_cluster = MarkerCluster(
             name="1000 clustered icons", overlay=True, control=False, icon_create_function=None
         )
-        
 
     def _init_map(self, location: list, zoom_start: int) -> None:
         self.m = folium.Map(
@@ -217,8 +217,8 @@ class MapFolium:
     def add_marker(
         self, key: str, latitude: float, longitude: float, tooltip=None, icon=None
     ) -> None:
-        print("Adding", key, latitude, longitude)
-        print(type(longitude), type(latitude))
+        # print("Adding", key, latitude, longitude)
+        # print(type(longitude), type(latitude))
 
         # Use a custom icon if a file path is provided
         if icon and "icon_path" in icon:
@@ -226,7 +226,7 @@ class MapFolium:
             icon_path = str(icon["icon_path"])  # Convert PosixPath to string
             custom_icon = CustomIcon(
                 icon_image=icon_path,  # Path to the custom icon image
-                icon_size=(32, 32)     # Adjust the size as needed
+                icon_size=(32, 32),  # Adjust the size as needed
             )
             marker = folium.Marker(
                 location=[latitude, longitude],

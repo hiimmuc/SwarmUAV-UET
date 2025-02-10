@@ -1,6 +1,9 @@
 import os
 import subprocess
 
+os.environ["PX4_HOME_LAT"] = "21.064862"  # export PX4_HOME_LAT=21.043493300234438
+os.environ["PX4_HOME_LON"] = "105.792958"  # export PX4_HOME_LON=105.72807953895773
+
 PROTO = "udp"
 SERVER_HOST = ""
 DEFAULT_PORT = 50060

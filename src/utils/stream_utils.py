@@ -13,7 +13,7 @@ from config.stream_config import *
 from .model_utils import *
 
 
-# cspell: ignore BUFFERSIZE msleep ndarray videowriter NSTRIPES FRAMEBYTES imwrite
+# cspell: ignore BUFFERSIZE msleep ndarray videowriter NSTRIPES FRAMEBYTES imwrite imgsz
 class Stream:
     def __init__(self, capture: dict, writer: dict) -> None:
         self.capture_params = capture
@@ -21,7 +21,7 @@ class Stream:
 
         self.capture = None
         self.writer = None
-        self.connect()
+        # self.connect()
 
     def connect(self) -> bool:
         # Release previous capture and writer
@@ -37,7 +37,7 @@ class Stream:
         # self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, int(self.capture_params["width"]))
         # self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(self.capture_params["height"]))
         # self.capture.set(cv2.CAP_PROP_FPS, int(self.capture_params["fps"]))
-        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 3)
+        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 4)
 
         # Set writer properties
         if self.writer_params["enable"]:
@@ -220,33 +220,66 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
                 ret, frame = self.stream.read()
                 annotated_frame = np.zeros_like(frame)
                 elapsed_time = 0
-                results = [None]
+                results = None
                 if ret:
                     processing_start = time.time()
                     # Use model to detect and track objects
+                    task = "tracking"
                     if self.model is not None:
-                        tracking_results = self.model.track(
-                            source=frame,
-                            classes=0,  # 0: person
-                            conf=0.5,
-                            iou=0.5,
-                            device=DEVICE,
-                            persist=True,
-                            verbose=False,
-                        )
-                        annotated_frame, track_ids, objects = draw_tracking_frame(
-                            frame=frame,
-                            results=tracking_results,
-                            history=self.track_history,
-                            track_frame_limit=int(self.stream.get_fps()) * 3,  # 3 seconds history
-                        )
+                        if task == "tracking":
+                            tracking_results = self.model.track(
+                                source=frame,
+                                classes=0,  # 0: person
+                                conf=0.5,  # confidence
+                                iou=0.5,  # intersection over union
+                                imgsz=640,  # image size
+                                half=False,  # use half precision
+                                max_det=5,  # maximum detections per image
+                                stream_buffer=False,  # stream video frames buffer
+                                device=DEVICE,
+                                persist=True,
+                                verbose=False,
+                            )
+                            annotated_frame, track_ids, objects = draw_tracking_frame(
+                                frame=frame,
+                                results=tracking_results,
+                                history=self.track_history,
+                                track_frame_limit=int(self.stream.get_fps())
+                                * 3,  # 3 seconds history
+                            )
+                            results = [track_ids, objects]
+                            inference_time = (
+                                tracking_results[0].speed["preprocess"]
+                                + tracking_results[0].speed["inference"]
+                                + tracking_results[0].speed["postprocess"]
+                            )
+                        else:
+                            detection_results = self.model.predict(
+                                source=frame,
+                                conf=0.5,
+                                iou=0.5,
+                                imgsz=640,
+                                device=DEVICE,
+                                half=False,
+                                verbose=False,
+                            )
+                            annotated_frame, results = draw_detected_frame(
+                                frame=frame, results=detection_results
+                            )
 
-                        results = [track_ids, objects]
+                            inference_time = (
+                                detection_results[0].speed["preprocess"]
+                                + detection_results[0].speed["inference"]
+                                + detection_results[0].speed["postprocess"]
+                            )
                     else:
                         annotated_frame = frame
+                        inference_time = 0  # milliseconds
 
                     processing_end = time.time()
-                    elapsed_time = processing_end - processing_start
+                    elapsed_time = (
+                        processing_end - processing_start
+                    ) * 1000  # in milliseconds, including inference time
 
                     # write to saved video
                     if self.stream.is_writer_opened():
@@ -260,8 +293,9 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
                     )
 
                     # delay to match the FPS
-                    adaptive_delay = max(self.stream.get_fps(), elapsed_time)
-                    self.msleep(int(1000 * 1 / adaptive_delay))
+                    delay = max((1000 / self.stream.get_fps()), elapsed_time)
+                    self.msleep(int(delay - inference_time))
+                    # self.msleep(5)
                 else:
                     if self.stream.is_video():
                         self.stream.capture_reset()

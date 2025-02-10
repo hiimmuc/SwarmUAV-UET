@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'src/UI/interface_uav.ui'
+# Form implementation generated from reading ui file 'src/Qt/interface_uav.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -69,7 +69,7 @@ class Ui_MainWindow(object):
         self.page_name.setMaximumSize(QtCore.QSize(69, 69))
         self.page_name.setFrameShape(QtWidgets.QFrame.Box)
         self.page_name.setText("")
-        self.page_name.setPixmap(QtGui.QPixmap("src/UI/../../assets/icons/logo1.png"))
+        self.page_name.setPixmap(QtGui.QPixmap("src/Qt/../../assets/icons/logo1.png"))
         self.page_name.setScaledContents(True)
         self.page_name.setAlignment(QtCore.Qt.AlignCenter)
         self.page_name.setObjectName("page_name")
@@ -87,7 +87,7 @@ class Ui_MainWindow(object):
         self.logo2.setStyleSheet("background-color: white;")
         self.logo2.setFrameShape(QtWidgets.QFrame.Box)
         self.logo2.setText("")
-        self.logo2.setPixmap(QtGui.QPixmap("src/UI/../../assets/icons/logoUET.png"))
+        self.logo2.setPixmap(QtGui.QPixmap("src/Qt/../../assets/icons/logoUET.png"))
         self.logo2.setScaledContents(True)
         self.logo2.setAlignment(QtCore.Qt.AlignCenter)
         self.logo2.setWordWrap(True)
@@ -148,7 +148,7 @@ class Ui_MainWindow(object):
         self.general_screen_uav_6.setLineWidth(0)
         self.general_screen_uav_6.setText("")
         self.general_screen_uav_6.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_333x592.jpg")
         )
         self.general_screen_uav_6.setScaledContents(False)
         self.general_screen_uav_6.setAlignment(QtCore.Qt.AlignCenter)
@@ -169,7 +169,7 @@ class Ui_MainWindow(object):
         self.general_screen_uav_1.setLineWidth(0)
         self.general_screen_uav_1.setText("")
         self.general_screen_uav_1.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_333x592.jpg")
         )
         self.general_screen_uav_1.setScaledContents(False)
         self.general_screen_uav_1.setAlignment(QtCore.Qt.AlignCenter)
@@ -190,7 +190,7 @@ class Ui_MainWindow(object):
         self.general_screen_uav_3.setLineWidth(0)
         self.general_screen_uav_3.setText("")
         self.general_screen_uav_3.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_333x592.jpg")
         )
         self.general_screen_uav_3.setScaledContents(False)
         self.general_screen_uav_3.setAlignment(QtCore.Qt.AlignCenter)
@@ -211,7 +211,7 @@ class Ui_MainWindow(object):
         self.general_screen_uav_2.setLineWidth(0)
         self.general_screen_uav_2.setText("")
         self.general_screen_uav_2.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_333x592.jpg")
         )
         self.general_screen_uav_2.setScaledContents(False)
         self.general_screen_uav_2.setAlignment(QtCore.Qt.AlignCenter)
@@ -232,7 +232,7 @@ class Ui_MainWindow(object):
         self.general_screen_uav_4.setLineWidth(0)
         self.general_screen_uav_4.setText("")
         self.general_screen_uav_4.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_333x592.jpg")
         )
         self.general_screen_uav_4.setScaledContents(False)
         self.general_screen_uav_4.setAlignment(QtCore.Qt.AlignCenter)
@@ -253,7 +253,7 @@ class Ui_MainWindow(object):
         self.general_screen_uav_5.setLineWidth(0)
         self.general_screen_uav_5.setText("")
         self.general_screen_uav_5.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_333x592.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_333x592.jpg")
         )
         self.general_screen_uav_5.setScaledContents(False)
         self.general_screen_uav_5.setAlignment(QtCore.Qt.AlignCenter)
@@ -281,7 +281,7 @@ class Ui_MainWindow(object):
         self.stream_screen_1.setLineWidth(0)
         self.stream_screen_1.setText("")
         self.stream_screen_1.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/no_signal2_720x1280.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/no_signal2_720x1280.jpg")
         )
         self.stream_screen_1.setAlignment(QtCore.Qt.AlignCenter)
         self.stream_screen_1.setObjectName("stream_screen_1")
@@ -899,7 +899,7 @@ class Ui_MainWindow(object):
         self.stream_screen_2.setLineWidth(0)
         self.stream_screen_2.setText("")
         self.stream_screen_2.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/no_signal2_720x1280.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/no_signal2_720x1280.jpg")
         )
         self.stream_screen_2.setAlignment(QtCore.Qt.AlignCenter)
         self.stream_screen_2.setObjectName("stream_screen_2")
@@ -1516,7 +1516,7 @@ class Ui_MainWindow(object):
         self.stream_screen_3.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.stream_screen_3.setText("")
         self.stream_screen_3.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/no_signal2.jpg")
         )
         self.stream_screen_3.setAlignment(QtCore.Qt.AlignCenter)
         self.stream_screen_3.setObjectName("stream_screen_3")
@@ -2146,7 +2146,7 @@ class Ui_MainWindow(object):
         self.stream_screen_4.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.stream_screen_4.setText("")
         self.stream_screen_4.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/no_signal2.jpg")
         )
         self.stream_screen_4.setAlignment(QtCore.Qt.AlignCenter)
         self.stream_screen_4.setObjectName("stream_screen_4")
@@ -2769,7 +2769,7 @@ class Ui_MainWindow(object):
         self.stream_screen_5.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.stream_screen_5.setText("")
         self.stream_screen_5.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/no_signal2.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/no_signal2.jpg")
         )
         self.stream_screen_5.setAlignment(QtCore.Qt.AlignCenter)
         self.stream_screen_5.setObjectName("stream_screen_5")
@@ -3387,7 +3387,7 @@ class Ui_MainWindow(object):
         self.stream_screen_6.setLineWidth(0)
         self.stream_screen_6.setText("")
         self.stream_screen_6.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/no_signal2_720x1280.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/no_signal2_720x1280.jpg")
         )
         self.stream_screen_6.setAlignment(QtCore.Qt.AlignCenter)
         self.stream_screen_6.setObjectName("stream_screen_6")
@@ -4559,7 +4559,7 @@ class Ui_MainWindow(object):
         self.ovv_screen_uav_3.setLineWidth(0)
         self.ovv_screen_uav_3.setText("")
         self.ovv_screen_uav_3.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_180x320.jpg")
         )
         self.ovv_screen_uav_3.setScaledContents(False)
         self.ovv_screen_uav_3.setAlignment(QtCore.Qt.AlignCenter)
@@ -4580,7 +4580,7 @@ class Ui_MainWindow(object):
         self.ovv_screen_uav_5.setLineWidth(0)
         self.ovv_screen_uav_5.setText("")
         self.ovv_screen_uav_5.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_180x320.jpg")
         )
         self.ovv_screen_uav_5.setScaledContents(False)
         self.ovv_screen_uav_5.setAlignment(QtCore.Qt.AlignCenter)
@@ -4601,7 +4601,7 @@ class Ui_MainWindow(object):
         self.ovv_screen_uav_1.setLineWidth(0)
         self.ovv_screen_uav_1.setText("")
         self.ovv_screen_uav_1.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_180x320.jpg")
         )
         self.ovv_screen_uav_1.setScaledContents(False)
         self.ovv_screen_uav_1.setAlignment(QtCore.Qt.AlignCenter)
@@ -4622,7 +4622,7 @@ class Ui_MainWindow(object):
         self.ovv_screen_uav_2.setLineWidth(0)
         self.ovv_screen_uav_2.setText("")
         self.ovv_screen_uav_2.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_180x320.jpg")
         )
         self.ovv_screen_uav_2.setScaledContents(False)
         self.ovv_screen_uav_2.setAlignment(QtCore.Qt.AlignCenter)
@@ -4643,7 +4643,7 @@ class Ui_MainWindow(object):
         self.ovv_screen_uav_4.setLineWidth(0)
         self.ovv_screen_uav_4.setText("")
         self.ovv_screen_uav_4.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_180x320.jpg")
         )
         self.ovv_screen_uav_4.setScaledContents(False)
         self.ovv_screen_uav_4.setAlignment(QtCore.Qt.AlignCenter)
@@ -4664,7 +4664,7 @@ class Ui_MainWindow(object):
         self.ovv_screen_uav_6.setLineWidth(0)
         self.ovv_screen_uav_6.setText("")
         self.ovv_screen_uav_6.setPixmap(
-            QtGui.QPixmap("src/UI/../../assets/pictures/resized/nosignal_180x320.jpg")
+            QtGui.QPixmap("src/Qt/../../assets/pictures/resized/nosignal_180x320.jpg")
         )
         self.ovv_screen_uav_6.setScaledContents(False)
         self.ovv_screen_uav_6.setAlignment(QtCore.Qt.AlignCenter)
@@ -5009,7 +5009,7 @@ class Ui_MainWindow(object):
         )
         icon = QtGui.QIcon()
         icon.addPixmap(
-            QtGui.QPixmap("src/UI/icons/pauseMission.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
+            QtGui.QPixmap("src/Qt/icons/pauseMission.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
         self.btn_pause_resume.setIcon(icon)
         self.btn_pause_resume.setIconSize(QtCore.QSize(24, 24))
@@ -5039,7 +5039,7 @@ class Ui_MainWindow(object):
         )
         icon1 = QtGui.QIcon()
         icon1.addPixmap(
-            QtGui.QPixmap("src/UI/icons/arm.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
+            QtGui.QPixmap("src/Qt/icons/arm.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
         self.btn_arm.setIcon(icon1)
         self.btn_arm.setIconSize(QtCore.QSize(24, 24))
@@ -5069,7 +5069,7 @@ class Ui_MainWindow(object):
         )
         icon2 = QtGui.QIcon()
         icon2.addPixmap(
-            QtGui.QPixmap("src/UI/icons/connect.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
+            QtGui.QPixmap("src/Qt/icons/connect.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
         self.btn_connect.setIcon(icon2)
         self.btn_connect.setIconSize(QtCore.QSize(24, 24))
@@ -5099,7 +5099,7 @@ class Ui_MainWindow(object):
         )
         icon3 = QtGui.QIcon()
         icon3.addPixmap(
-            QtGui.QPixmap("src/UI/icons/mission.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
+            QtGui.QPixmap("src/Qt/icons/mission.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
         self.btn_mission.setIcon(icon3)
         self.btn_mission.setIconSize(QtCore.QSize(24, 24))
@@ -5125,7 +5125,7 @@ class Ui_MainWindow(object):
         )
         icon4 = QtGui.QIcon()
         icon4.addPixmap(
-            QtGui.QPixmap("src/UI/icons/toggle_camera.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+            QtGui.QPixmap("src/Qt/icons/toggle_camera.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
         )
         self.btn_toggle_camera.setIcon(icon4)
         self.btn_toggle_camera.setIconSize(QtCore.QSize(24, 24))
@@ -5151,7 +5151,7 @@ class Ui_MainWindow(object):
         )
         icon5 = QtGui.QIcon()
         icon5.addPixmap(
-            QtGui.QPixmap("src/UI/icons/return.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
+            QtGui.QPixmap("src/Qt/icons/return.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
         self.btn_return.setIcon(icon5)
         self.btn_return.setIconSize(QtCore.QSize(24, 24))
@@ -5181,7 +5181,7 @@ class Ui_MainWindow(object):
         )
         icon6 = QtGui.QIcon()
         icon6.addPixmap(
-            QtGui.QPixmap("src/UI/icons/landing.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
+            QtGui.QPixmap("src/Qt/icons/landing.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
         self.btn_landing.setIcon(icon6)
         self.btn_landing.setIconSize(QtCore.QSize(24, 24))
@@ -5210,7 +5210,7 @@ class Ui_MainWindow(object):
             "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
         )
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap("src/UI/icons/rtl.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7.addPixmap(QtGui.QPixmap("src/Qt/icons/rtl.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btn_rtl.setIcon(icon7)
         self.btn_rtl.setIconSize(QtCore.QSize(24, 24))
         self.btn_rtl.setObjectName("btn_rtl")
@@ -5239,7 +5239,7 @@ class Ui_MainWindow(object):
         )
         icon8 = QtGui.QIcon()
         icon8.addPixmap(
-            QtGui.QPixmap("src/UI/icons/takeOff.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
+            QtGui.QPixmap("src/Qt/icons/takeOff.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
         self.btn_take_off.setIcon(icon8)
         self.btn_take_off.setIconSize(QtCore.QSize(24, 24))
@@ -5269,7 +5269,7 @@ class Ui_MainWindow(object):
         )
         icon9 = QtGui.QIcon()
         icon9.addPixmap(
-            QtGui.QPixmap("src/UI/icons/pushMission.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
+            QtGui.QPixmap("src/Qt/icons/pushMission.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
         self.btn_push_mission.setIcon(icon9)
         self.btn_push_mission.setIconSize(QtCore.QSize(24, 24))
@@ -5299,7 +5299,7 @@ class Ui_MainWindow(object):
         )
         icon10 = QtGui.QIcon()
         icon10.addPixmap(
-            QtGui.QPixmap("src/UI/icons/disarm.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
+            QtGui.QPixmap("src/Qt/icons/disarm.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
         self.btn_disarm.setIcon(icon10)
         self.btn_disarm.setIconSize(QtCore.QSize(24, 24))
@@ -5329,7 +5329,7 @@ class Ui_MainWindow(object):
         )
         icon11 = QtGui.QIcon()
         icon11.addPixmap(
-            QtGui.QPixmap("src/UI/icons/toggleOpen.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
+            QtGui.QPixmap("src/Qt/icons/toggleOpen.png"), QtGui.QIcon.Selected, QtGui.QIcon.On
         )
         self.btn_open_close.setIcon(icon11)
         self.btn_open_close.setIconSize(QtCore.QSize(24, 24))
@@ -5372,7 +5372,7 @@ class Ui_MainWindow(object):
         self.page_name_2.setMaximumSize(QtCore.QSize(69, 69))
         self.page_name_2.setFrameShape(QtWidgets.QFrame.Box)
         self.page_name_2.setText("")
-        self.page_name_2.setPixmap(QtGui.QPixmap("src/UI/../../assets/icons/logo1.png"))
+        self.page_name_2.setPixmap(QtGui.QPixmap("src/Qt/../../assets/icons/logo1.png"))
         self.page_name_2.setScaledContents(True)
         self.page_name_2.setAlignment(QtCore.Qt.AlignCenter)
         self.page_name_2.setObjectName("page_name_2")
@@ -5390,7 +5390,7 @@ class Ui_MainWindow(object):
         self.logo2_2.setStyleSheet("background-color: white;")
         self.logo2_2.setFrameShape(QtWidgets.QFrame.Box)
         self.logo2_2.setText("")
-        self.logo2_2.setPixmap(QtGui.QPixmap("src/UI/../../assets/icons/logoUET.png"))
+        self.logo2_2.setPixmap(QtGui.QPixmap("src/Qt/../../assets/icons/logoUET.png"))
         self.logo2_2.setScaledContents(True)
         self.logo2_2.setAlignment(QtCore.Qt.AlignCenter)
         self.logo2_2.setWordWrap(True)
@@ -5482,78 +5482,54 @@ class Ui_MainWindow(object):
         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.groupBox)
         self.verticalLayout_12.setSizeConstraint(QtWidgets.QLayout.SetMaximumSize)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
-        self.btn_map_show_drones = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_map_show_drones.sizePolicy().hasHeightForWidth())
-        self.btn_map_show_drones.setSizePolicy(sizePolicy)
-        self.btn_map_show_drones.setAutoFillBackground(False)
-        self.btn_map_show_drones.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
-        self.btn_map_show_drones.setAutoDefault(False)
-        self.btn_map_show_drones.setObjectName("btn_map_show_drones")
-        self.verticalLayout_12.addWidget(self.btn_map_show_drones)
-        self.btn_map_show_points = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_map_show_points.sizePolicy().hasHeightForWidth())
-        self.btn_map_show_points.setSizePolicy(sizePolicy)
-        self.btn_map_show_points.setAutoFillBackground(False)
-        self.btn_map_show_points.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
-        self.btn_map_show_points.setObjectName("btn_map_show_points")
-        self.verticalLayout_12.addWidget(self.btn_map_show_points)
-        self.btn_map_refresh_data = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_map_refresh_data.sizePolicy().hasHeightForWidth())
-        self.btn_map_refresh_data.setSizePolicy(sizePolicy)
-        self.btn_map_refresh_data.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
-        self.btn_map_refresh_data.setObjectName("btn_map_refresh_data")
-        self.verticalLayout_12.addWidget(self.btn_map_refresh_data)
-        self.btn_map_export_points = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_map_export_points.sizePolicy().hasHeightForWidth())
-        self.btn_map_export_points.setSizePolicy(sizePolicy)
-        self.btn_map_export_points.setAutoFillBackground(False)
-        self.btn_map_export_points.setStyleSheet(
-            "QPushButton{background-color: rgb(243, 243, 243);}\n"
-            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
-        )
-        self.btn_map_export_points.setAutoDefault(False)
-        self.btn_map_export_points.setObjectName("btn_map_export_points")
-        self.verticalLayout_12.addWidget(self.btn_map_export_points)
         self.horizontalLayout_20 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_20.setObjectName("horizontalLayout_20")
         self.noArea_label = QtWidgets.QLabel(self.groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.noArea_label.sizePolicy().hasHeightForWidth())
+        self.noArea_label.setSizePolicy(sizePolicy)
         self.noArea_label.setFrameShape(QtWidgets.QFrame.Box)
         self.noArea_label.setObjectName("noArea_label")
         self.horizontalLayout_20.addWidget(self.noArea_label)
-        self.noArea_value = QtWidgets.QTextEdit(self.groupBox)
-        self.noArea_value.setFrameShape(QtWidgets.QFrame.Box)
-        self.noArea_value.setObjectName("noArea_value")
-        self.horizontalLayout_20.addWidget(self.noArea_value)
+        self.noArea_line_edit = QtWidgets.QLineEdit(self.groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.noArea_line_edit.sizePolicy().hasHeightForWidth())
+        self.noArea_line_edit.setSizePolicy(sizePolicy)
+        self.noArea_line_edit.setStyleSheet("background-color: rgb(180, 180, 180);")
+        self.noArea_line_edit.setObjectName("noArea_line_edit")
+        self.horizontalLayout_20.addWidget(self.noArea_line_edit)
+        self.horizontalLayout_20.setStretch(0, 1)
+        self.horizontalLayout_20.setStretch(1, 1)
         self.verticalLayout_12.addLayout(self.horizontalLayout_20)
+        self.horizontalLayout_14 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_14.setObjectName("horizontalLayout_14")
+        self.gridSize_label = QtWidgets.QLabel(self.groupBox)
+        self.gridSize_label.setFrameShape(QtWidgets.QFrame.Box)
+        self.gridSize_label.setObjectName("gridSize_label")
+        self.horizontalLayout_14.addWidget(self.gridSize_label)
+        self.gridSize_line_edit = QtWidgets.QLineEdit(self.groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.gridSize_line_edit.sizePolicy().hasHeightForWidth())
+        self.gridSize_line_edit.setSizePolicy(sizePolicy)
+        self.gridSize_line_edit.setAutoFillBackground(False)
+        self.gridSize_line_edit.setStyleSheet("background-color: rgb(204, 204, 204);")
+        self.gridSize_line_edit.setObjectName("gridSize_line_edit")
+        self.horizontalLayout_14.addWidget(self.gridSize_line_edit)
+        self.horizontalLayout_14.setStretch(0, 1)
+        self.horizontalLayout_14.setStretch(1, 1)
+        self.verticalLayout_12.addLayout(self.horizontalLayout_14)
         self.btn_map_split_area = QtWidgets.QPushButton(self.groupBox)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
@@ -5570,6 +5546,55 @@ class Ui_MainWindow(object):
         self.btn_map_split_area.setAutoDefault(False)
         self.btn_map_split_area.setObjectName("btn_map_split_area")
         self.verticalLayout_12.addWidget(self.btn_map_split_area)
+        self.btn_map_show_grid_points = QtWidgets.QPushButton(self.groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.btn_map_show_grid_points.sizePolicy().hasHeightForWidth()
+        )
+        self.btn_map_show_grid_points.setSizePolicy(sizePolicy)
+        self.btn_map_show_grid_points.setAutoFillBackground(False)
+        self.btn_map_show_grid_points.setStyleSheet(
+            "QPushButton{background-color: rgb(243, 243, 243);}\n"
+            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
+        )
+        self.btn_map_show_grid_points.setObjectName("btn_map_show_grid_points")
+        self.verticalLayout_12.addWidget(self.btn_map_show_grid_points)
+        self.btn_map_create_routes = QtWidgets.QPushButton(self.groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btn_map_create_routes.sizePolicy().hasHeightForWidth())
+        self.btn_map_create_routes.setSizePolicy(sizePolicy)
+        self.btn_map_create_routes.setAutoFillBackground(False)
+        self.btn_map_create_routes.setStyleSheet(
+            "QPushButton{background-color: rgb(243, 243, 243);}\n"
+            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
+        )
+        self.btn_map_create_routes.setAutoDefault(False)
+        self.btn_map_create_routes.setObjectName("btn_map_create_routes")
+        self.verticalLayout_12.addWidget(self.btn_map_create_routes)
+        self.btn_map_reduce_points = QtWidgets.QPushButton(self.groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btn_map_reduce_points.sizePolicy().hasHeightForWidth())
+        self.btn_map_reduce_points.setSizePolicy(sizePolicy)
+        self.btn_map_reduce_points.setAutoFillBackground(False)
+        self.btn_map_reduce_points.setStyleSheet(
+            "QPushButton{background-color: rgb(243, 243, 243);}\n"
+            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
+        )
+        self.btn_map_reduce_points.setAutoDefault(False)
+        self.btn_map_reduce_points.setObjectName("btn_map_reduce_points")
+        self.verticalLayout_12.addWidget(self.btn_map_reduce_points)
         self.btn_map_toggle_route = QtWidgets.QPushButton(self.groupBox)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
@@ -5586,34 +5611,49 @@ class Ui_MainWindow(object):
         self.btn_map_toggle_route.setAutoDefault(False)
         self.btn_map_toggle_route.setObjectName("btn_map_toggle_route")
         self.verticalLayout_12.addWidget(self.btn_map_toggle_route)
-        self.btn_map_export_grid = QtWidgets.QPushButton(self.groupBox)
+        self.btn_map_export_plan = QtWidgets.QPushButton(self.groupBox)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_map_export_grid.sizePolicy().hasHeightForWidth())
-        self.btn_map_export_grid.setSizePolicy(sizePolicy)
-        self.btn_map_export_grid.setAutoFillBackground(False)
-        self.btn_map_export_grid.setStyleSheet(
+        sizePolicy.setHeightForWidth(self.btn_map_export_plan.sizePolicy().hasHeightForWidth())
+        self.btn_map_export_plan.setSizePolicy(sizePolicy)
+        self.btn_map_export_plan.setAutoFillBackground(False)
+        self.btn_map_export_plan.setStyleSheet(
             "QPushButton{background-color: rgb(243, 243, 243);}\n"
             "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
         )
-        self.btn_map_export_grid.setAutoDefault(False)
-        self.btn_map_export_grid.setObjectName("btn_map_export_grid")
-        self.verticalLayout_12.addWidget(self.btn_map_export_grid)
-        self.verticalLayout_12.setStretch(0, 1)
-        self.verticalLayout_12.setStretch(1, 1)
+        self.btn_map_export_plan.setAutoDefault(False)
+        self.btn_map_export_plan.setObjectName("btn_map_export_plan")
+        self.verticalLayout_12.addWidget(self.btn_map_export_plan)
+        self.btn_map_refresh_data = QtWidgets.QPushButton(self.groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btn_map_refresh_data.sizePolicy().hasHeightForWidth())
+        self.btn_map_refresh_data.setSizePolicy(sizePolicy)
+        self.btn_map_refresh_data.setStyleSheet(
+            "QPushButton{background-color: rgb(243, 243, 243);}\n"
+            "QPushButton::pressed{background-color: rgb(255, 0, 0);}"
+        )
+        self.btn_map_refresh_data.setObjectName("btn_map_refresh_data")
+        self.verticalLayout_12.addWidget(self.btn_map_refresh_data)
+        self.spacing_label = QtWidgets.QLabel(self.groupBox)
+        self.spacing_label.setText("")
+        self.spacing_label.setObjectName("spacing_label")
+        self.verticalLayout_12.addWidget(self.spacing_label)
         self.verticalLayout_12.setStretch(2, 1)
         self.verticalLayout_12.setStretch(3, 1)
         self.verticalLayout_12.setStretch(4, 1)
         self.verticalLayout_12.setStretch(5, 1)
         self.verticalLayout_12.setStretch(6, 1)
         self.verticalLayout_12.setStretch(7, 1)
+        self.verticalLayout_12.setStretch(8, 1)
+        self.verticalLayout_12.setStretch(9, 5)
         self.verticalLayout_11.addWidget(self.groupBox)
-        self.verticalLayout_11.setStretch(0, 1)
-        self.verticalLayout_11.setStretch(1, 1)
-        self.verticalLayout_11.setStretch(2, 100)
         self.verticalLayout_22.addLayout(self.verticalLayout_11)
         self.mapDisplay.addLayout(self.verticalLayout_22)
         self.MapWebView = QWebView(self.RescueMapPage)
@@ -5642,7 +5682,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.stackedWidget)
         MainWindow.setCentralWidget(self.centralWidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 20))
         self.menubar.setObjectName("menubar")
         self.menuView = QtWidgets.QMenu(self.menubar)
         self.menuView.setObjectName("menuView")
@@ -5694,7 +5734,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuView.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(1)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -5900,25 +5940,15 @@ class Ui_MainWindow(object):
         self.area_label.setText(_translate("MainWindow", "Area (m2): "))
         self.area_value.setText(_translate("MainWindow", "...."))
         self.groupBox.setTitle(_translate("MainWindow", "Control Buttons"))
-        self.btn_map_show_drones.setText(_translate("MainWindow", "Display drones"))
-        self.btn_map_show_points.setText(_translate("MainWindow", "Display points"))
-        self.btn_map_refresh_data.setText(_translate("MainWindow", "Refresh"))
-        self.btn_map_export_points.setText(_translate("MainWindow", "Export points"))
         self.noArea_label.setText(_translate("MainWindow", "# Area"))
-        self.noArea_value.setHtml(
-            _translate(
-                "MainWindow",
-                '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n'
-                '<html><head><meta name="qrichtext" content="1" /><style type="text/css">\n'
-                "p, li { white-space: pre-wrap; }\n"
-                "</style></head><body style=\" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-                '<p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Enter here</p>\n'
-                '<p align="center" style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><br /></p></body></html>',
-            )
-        )
-        self.btn_map_split_area.setText(_translate("MainWindow", "Split Area"))
+        self.gridSize_label.setText(_translate("MainWindow", "Grid size"))
+        self.btn_map_split_area.setText(_translate("MainWindow", "Display mission areas"))
+        self.btn_map_show_grid_points.setText(_translate("MainWindow", "Display grid points"))
+        self.btn_map_create_routes.setText(_translate("MainWindow", "Create routes"))
+        self.btn_map_reduce_points.setText(_translate("MainWindow", "Reduce points"))
         self.btn_map_toggle_route.setText(_translate("MainWindow", "On/Off Route"))
-        self.btn_map_export_grid.setText(_translate("MainWindow", "Export grid"))
+        self.btn_map_export_plan.setText(_translate("MainWindow", "Export mission plans"))
+        self.btn_map_refresh_data.setText(_translate("MainWindow", "Refresh"))
         self.menuView.setTitle(_translate("MainWindow", "Page view"))
         self.menuScreen_0_Main_Page.setTitle(_translate("MainWindow", "UAV views"))
         self.actionScreen_7_Rescue_map.setText(_translate("MainWindow", "Rescue map"))

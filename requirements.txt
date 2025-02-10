@@ -34,3 +34,8 @@ tqdm
 folium
 PyYAML==6.0.2
 future
+pyfiglet
+colorlog
+geographiclib
+pyserial
+serial

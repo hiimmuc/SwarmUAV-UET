@@ -1,4 +1,6 @@
+echo "===========Setting up MAVSDK==========="
 cd dependencies/
+rm -rf MAVSDK-Python/
 
 git clone https://github.com/mavlink/MAVSDK-Python --recursive
 cd MAVSDK-Python
@@ -13,5 +15,5 @@ pip3 install -e .
 sudo apt-get install python3-grpcio
 pip3 install --force mavsdk
 pip3 install asyncio
-
+echo "Done"
 cd ..

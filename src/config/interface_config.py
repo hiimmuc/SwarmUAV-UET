@@ -48,6 +48,9 @@ pause_img_paths["all"] = f"{ROOT_DIR}/assets/pictures/pause_screen.jpg"
 map_html_path = f"file://{ROOT_DIR}/assets/map.html"
 map_html_updated_path = f"file://{SRC_DIR}/data/map.html"
 
+map_ovv_html_path = f"file://{ROOT_DIR}/assets/map_ovv.html"
+map_ovv_html_updated_path = f"file://{SRC_DIR}/data/map.html"
+
 # displayed_parameter_list
 displayed_parameter_list = [
     "MIS_TAKEOFF_ALT",  # Take-off altitude

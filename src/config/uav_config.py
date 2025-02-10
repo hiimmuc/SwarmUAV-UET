@@ -131,3 +131,6 @@ plans_log_dir = f"{SRC_DIR}/logs/points/"
 parameter_data_files = [
     f"{SRC_DIR}/data/parameters/param_uav_{i}.txt" for i in range(1, MAX_UAV_COUNT + 1)
 ]
+drone_init_pos_files = [
+    f"{SRC_DIR}/logs/drone_init_pos/uav_{i}.txt" for i in range(1, MAX_UAV_COUNT + 1)
+]

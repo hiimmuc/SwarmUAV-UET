@@ -34,7 +34,7 @@ from utils.serial_utils import *
 from utils.stream_utils import *
 
 # cspell: ignore UAVs mavsdk asyncqt figlet ndarray offboard pixmap qgroundcontrol rtcm imwrite dsize fourcc imread
-__version__ = "0.12.16.1"
+__version__ = "1.02.10.1"
 __current_time__ = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 __current_path__ = os.path.dirname(os.path.abspath(__file__))
 __system_info__ = get_system_information()
@@ -126,6 +126,10 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         Returns:
             None
         """
+        # set default views
+        self.ui.stackedWidget.setCurrentIndex(0)
+        self.ui.tabWidget.setCurrentIndex(0)
+
         # set buttons click events
         self._button_clicked_event()
 
@@ -383,8 +387,14 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     level="info",
                 )
 
+                try:
+                    self.uav_stream_threads[uav_index - 1].change_image_signal.disconnect()
+                except Exception as e:
+                    pass
+
                 self.uav_stream_threads[uav_index - 1].change_image_signal.connect(
-                    self.stream_on_uav_screen
+                    self.stream_on_uav_screen,
+                    Qt.QueuedConnection,
                 )
 
                 logger.log(f"UAV-{uav_index} streaming thread created!", level="info")
@@ -842,6 +852,12 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 UAVs[uav_index]["init_params"]["longitude"] = float(
                     UAVs[uav_index]["status"]["position_status"][1]
                 )
+
+                # save initial position to file
+                with open(drone_init_pos_files[uav_index - 1], "w") as f:
+                    f.write(
+                        f"{UAVs[uav_index]['init_params']['latitude']}, {UAVs[uav_index]['init_params']['longitude']}"
+                    )
 
                 # update UAV information
                 UAVs[uav_index]["status"]["connection_status"] = True
@@ -1608,6 +1624,9 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             )
 
             if UAVs[uav_index]["detection_enable"]:
+                if len(detected_results) != 2:
+                    return
+
                 track_ids, objects = detected_results
                 for track_id, obj in zip(track_ids, objects):
                     if obj["detected"] and obj["class"] == "person":

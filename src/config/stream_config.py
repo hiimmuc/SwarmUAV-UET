@@ -12,12 +12,12 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Do not change
 SRC_DIR = Path(__file__).parent.parent
 ROOT_DIR = SRC_DIR.parent
-NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+NOW = datetime.now().strftime("%y-%m-%d_%H-%M-%S")
 
 #
 DEFAULT_STREAM_SCREEN = "general_screen"  # NOTE: Change between "general_screen" or "stream_screen" or "ovv_screen" or "all"
 DEFAULT_STREAM_SOURCE = (
-    "videos"  # NOTE: Change between "streams" or "rtsp" or "webcam" or "videos"
+    "streams"  # NOTE: Change between "streams" or "rtsp" or "webcam" or "videos"
 )
 DEFAULT_STREAM_SIZE = (320, 180)  # NOTE Change for modify recording settings
 DEFAULT_STREAM_FPS = 30  # NOTE Change for modify frame rate of streaming
