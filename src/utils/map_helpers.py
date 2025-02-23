@@ -466,5 +466,19 @@ def generate_grid(vertices, spacing_m):
     return points
 
 
+def remove_duplicate_pts(vertices):
+    """
+    Remove duplicate points from a list of vertices.
+
+    :param vertices: List of (x, y) tuples for the vertices.
+    :return: List of (x, y) tuples for the vertices with duplicates removed.
+    """
+    temp = []
+    for i in vertices:
+        if i not in temp:
+            temp.append(i)
+    return temp
+
+
 if __name__ == "__main__":
     pass

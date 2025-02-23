@@ -37,11 +37,6 @@ parent_dir = Path(__file__).parent.parent
 drone_icon_path = "../assets/icons/drone.png"
 dot_icon_path = "../assets/icons/red_dot.png"
 
-rotated_area_list = []
-grid_enabled = False
-grid_points = []
-final_grid = []
-
 """NOTE:
 Main map: leaflet.js (html)
 - Draw points, lines, polygons
@@ -67,10 +62,11 @@ class Map(Interface):
 
     drone_path_enabled = False
     geodata = {}
-    position_list = []
-    drone_path_keys = []
-    drone_marker_keys = []
-    drone_area_keys = []
+
+    drone_areas_dict = {}
+    drone_paths_dict = {}
+    drone_markers_dict = {}
+    drone_initial_positions = {}
 
     def __init__(self):
         Interface.__init__(self)
@@ -165,11 +161,11 @@ class Map(Interface):
 
             if self.drone_path_enabled:
                 # Remove all previous markers
-                for key in self.drone_path_keys:
+                for key in self.drone_paths_dict.keys():
                     self.rescue_map.deletePolyLine(key)
                     self.ovv_map.deletePolyLine(key)
                     # print("Removed path:", key)
-                self.drone_path_keys = []
+                self.drone_paths_dict = {}
                 self.drone_path_enabled = False
                 return
             else:
@@ -190,7 +186,7 @@ class Map(Interface):
                     self.ovv_map.drawPolyLine(
                         f"Path_{i}_0", [start, end], options=dict(color=color, weight=5)
                     )
-                    self.drone_path_keys.append(f"Path_{i}_0")
+                    self.drone_paths_dict[f"Path_{i}_0"] = (start, end)
 
                     # within area
                     for j in range(len(value)):
@@ -206,7 +202,7 @@ class Map(Interface):
                         self.ovv_map.drawPolyLine(
                             f"Path_{i}_{j}", [start, end], options=dict(color=color, weight=5)
                         )
-                        self.drone_path_keys.append(f"Path_{i}_{j}")
+                        self.drone_paths_dict[f"Path_{i}_{j}"] = (start, end)
                 return
         except Exception as e:
             logger.log(repr(e), level="error")
@@ -238,10 +234,10 @@ class Map(Interface):
                 pprint.pprint(grid_points)
 
             # Remove all previous markers
-            for key in self.drone_marker_keys:
+            for key in self.drone_markers_dict.keys():
                 self.rescue_map.deleteMarker(key)
                 self.ovv_map.deleteMarker(key)
-            self.drone_marker_keys = []
+            self.drone_markers_dict = {}
 
             # Show grid points on the map
             self.process_grid_points(grid_points)
@@ -251,67 +247,81 @@ class Map(Interface):
             logger.log(repr(e), level="error")
             self.popup_msg(
                 f"Error: {repr(e)}, try to modify the grid size or number of areas",
-                src="Show grid points",
-                level="error",
+                src_msg="Show grid points",
+                type_msg="error",
             )
 
     def process_grid_points(self, grid_points):
-        # Show grid points on the map
-        self.area_grid_points = {}
+        try:
+            # Show grid points on the map
+            self.area_grid_points = {}
 
-        if self.multi_area:
-            for ind, area in enumerate(grid_points):
-                self.ordered_grid_points = find_path(area, self.drone_position_list[0])
+            if self.multi_area:
+                for ind, area in enumerate(grid_points):
+                    self.ordered_grid_points = find_path(area, self.drone_position_list[0])
+                    self.ordered_grid_points = remove_duplicate_pts(self.ordered_grid_points)
 
-                # avoid plotting too many points
-                if len(self.ordered_grid_points) > 100:
-                    logger.log(
-                        "Two many points to plot, try to increase grid size!!", level="warning"
-                    )
-                    return
+                    # avoid plotting too many points
+                    if len(self.ordered_grid_points) > 100:
+                        logger.log(
+                            "Two many points to plot, try to increase grid size!!", level="warning"
+                        )
+                        return
+
+                    for i, point in enumerate(self.ordered_grid_points):
+                        self.rescue_map.addMarker(
+                            f"A{ind + 1}P{i + 1}",
+                            float(point[0]),
+                            float(point[1]),
+                            **dict(icon=str(dot_icon_path), iconSize={"width": 5, "height": 5}),
+                        )
+                        self.ovv_map.addMarker(
+                            f"A{ind + 1}P{i + 1}",
+                            float(point[0]),
+                            float(point[1]),
+                            **dict(icon=str(dot_icon_path), iconSize={"width": 5, "height": 5}),
+                        )
+
+                        self.drone_markers_dict[f"A{ind + 1}P{i + 1}"] = point
+
+                    self.area_grid_points[f"Area_{ind + 1}"] = list(self.ordered_grid_points)
+                    # write to file
+                    with open(f"{parent_dir}/src/logs/points/points{ind + 1}.txt", "w") as file:
+                        for lat, lon in self.ordered_grid_points:
+                            file.write(f"{lat}, {lon}\n")
+            else:
+                self.ordered_grid_points = find_path(grid_points, self.drone_position_list[0])
+                self.ordered_grid_points = remove_duplicate_pts(self.ordered_grid_points)
 
                 for i, point in enumerate(self.ordered_grid_points):
                     self.rescue_map.addMarker(
-                        f"A{ind + 1}P{i + 1}",
+                        f"A{1}P{i + 1}",
                         float(point[0]),
                         float(point[1]),
                         **dict(icon=str(dot_icon_path), iconSize={"width": 5, "height": 5}),
                     )
                     self.ovv_map.addMarker(
-                        f"A{ind + 1}P{i + 1}",
+                        f"A{1}P{i + 1}",
                         float(point[0]),
                         float(point[1]),
                         **dict(icon=str(dot_icon_path), iconSize={"width": 5, "height": 5}),
                     )
-                    self.drone_marker_keys.append(f"A{ind + 1}P{i + 1}")
 
-                self.area_grid_points[f"Area_{ind}"] = self.ordered_grid_points
+                    self.drone_markers_dict[f"A{1}P{i + 1}"] = point
+
+                self.area_grid_points["Area_1"] = list(self.ordered_grid_points)
                 # write to file
-                with open(f"{parent_dir}/src/logs/points/points{ind + 1}.txt", "w") as file:
+                with open(f"{parent_dir}/src/logs/points/points1.txt", "w") as file:
                     for lat, lon in self.ordered_grid_points:
                         file.write(f"{lat}, {lon}\n")
-        else:
-            self.ordered_grid_points = find_path(grid_points, self.drone_position_list[0])
-            for i, point in enumerate(self.ordered_grid_points):
-                self.rescue_map.addMarker(
-                    f"A{1}P{i + 1}",
-                    float(point[0]),
-                    float(point[1]),
-                    **dict(icon=str(dot_icon_path), iconSize={"width": 5, "height": 5}),
-                )
-                self.ovv_map.addMarker(
-                    f"A{1}P{i + 1}",
-                    float(point[0]),
-                    float(point[1]),
-                    **dict(icon=str(dot_icon_path), iconSize={"width": 5, "height": 5}),
-                )
-                self.drone_marker_keys.append(f"A{1}P{i + 1}")
 
-            self.area_grid_points["Area_1"] = self.ordered_grid_points
-            # write to file
-            with open(f"{parent_dir}/src/logs/points/points1.txt", "w") as file:
-                for lat, lon in self.ordered_grid_points:
-                    file.write(f"{lat}, {lon}\n")
+        except Exception as e:
+            logger.log(repr(e), level="error")
+            self.popup_msg(
+                f"Error: {repr(e)}, try to modify the grid size or number of areas",
+                src_msg="Show grid points",
+                type_msg="error",
+            )
 
     def btn_refresh_data_callback(self):
         """Refresh the data on the map"""
@@ -326,48 +336,51 @@ class Map(Interface):
             filename = QFileDialog.getOpenFileName(
                 parent=self,
                 caption="Open map file",
-                directory=f"{parent_dir}/src/logs/area/",
-                initialFilter="Files (*.TXT *.txt *.plan)",
+                directory=f"{parent_dir}/src/logs/",
+                initialFilter="Files (*.json)",
             )[0]
             # print("Open file:", filename)
             if filename:
-                with open(file=filename, mode="r") as file:
-                    data = file.read().strip().split("\n")
-                    for line in data:
-                        lat, lon = line.split(",")
-                        points_from_file.append([float(lat), float(lon)])
+                with open(filename, "r") as file:
+                    data = json.load(file)
             else:
                 logger.log("No file selected, plotting default grid", level="warning")
-                points_from_file = self.geodata.get("Points", [])
 
             if len(points_from_file) < 3:
                 print("Invalid area points, must be at least 3 points")
                 return
 
-            # from position list to polygon, line, and markers draws as geojson
-            geojson = {}
-
-            if points_from_file[0] != points_from_file[-1]:
-                points_from_file.append(points_from_file[0])
-
-            geojson.setdefault("Polygon", []).append(points_from_file[:])
-
-            for ind, (lat, lon) in enumerate(points_from_file[:-1]):
-                geojson.setdefault("Points", []).append([float(lat), float(lon)])
-                geojson.setdefault("LineString", []).append(
-                    [points_from_file[ind], points_from_file[ind + 1]]
-                )
-
-            if self.debug:
-                print("GeoJSON data:", geojson)
-
-            # NOTE: compare to self.geodata (current points) and update the map
-            self.geodata["Polygon"] = geojson["Polygon"]
-
-            # show geodata on the map (no need) because this map is fixed, cannot be changed
-            # self.show_geodata(geojson)
+            """
+            data = {
+                "Area": self.geodata.get("Polygon", []),
+                "Points": self.geodata.get("Points", []),
+                "LineString": self.geodata.get("LineString", []),
+                "Drone areas:": {
+                    key: value for key, value in self.drone_areas_dict.items()
+                },
+                "Drone grid points": {
+                    key: value for key, value in self.drone_markers_dict.items()
+                },
+                "Drone paths": {key: value for key, value in self.drone_paths_dict.items()},
+            }
+            """
+            self.geodata["Polygon"] = data.get("Area", [])
+            self.geodata["Points"] = data.get("Points", [])
+            self.geodata["LineString"] = data.get("LineString", [])
+            self.drone_areas_dict = data.get("Drone areas:", {})
+            self.drone_markers_dict = data.get("Drone grid points", {})
+            self.drone_paths_dict = data.get("Drone paths", {})
 
             logger.log("Updated data on the map", level="info")
+
+            # NOTE: All point of polygon is fixed, if you want to change it, please delete the data file
+            self.popup_msg(
+                "Data updated successfully, please re-process",
+                src_msg="Refresh data",
+                type_msg="info",
+            )
+
+            return
 
         except Exception as e:
             logger.log(repr(e), level="error")
@@ -381,40 +394,64 @@ class Map(Interface):
         try:
             # export points to file
 
-            if len(os.listdir(f"{parent_dir}/src/logs/points/")) >= 1:
-                logger.log("No points to export", level="In")
-                return
-            else:
-                if self.multi_area:
-                    for i, (key, value) in enumerate(self.area_grid_points.items()):
-                        with open(f"{parent_dir}/src/logs/points/points{i + 1}.txt", "w") as file:
-                            for lat, lon in value:
-                                file.write(f"{lat}, {lon}\n")
+            # if len(os.listdir(f"{parent_dir}/src/logs/points/")) >= 1:
+            #     logger.log("No points to export", level="In")
+            #     return
+            # else:
+            #     if self.multi_area:
+            #         for i, (key, value) in enumerate(self.area_grid_points.items()):
+            #             with open(f"{parent_dir}/src/logs/points/points{i + 1}.txt", "w") as file:
+            #                 for lat, lon in value:
+            #                     file.write(f"{lat}, {lon}\n")
 
-            # Define the structure of the .plan file according to QGroundControl specifications
-            # Define the structure of the .plan file according to QGroundControl specifications
-            if to_plan_format:
-                plan_data = {
-                    "fileType": "Plan",
-                    "geoFence": {"circles": [], "polygons": [], "version": 2},
-                    "groundStation": "QGroundControl",
-                    "mission": {
-                        "cruiseSpeed": 5,  # Set cruise speed in m/s
-                        "hoverSpeed": 1,  # Set hover speed in m/s
-                        "firmwareType": 12,  # Specify the firmware type (e.g., PX4)
-                        "globalPlanAltitudeMode": 1,  # Altitude mode
-                        "items": [],
-                        "plannedHomePosition": [0, 0, 0],  # Placeholder for home position
-                        "vehicleType": 2,  # Type of vehicle (e.g., 2 for fixed-wing)
-                        "version": 2,
-                    },
-                    "rallyPoints": {"points": [], "version": 2},  # Initialize with empty points
-                    "version": 1,
-                }
-                for i, (key, value) in enumerate(self.area_grid_points.items()):
-                    # Todo: Add the grid points to the plan_data
-                    pass
-                # Todo: export to plan file as json
+            # # Define the structure of the .plan file according to QGroundControl specifications
+            # # Define the structure of the .plan file according to QGroundControl specifications
+            # if to_plan_format:
+            #     plan_data = {
+            #         "fileType": "Plan",
+            #         "geoFence": {"circles": [], "polygons": [], "version": 2},
+            #         "groundStation": "QGroundControl",
+            #         "mission": {
+            #             "cruiseSpeed": 5,  # Set cruise speed in m/s
+            #             "hoverSpeed": 1,  # Set hover speed in m/s
+            #             "firmwareType": 12,  # Specify the firmware type (e.g., PX4)
+            #             "globalPlanAltitudeMode": 1,  # Altitude mode
+            #             "items": [],
+            #             "plannedHomePosition": [0, 0, 0],  # Placeholder for home position
+            #             "vehicleType": 2,  # Type of vehicle (e.g., 2 for fixed-wing)
+            #             "version": 2,
+            #         },
+            #         "rallyPoints": {"points": [], "version": 2},  # Initialize with empty points
+            #         "version": 1,
+            #     }
+            #     for i, (key, value) in enumerate(self.area_grid_points.items()):
+            #         # Todo: Add the grid points to the plan_data
+            #         pass
+
+            # Todo: export polygon, grid points, lines to .json file
+            file_path = f"{parent_dir}/src/logs/my_current_data.json"
+
+            data = {
+                "Area": self.geodata.get("Polygon", []),
+                "Points": self.geodata.get("Points", []),
+                "LineString": self.geodata.get("LineString", []),
+                "Drone areas:": {key: area for key, area in self.drone_areas_dict.items()},
+                "Drone grid points": {
+                    key: value for key, value in self.drone_markers_dict.items()
+                },
+                "Drone paths": {key: value for key, value in self.drone_paths_dict.items()},
+            }
+
+            with open(file_path, "w") as file:
+                json.dump(data, file, indent=4)
+
+            logger.log(f"Exported data to {file_path}", level="info")
+            self.popup_msg(
+                f"Exported data to {file_path}",
+                src_msg="Export plan",
+                type_msg="info",
+            )
+            return
 
         except Exception as e:
             logger.log(repr(e), level="error")
@@ -425,7 +462,6 @@ class Map(Interface):
         2. Get the number of `n_areas`
         3. Split the polygon into `n_areas` parts
         """
-        self.splitted_areas = []
 
         if self.debug:
             print("Button clicked: Split area")
@@ -443,6 +479,16 @@ class Map(Interface):
                 print("Got:", polygon_points)
                 return
 
+            if self.debug:
+                print("Receive polygon points:", polygon_points)
+
+            # Remove all previous markers
+            for key in self.drone_areas_dict.keys():
+                self.rescue_map.deletePolygon(key)
+                self.ovv_map.deletePolygon(key)
+            self.drone_areas_dict = {}
+
+            # get the number of areas to split
             n_areas = min(self.noArea, self.drone_num)  # number of areas to split
             logger.log(f"Splitting the area into {n_areas} areas", level="info")
 
@@ -451,6 +497,7 @@ class Map(Interface):
                 split_polygon_into_areas_old(polygon_points, n_areas)
             )
 
+            # draw the splitted areas on the map
             for ind, area in enumerate(splitted_areas):
                 if self.debug:
                     print(f"Area {ind}: {area}")
@@ -459,36 +506,30 @@ class Map(Interface):
                     area.append(area[0])
 
                 key = f"Area_{ind}"
-                if key in self.drone_area_keys:
-                    self.rescue_map.deletePolygon(key)
-                    self.ovv_map.deletePolygon(key)
-                    self.drone_area_keys.remove(key)
-
                 self.rescue_map.drawPolygon(
-                    f"Area_{ind}",
-                    area,
+                    key=key,
+                    coordinates=area,
                     options=dict(
                         color="blue", weight=2, fill=True, fillColor="blue", fillOpacity=0.2
                     ),
                 )
                 self.ovv_map.drawPolygon(
-                    f"Area_{ind}",
-                    area,
+                    key=key,
+                    coordinates=area,
                     options=dict(
                         color="blue", weight=2, fill=True, fillColor="blue", fillOpacity=0.2
                     ),
                 )
-                self.drone_area_keys.append(f"Area_{ind}")
+                self.drone_areas_dict[key] = area
 
                 # Save the rotated area list
                 with open(f"{parent_dir}/src/logs/area/area{ind + 1}.txt", "w") as file:
                     for lat, lon in area:
                         file.write(f"{lat}, {lon}\n")
 
-            self.grid_points_list = copy.deepcopy(rotated_area_list)
+            # copy to the class variables
             self.rotated_area_list = rotated_area_list
             self.extra = (angle, midpoint, min_lat, min_lon)
-            self.splitted_areas = splitted_areas
 
         except Exception as e:
             logger.log(repr(e), level="error")
@@ -506,10 +547,10 @@ class Map(Interface):
 
         try:
             # delete point from map
-            for key in self.drone_marker_keys:
+            for key in self.drone_markers_dict.keys():
                 self.rescue_map.deleteMarker(key)
                 self.ovv_map.deleteMarker(key)
-            self.drone_marker_keys = []
+            self.drone_markers_dict = {}
 
             # reduce the number of points
             for ind, points_in_area in enumerate(points_sets):
@@ -542,7 +583,7 @@ class Map(Interface):
                         float(point[1]),
                         **dict(icon=str(dot_icon_path), iconSize={"width": 5, "height": 5}),
                     )
-                    self.drone_marker_keys.append(f"A{ind+ 1}P{i + 1}")
+                    self.drone_markers_dict[f"A{ind+ 1}P{i + 1}"] = point
 
                 self.reduced_grid_points.append(filtered_points)
 
@@ -662,7 +703,10 @@ class Map(Interface):
             if type == "Point":
                 lon, lat = points
                 self.ovv_map.addMarker("Point", lat, lon, icon=dot_icon_path)
-                self.position_list.append((lat, lon))
+
+            elif type == "LineString":
+                points = [[float(lat), float(lon)] for lon, lat in points]
+                self.ovv_map.drawPolyLine(type, points)
 
             elif type == "Polygon":
                 points = [[float(lat), float(lon)] for lon, lat in points[0]]
@@ -675,14 +719,10 @@ class Map(Interface):
                 # display the polygon on the ovv map
                 self.ovv_map.drawPolygon(type, points)
 
-                # export to current area file
-                with open(f"{parent_dir}/src/logs/area/current_area.txt", "w") as file:
-                    for lat, lon in points:
-                        file.write(f"{lat}, {lon}\n")
-
-            elif type == "LineString":
-                points = [[float(lat), float(lon)] for lon, lat in points]
-                self.ovv_map.drawPolyLine(type, points)
+                # # export to current area file
+                # with open(f"{parent_dir}/src/logs/area/current_area.txt", "w") as file:
+                #     for lat, lon in points:
+                #         file.write(f"{lat}, {lon}\n")
 
             self.geodata.setdefault(type, []).append(points)
 
@@ -693,8 +733,12 @@ class Map(Interface):
         """Show the drones on the map"""
 
         self.drone_position_list = []
-        self.drone_marker_keys = []
         self.drone_station_position = None
+
+        for key in self.drone_initial_positions.keys():
+            self.rescue_map.deleteMarker(key)
+            self.ovv_map.deleteMarker(key)
+        self.drone_initial_positions = {}
 
         for i in range(self.drone_num):
             with open(f"{parent_dir}/src/logs/drone_init_pos/uav_{i + 1}.txt", "r") as file:
@@ -722,7 +766,7 @@ class Map(Interface):
                         iconSize={"width": 21, "height": 21},
                     ),
                 )
-                self.drone_marker_keys.append(i + 1)
+                self.drone_initial_positions["uav_" + str(i + 1)] = (lat, lon)
         # assign the first drone as the station
         self.drone_station_position = self.drone_position_list[0]
 
@@ -745,8 +789,6 @@ class Map(Interface):
             if self.debug:
                 print(f"Added marker {ind} at {lat}, {lon}")
 
-            self.drone_marker_keys.append(f"Marker{ind}")
-
         # Show the line on the rescue map
         for ind, (start, end) in enumerate(geodata["LineString"]):
 
@@ -758,7 +800,6 @@ class Map(Interface):
             )
             if self.debug:
                 print(f"Added line {ind} from {start} to {end}")
-            self.drone_path_keys.append(f"Line{ind}")
 
         # Show the polygon on the rescue map
         for ind, polygon in enumerate(geodata["Polygon"]):
@@ -778,7 +819,6 @@ class Map(Interface):
             )
             if self.debug:
                 print(f"Added polygon {ind} with points {polygon}")
-            self.drone_area_keys.append(f"Area{ind}")
         pass
 
 
@@ -800,5 +840,6 @@ def run():
 
 
 if __name__ == "__main__":
+    run()
     run()
     run()
