@@ -121,10 +121,12 @@ class Map(Interface):
 
         self.ovv_map.waitUntilReady()
 
-        #
+        # set initial values
+        self.ui.noArea_line_edit.setText(str(self.noArea))
+        self.ui.gridSize_line_edit.setText(str(self.gridSize))
         self.ui.dateTimeEdit.setDateTime(__current_time__)
 
-        # TODO: Initialize the timer and set update flag, to read the drone position every ... seconds
+        # TODO(future): Initialize the timer and set update flag, to read the drone position every ... seconds
         # ...
 
         # Show drones on the map
@@ -144,7 +146,8 @@ class Map(Interface):
         self.ui.btn_map_reduce_points.clicked.connect(self.btn_map_reduce_points_callback)
         self.ui.btn_map_toggle_route.clicked.connect(self.btn_toggle_route_callback)
         #
-        # self.ui.noArea_value.installEventFilter(self)
+
+        # connect line edit to callback functions
         self.ui.noArea_line_edit.returnPressed.connect(self.noArea_line_edit_callback)
         self.ui.gridSize_line_edit.returnPressed.connect(self.gridSize_line_edit_callback)
 
@@ -165,7 +168,7 @@ class Map(Interface):
                 for key in self.drone_path_keys:
                     self.rescue_map.deletePolyLine(key)
                     self.ovv_map.deletePolyLine(key)
-                    print("Removed path:", key)
+                    # print("Removed path:", key)
                 self.drone_path_keys = []
                 self.drone_path_enabled = False
                 return
@@ -193,7 +196,7 @@ class Map(Interface):
                     for j in range(len(value)):
                         if j == 0:
                             continue
-                        print("Add path from", value[j - 1], "to", value[j])
+                        # print("Add path from", value[j - 1], "to", value[j])
                         start = value[j - 1]
                         end = value[j]
                         paths.append([start, end])
@@ -219,7 +222,6 @@ class Map(Interface):
             print("Button clicked: Show grid points")
 
         try:
-            # TODO(fixme): delete all markers before adding new ones
             grid_size = self.gridSize
             n_areas = min(self.noArea, self.drone_num)
 
@@ -247,6 +249,11 @@ class Map(Interface):
 
         except Exception as e:
             logger.log(repr(e), level="error")
+            self.popup_msg(
+                f"Error: {repr(e)}, try to modify the grid size or number of areas",
+                src="Show grid points",
+                level="error",
+            )
 
     def process_grid_points(self, grid_points):
         # Show grid points on the map
@@ -343,7 +350,7 @@ class Map(Interface):
             if points_from_file[0] != points_from_file[-1]:
                 points_from_file.append(points_from_file[0])
 
-            geojson.setdefault("Polygon", []).extend(points_from_file[:])
+            geojson.setdefault("Polygon", []).append(points_from_file[:])
 
             for ind, (lat, lon) in enumerate(points_from_file[:-1]):
                 geojson.setdefault("Points", []).append([float(lat), float(lon)])
@@ -354,15 +361,16 @@ class Map(Interface):
             if self.debug:
                 print("GeoJSON data:", geojson)
 
-            # TODO: compare to current point and update
-            # ...
+            # NOTE: compare to self.geodata (current points) and update the map
+            self.geodata["Polygon"] = geojson["Polygon"]
 
-            # show geodata on the map
-            self.show_geodata(geojson)
+            # show geodata on the map (no need) because this map is fixed, cannot be changed
+            # self.show_geodata(geojson)
+
+            logger.log("Updated data on the map", level="info")
 
         except Exception as e:
             logger.log(repr(e), level="error")
-        pass
 
     def btn_map_export_plan_callback(self, to_plan_format=False):
         """Get points from the map and export to a .txt file"""
@@ -489,16 +497,22 @@ class Map(Interface):
         """Reduce the number of grid points by
         removing the middle points of each line, keeping the end points
         """
-        # TODO: Reduce the number of grid points
         self.reduced_grid_points = []
-        # self.area_grid_points = {}
+        # self.area_grid_points[f"Area_{ind}"] = self.ordered_grid_points marker: A ind + 1 P i + 1a
         points_sets = self.area_grid_points.values()
 
         if self.debug:
             print("Button clicked: Reduce points")
 
         try:
-            for points_in_area in points_sets:
+            # delete point from map
+            for key in self.drone_marker_keys:
+                self.rescue_map.deleteMarker(key)
+                self.ovv_map.deleteMarker(key)
+            self.drone_marker_keys = []
+
+            # reduce the number of points
+            for ind, points_in_area in enumerate(points_sets):
                 if len(points_in_area) < 3:
                     self.reduced_grid_points.append(points_in_area)
                     continue
@@ -514,7 +528,24 @@ class Map(Interface):
                         filtered_points.append(points_in_area[i])
                         i += 1
                 filtered_points.append(points_in_area[-1])
+
+                for i, point in enumerate(filtered_points):
+                    self.rescue_map.addMarker(
+                        f"A{ind + 1}P{i + 1}",
+                        float(point[0]),
+                        float(point[1]),
+                        **dict(icon=str(dot_icon_path), iconSize={"width": 5, "height": 5}),
+                    )
+                    self.ovv_map.addMarker(
+                        f"A{ind+ 1}P{i + 1}",
+                        float(point[0]),
+                        float(point[1]),
+                        **dict(icon=str(dot_icon_path), iconSize={"width": 5, "height": 5}),
+                    )
+                    self.drone_marker_keys.append(f"A{ind+ 1}P{i + 1}")
+
                 self.reduced_grid_points.append(filtered_points)
+
             print("Original grid points:", self.area_grid_points)
             print("Reduced grid points:", self.reduced_grid_points)
 
@@ -697,15 +728,16 @@ class Map(Interface):
 
     def show_geodata(self, geodata: dict) -> None:
         # Show the points on the rescue map
+
         for ind, (lat, lon) in enumerate(geodata["Points"]):
             self.rescue_map.addMarker(
-                str(ind),
+                "Marker" + str(ind),
                 float(lat),
                 float(lon),
                 **dict(icon=str(dot_icon_path), iconSize={"width": 10, "height": 10}),
             )
             self.ovv_map.addMarker(
-                str(ind),
+                "Marker" + str(ind),
                 float(lat),
                 float(lon),
                 **dict(icon=str(dot_icon_path), iconSize={"width": 10, "height": 10}),
@@ -713,28 +745,40 @@ class Map(Interface):
             if self.debug:
                 print(f"Added marker {ind} at {lat}, {lon}")
 
+            self.drone_marker_keys.append(f"Marker{ind}")
+
         # Show the line on the rescue map
         for ind, (start, end) in enumerate(geodata["LineString"]):
+
             self.rescue_map.drawPolyLine(
-                str(ind), [start, end], options=dict(color="yellow", weight=5)
+                "Line" + str(ind), [start, end], options=dict(color="yellow", weight=5)
             )
             self.ovv_map.drawPolyLine(
-                str(ind), [start, end], options=dict(color="yellow", weight=5)
+                "Line" + str(ind), [start, end], options=dict(color="yellow", weight=5)
             )
             if self.debug:
                 print(f"Added line {ind} from {start} to {end}")
+            self.drone_path_keys.append(f"Line{ind}")
 
         # Show the polygon on the rescue map
-        self.rescue_map.drawPolygon(
-            "Polygon",
-            geodata["Polygon"],
-            options=dict(color="green", weight=2, fill=True, fillColor="green", fillOpacity=0.2),
-        )
-        self.ovv_map.drawPolygon(
-            "Polygon",
-            geodata["Polygon"],
-            options=dict(color="green", weight=2, fill=True, fillColor="green", fillOpacity=0.2),
-        )
+        for ind, polygon in enumerate(geodata["Polygon"]):
+            self.rescue_map.drawPolygon(
+                "Area" + str(ind),
+                polygon,
+                options=dict(
+                    color="green", weight=2, fill=True, fillColor="green", fillOpacity=0.2
+                ),
+            )
+            self.ovv_map.drawPolygon(
+                "Area" + str(ind),
+                polygon,
+                options=dict(
+                    color="green", weight=2, fill=True, fillColor="green", fillOpacity=0.2
+                ),
+            )
+            if self.debug:
+                print(f"Added polygon {ind} with points {polygon}")
+            self.drone_area_keys.append(f"Area{ind}")
         pass
 
 
