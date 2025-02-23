@@ -47,7 +47,7 @@ Main map: leaflet.js (html)
 - Draw points, lines, polygons
 - Get data of points, lines, polygons as GeoJSON (save to files, and send via qtwebchannel)
 - Add draw makers, lines, polygons from GeoJSON data or st else.
-Ovv map: folium (python): one-way from python to html
+Ovv map: leaflet.js (html): one-way from python to html
 - Draw points, lines, polygons from GeoJSON data
 """
 

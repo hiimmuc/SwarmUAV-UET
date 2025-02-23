@@ -128,6 +128,12 @@ SYSTEMS_ADDRESSES = [
 
 # 3. Log settings
 plans_log_dir = f"{SRC_DIR}/logs/points/"
+parameter_uav_dir = f"{SRC_DIR}/data/parameters/"
+drone_init_pos_dir = f"{SRC_DIR}/logs/drone_init_pos/"
+os.makedirs(plans_log_dir, exist_ok=True)
+os.makedirs(parameter_uav_dir, exist_ok=True)
+os.makedirs(drone_init_pos_dir, exist_ok=True)
+
 parameter_data_files = [
     f"{SRC_DIR}/data/parameters/param_uav_{i}.txt" for i in range(1, MAX_UAV_COUNT + 1)
 ]
