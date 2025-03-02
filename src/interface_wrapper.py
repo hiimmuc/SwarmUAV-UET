@@ -108,7 +108,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             YOLO(model_uav_paths[uav_index]) for uav_index in range(1, MAX_UAV_COUNT + 1)
         ]
         logger.log(
-            f"Detection models loaded successfully in {time.time() - start_time}s!", level="info"
+            f"Detection models loaded successfully in {(time.time() - start_time):3f}s!",
+            level="info",
         )
         #
         self.init_application()
@@ -1037,7 +1038,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
                 await uav_fn_do_mission(
                     drone=UAVs[uav_index],
-                    mission_plan_file=f"{__current_path__}/logs/points/points{uav_index}.txt",
+                    mission_plan_file=f"{__current_path__}/logs/points/reduced_points{uav_index}.txt",
                 )
 
                 self.uav_information_views[uav_index - 1].setText(
@@ -1254,16 +1255,21 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             ):
                 return
             try:
+                # check if the UAV is streaming, if yes, stop the streaming, otherwise start the streaming
                 if not UAVs[uav_index]["status"]["streaming_status"]:
                     if self.uav_stream_threads[uav_index - 1] is None:
                         self._create_streaming_threads(uav_indexes=[uav_index])
+                    # start the steaming thread
                     self.uav_stream_threads[uav_index - 1].start()
                     UAVs[uav_index]["status"]["streaming_status"] = True
+                    # set steaming status
                     logger.log(f"UAV-{uav_index} streaming thread is starting...", level="info")
                     self.ui.btn_toggle_camera.setStyleSheet("background-color : green")
                 else:
+                    # stop the steaming thread
                     self.uav_stream_threads[uav_index - 1].stop()
                     UAVs[uav_index]["status"]["streaming_status"] = False
+                    # set steaming status
                     logger.log(
                         f"UAV-{uav_index} streaming thread is paused...",
                         level="info",
@@ -1584,19 +1590,37 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
     @pyqtSlot(np.ndarray, np.ndarray, list)
     def stream_on_uav_screen(self, frame=None, annotated_frame=None, results=None) -> None:
         """
-        Streams the given frame on the UAV screen and handles detection results.
-        Args:
-            frame (numpy.ndarray, optional): The frame to be streamed. Defaults to None.
-            results (tuple, optional): A tuple containing the UAV index and detected results. Defaults to None.
+        Display video stream on the UAV screen with optional object detection annotations.
+
+        This method manages the streaming of video frames to the UAV interface. It can display
+        either raw frames or annotated frames with detection results. The method also handles
+        frame rate limitation to maintain reasonable performance and can export detected target
+        information when objects of interest are found.
+
+        Parameters:
+        ----------
+        frame : numpy.ndarray, optional
+            The original video frame without annotations
+        annotated_frame : numpy.ndarray, optional
+            The video frame with detection annotations (bounding boxes, labels, etc.)
+        results : tuple, optional
+            Contains (uav_index, current_fps, detected_results) where:
+            - uav_index: ID of the UAV
+            - current_fps: Current frames per second rate
+            - detected_results: Object detection results including track IDs and object data
+
         Returns:
-            None
-        Raises:
-            Exception: If an error occurs during streaming or processing.
+        -------
+        None
+            This method doesn't return a value but updates the UAV screen display
+            and may export detection data to logs.
+
         Notes:
-            - The function updates the UAV screen view with the given frame.
-            - If recording is enabled for the UAV, the frame is written to the stream file.
-            - If detection is enabled, the function processes detected objects and performs actions based on the detection results.
-            - If a person is detected, the function saves the frame, converts the detected position to GPS coordinates, and updates the terminal with the detection information.
+        -----
+        - The method only processes frames if UAV connection is allowed and streaming is enabled
+        - Frame rate is limited according to DEFAULT_STREAM_FPS
+        - When detection is enabled and a person is detected, the frame is saved and GPS coordinates
+          are exported to logs
         """
 
         global UAVs
@@ -1698,6 +1722,14 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 )
                 break
 
+        logger.log(f"UAV-{RESCUE_UAV_INDEX} -- Arming and taking off", level="info")
+
+        await asyncio.sleep(1)
+        await UAVs[RESCUE_UAV_INDEX]["system"].action.arm()
+        await asyncio.sleep(2)
+        await UAVs[RESCUE_UAV_INDEX]["system"].action.takeoff()
+        await asyncio.sleep(3)
+
         # get initial position
         async for position in UAVs[RESCUE_UAV_INDEX]["system"].telemetry.position():
             UAVs[RESCUE_UAV_INDEX]["init_params"]["latitude"] = round(position.latitude_deg, 12)
@@ -1708,7 +1740,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             # do the rescue mission
             while True:
                 # NOTE 1st time rescue mission or press mission btn 6
-                if not UAVs[RESCUE_UAV_INDEX]["rescue_first_time"] or not (
+                if not UAVs[RESCUE_UAV_INDEX]["rescue_first_time"] and not (
                     self.ui.tabWidget.currentIndex() == RESCUE_UAV_INDEX
                 ):
                     return
@@ -1719,8 +1751,19 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 )
 
                 if len(rescue_filepaths) == 0:
+                    logger.log(
+                        f"No rescue position found, re-check rescue directory...", level="info"
+                    )
                     await asyncio.sleep(1)
                     continue
+
+                # get the rescue filepath
+                # NOTE: you can implement your own logic here
+                rescue_filepath = select_mission_plan(rescue_filepaths)
+                logger.log(
+                    f"Found {len(rescue_filepaths)} rescue files, select: {rescue_filepath}",
+                    level="info",
+                )
 
                 # get the detected UAVs
                 detected_uav_list = []
@@ -1728,23 +1771,23 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     uav_index = int(Path(rescue_filepath).stem.split("_")[-1])
                     detected_uav_list.append(UAVs[uav_index])
 
-                # get the rescue filepath
-                # NOTE: you can implement your own logic here
-                rescue_filepath = select_mission_plan(rescue_filepaths)
-
+                logger.log("Rescue mission started...", level="info")
+                
                 # 2 UAV Rescue do the rescue mission and the detected drones goes into suspend mode
                 UAVs[RESCUE_UAV_INDEX]["status"]["on_mission"] = True
                 await asyncio.gather(
+                    uav_suspend_missions(drones=detected_uav_list, suspend_time=30),
                     uav_rescue_process(
                         drone=UAVs[RESCUE_UAV_INDEX], rescue_filepath=rescue_filepath
                     ),
-                    uav_suspend_missions(drones=detected_uav_list, suspend_time=30),
                 )
                 UAVs[RESCUE_UAV_INDEX]["status"]["on_mission"] = False
 
                 # 3 remove the rescue file
-                os.rename(rescue_filepath)  # remove the rescue file
-                break
+                os.remove(rescue_filepath)  # remove the rescue file
+
+                break  # remove this line if you want to do the rescue mission continuously
+
             logger.log(f"Rescue mission completed", level="info")
         except Exception as e:
             logger.log(f"Error: {repr(e)}", level="error")

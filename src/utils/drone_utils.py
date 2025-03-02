@@ -517,29 +517,60 @@ async def uav_fn_do_mission(drone, mission_plan_file) -> None:
     return
 
 
-async def uav_rescue_process(drone, rescue_fpath):
-    await asyncio.sleep(1)
-    print("Rescue process started.")
-    await uav_fn_do_mission(drone, rescue_fpath)
-    # with open(rescue_fpath, "r") as rf:
-    #     rescue_pos = rf.read().strip().split(", ")
-    # rescue_pos = list(map(float, rescue_pos))
+async def uav_rescue_process(drone, rescue_filepath):
+    """
+    Performs the UAV rescue operation.
+    This asynchronous function carries out a rescue mission by navigating the drone to coordinates
+    specified in the rescue file, performing a downward movement, and then returning to launch position.
+    Args:
+        drone (dict): A dictionary containing drone control interfaces and systems.
+        rescue_fpath (str): File path to the rescue coordinates file. The file should contain
+            latitude and longitude as comma-separated floats.
+    Returns:
+        None: This function doesn't return any value.
+    Note:
+        - The function reads rescue coordinates from a file (latitude, longitude).
+        - Current implementation includes a 5-meter downward movement at the rescue location.
+        - After completing the rescue operation, the drone returns to its launch location.
+    """
 
-    # await uav_fn_goto_location(
-    #     drone=drone,
-    #     latitude=rescue_pos[0],
-    #     longitude=rescue_pos[1],
-    # )
+    # await asyncio.sleep(1)
+    print("---> [RESCUE PROCESS] Start going to rescue location at: ", end="")
+    # await uav_fn_do_mission(drone, rescue_fpath)
+    with open(rescue_filepath, "r") as rf:
+        rescue_pos = rf.read().strip().split(", ")
+    rescue_pos = list(map(float, rescue_pos))
+    # print rescue position
+    print(rescue_pos)
 
-    # NOTE: do something here ==========================
+    await uav_fn_goto_location(
+        drone=drone,
+        latitude=rescue_pos[0],
+        longitude=rescue_pos[1],
+    )
+    print("---> [RESCUE PROCESS] Arrived at rescue location.")
+
+    # Todo: do something here ==========================
     await asyncio.sleep(3)
     # NOTE: Change distance to go down here
-    await uav_fn_goto_distance(drone, distance=5, direction="down")
-    await uav_fn_control_gimbal(drone, control_value={"pitch": -90, "yaw": 0})
-    print("Rescue process completed.")
+    descending_distance = 5
+    print("---> [RESCUE PROCESS] Start descending {} meters.".format(descending_distance))
+    await uav_fn_goto_distance(drone, distance=descending_distance, direction="down")
+    print("---> [RESCUE PROCESS] Reached rescue level, start dropping rescue kit.")
+    await asyncio.sleep(1)
+    # await uav_fn_control_gimbal(drone, control_value={"pitch": -90, "yaw": 0})
+    print("---> [RESCUE PROCESS] Rescue kit dropped.")
+    #
+    print("---> [RESCUE PROCESS] Start ascending {} meters.".format(descending_distance))
+    await uav_fn_goto_distance(drone, distance=descending_distance, direction="up")
+    print("---> [RESCUE PROCESS] Reached initial level.")
     await asyncio.sleep(3)
+    print("---> [RESCUE PROCESS] Mission completed!")
+    print("---> [RESCUE PROCESS] Start returning to launch position.")
     # ===================================================
+
     await drone["system"].action.return_to_launch()
+
     return
 
 
@@ -607,11 +638,14 @@ def export_points_to_gps_log(uav_index, detected_pos, frame_shape, uav_gps) -> l
     gps_lon = gps_result["lon2"]
     # * ================================================
     # write to files
+    # rescue file for uav to go to
     rescue_filepath = f"{SRC_DIR}/logs/rescue_pos/rescue_pos_uav_{uav_index}.log"
     with open(rescue_filepath, "w") as f:
         f.write(
             f"{gps_lat}, {gps_lon}\n"
         )  # change to uav_lat, uav_lon to go to the detected uav_position
+
+    # detection log file
     time_stamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     detection_filepath = f"{SRC_DIR}/logs/detected_pos/detection_pos_uav_{uav_index}.log"
     with open(detection_filepath, "a") as f:

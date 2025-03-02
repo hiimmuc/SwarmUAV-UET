@@ -277,16 +277,34 @@ def draw_tracking_frame(frame, results, history, track_frame_limit=90):
             x, y, w, h = box.int().tolist()
             track = history[track_id]
             track.append((float(x), float(y)))  # x, y center point
+
             if len(track) > track_frame_limit:  # retain 90 tracks for 90 frames
                 track.pop(0)
                 if cls_name == "person":
                     detected = True
+                else:
+                    detected = False
+            else:
+                detected = False
 
-            # Draw the tracking lines
+            # Draw the tracking lines by 3 levels of colors
+            # 0.75 track_frame_limit: yellow
+            # 0.5 track_frame_limit: green
+            # else: red
+            # cspell: ignore hstack
             points = np.hstack(track).astype(np.int32).reshape((-1, 1, 2))
-            cv2.polylines(
-                annotated_frame, [points], isClosed=False, color=(225, 225, 0), thickness=3
-            )
+            if len(track) > 0.75 * track_frame_limit:
+                cv2.polylines(
+                    annotated_frame, [points], isClosed=False, color=(225, 225, 0), thickness=3
+                )
+            elif len(track) > 0.5 * track_frame_limit:
+                cv2.polylines(
+                    annotated_frame, [points], isClosed=False, color=(0, 255, 0), thickness=3
+                )
+            else:
+                cv2.polylines(
+                    annotated_frame, [points], isClosed=False, color=(0, 0, 255), thickness=3
+                )
 
             objects.append(
                 {

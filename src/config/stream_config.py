@@ -17,7 +17,7 @@ NOW = datetime.now().strftime("%y-%m-%d_%H-%M-%S")
 #
 DEFAULT_STREAM_SCREEN = "general_screen"  # NOTE: Change between "general_screen" or "stream_screen" or "ovv_screen" or "all"
 DEFAULT_STREAM_SOURCE = (
-    "streams"  # NOTE: Change between "streams" or "rtsp" or "webcam" or "videos"
+    "videos"  # NOTE: Change between "streams" or "rtsp" or "webcam" or "videos"
 )
 DEFAULT_STREAM_SIZE = (320, 180)  # NOTE Change for modify recording settings
 DEFAULT_STREAM_FPS = 30  # NOTE Change for modify frame rate of streaming

@@ -236,7 +236,7 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
                                 half=False,  # use half precision
                                 max_det=5,  # maximum detections per image
                                 stream_buffer=False,  # stream video frames buffer
-                                device=DEVICE,
+                                device=DEVICE,  # device for inference
                                 persist=True,
                                 verbose=False,
                             )
@@ -281,21 +281,23 @@ class StreamQtThread(QThread):  # NOTE: slower than using Thread
                         processing_end - processing_start
                     ) * 1000  # in milliseconds, including inference time
 
+                    # TODO:: set delay to match the FPS
+                    delay = max((1000 / self.stream.get_fps()), elapsed_time)
+                    self.msleep(int(delay - inference_time))
+
+                    # self.msleep(5) # delay for 5 milliseconds for streaming
+
                     # write to saved video
                     if self.stream.is_writer_opened():
                         self.stream.write(annotated_frame)
 
-                    # emit signal to update GUI
+                    # NOTE: emit signal to update GUI
                     self.change_image_signal.emit(
                         frame,
                         annotated_frame,
                         [self.uav_index, int(self.stream.get_fps()), results],
                     )
 
-                    # delay to match the FPS
-                    delay = max((1000 / self.stream.get_fps()), elapsed_time)
-                    self.msleep(int(delay - inference_time))
-                    # self.msleep(5)
                 else:
                     if self.stream.is_video():
                         self.stream.capture_reset()
