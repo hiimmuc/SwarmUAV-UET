@@ -548,12 +548,13 @@ async def uav_rescue_process(drone, rescue_filepath):
         latitude=rescue_pos[0],
         longitude=rescue_pos[1],
     )
+
     print("---> [RESCUE PROCESS] Arrived at rescue location.")
 
     # Todo: do something here ==========================
     await asyncio.sleep(3)
     # NOTE: Change distance to go down here
-    descending_distance = 5
+    descending_distance = 5  # meters
     print("---> [RESCUE PROCESS] Start descending {} meters.".format(descending_distance))
     await uav_fn_goto_distance(drone, distance=descending_distance, direction="down")
     print("---> [RESCUE PROCESS] Reached rescue level, start dropping rescue kit.")
