@@ -163,10 +163,7 @@ class Map(Interface):
             # key = "A{ind + 1}P{j - 1}-{j}" : key for the path Area ind from Point j-1 to j
             if self.drone_path_enabled:
                 # Remove all previous markers
-                for key in self.drone_paths_dict.keys():
-                    self.rescue_map.deletePolyLine(key)
-                    self.ovv_map.deletePolyLine(key)
-                    # print("Removed path:", key)
+                self.remove_objects(["paths"])
                 self.drone_paths_dict = {}
                 self.drone_path_enabled = False
                 return
@@ -243,9 +240,7 @@ class Map(Interface):
 
             # if exist, show the grid points on the map
             if (self.reduced_grid_points or self.refreshed) and (self.drone_markers_dict != {}):
-                for key in self.drone_markers_dict.keys():
-                    self.rescue_map.deleteMarker(key)
-                    self.ovv_map.deleteMarker(key)
+                self.remove_objects(["markers"])
 
                 for key, value in self.drone_markers_dict.items():
                     self.rescue_map.addMarker(
@@ -267,9 +262,7 @@ class Map(Interface):
 
             self.multi_area = True if n_areas > 1 else False
             # Remove all previous markers
-            for key in self.drone_markers_dict.keys():
-                self.rescue_map.deleteMarker(key)
-                self.ovv_map.deleteMarker(key)
+            self.remove_objects(["markers"])
             self.drone_markers_dict = {}
 
             # Show grid points on the map
@@ -447,7 +440,7 @@ class Map(Interface):
             #         pass
 
             # Todo: export polygon, grid points, lines to .json file
-            file_path = f"{parent_dir}/src/logs/my_current_data.json"
+            file_path = f"{parent_dir}/src/logs/map_data/map_runtime_{__current_time__.strftime('%Y-%m-%d_%H-%M-%S')}.json"
 
             data = {
                 "Area": self.geodata.get("Polygon", []),
@@ -501,9 +494,7 @@ class Map(Interface):
                 print("Receive polygon points:", polygon_points)
 
             # Remove all previous markers
-            for key in self.drone_areas_dict.keys():
-                self.rescue_map.deletePolygon(key)
-                self.ovv_map.deletePolygon(key)
+            self.remove_objects(["markers", "paths", "areas"])
             self.drone_areas_dict = {}
 
             # get the number of areas to split
@@ -570,9 +561,7 @@ class Map(Interface):
                 area_grid_points.setdefault(area_index, []).append(value)
 
             # delete point from map
-            for key in self.drone_markers_dict.keys():
-                self.rescue_map.deleteMarker(key)
-                self.ovv_map.deleteMarker(key)
+            self.remove_objects(["markers"])
             self.drone_markers_dict = {}
 
             # reduce the number of points
@@ -724,13 +713,16 @@ class Map(Interface):
             type, points = coordinates
 
             self.geodata.setdefault(type, []).clear()  # clear the previous data
-
+            self.remove_objects(["markers", "paths", "areas"])
+            
             if type == "Point":
                 lon, lat = points
+                self.ovv_map.deleteMarker(type)
                 self.ovv_map.addMarker("Point", lat, lon, icon=dot_icon_path)
 
             elif type == "LineString":
                 points = [[float(lat), float(lon)] for lon, lat in points]
+                self.ovv_map.deletePolyLine(type)
                 self.ovv_map.drawPolyLine(type, points)
 
             elif type == "Polygon":
@@ -742,24 +734,67 @@ class Map(Interface):
                 self.ui.area_value.setText(str(round(area["ha"], 2)) + " ha")
 
                 # display the polygon on the ovv map
+                self.ovv_map.deletePolygon(type)
                 self.ovv_map.drawPolygon(type, points)
-
+                # TODO (fixme): maybe the overall polygon is diff
                 # # export to current area file
                 # with open(f"{parent_dir}/src/logs/area/current_area.txt", "w") as file:
                 #     for lat, lon in points:
                 #         file.write(f"{lat}, {lon}\n")
 
             self.geodata.setdefault(type, []).append(points)
+            
+            # reset variables
+            self.refreshed = False
+            self.reduced_grid_points = False           
 
         except Exception as e:
             logger.log(repr(e), level="error")
+            
+    def remove_objects(self, objs:str=[]) -> None:
+        # TODO: ovv map not del the polygon, only point
+        if self.debug:
+            print("Removing objects:", objs)
+        try:
+            if objs == []:
+                return
+            for obj in objs:
+                if obj == 'markers':
+                    for key in self.drone_markers_dict.keys():
+                        self.rescue_map.deleteMarker(key)
+                        self.ovv_map.deleteMarker(key)
+                    self.drone_markers_dict = {}
+                elif obj == 'paths':
+                    for key in self.drone_paths_dict.keys():
+                        self.rescue_map.deletePolyLine(key)
+                        self.ovv_map.deletePolyLine(key)
+                    self.drone_paths_dict = {}
+                elif obj == 'areas':
+                    for key in self.drone_areas_dict.keys():
+                        self.rescue_map.deletePolygon(key)
+                        self.ovv_map.deletePolygon(key)
+                    self.drone_areas_dict = {}
+                elif obj == 'drones':
+                    for key in self.drone_initial_positions.keys():
+                        self.rescue_map.deleteMarker(key)
+                        self.ovv_map.deleteMarker(key)
+                    self.drone_initial_positions = {}
+            
+            return
+        except Exception as e:
+            logger.log(repr(e), level="error")
+            self.popup_msg(
+                f"Error: {repr(e)}, try to modify the grid size or number of areas",
+                src_msg="Remove objects",
+                type_msg="error",
+            )
 
-    def show_drones(self) -> None:
+    def show_drones(self, init=True) -> None:
         """Show the drones on the map"""
-
+        # TODO: if init show the point, if not, show the current position from files
         self.drone_position_list = []
         self.drone_station_position = None
-
+        
         for key in self.drone_initial_positions.keys():
             self.rescue_map.deleteMarker(key)
             self.ovv_map.deleteMarker(key)
@@ -842,6 +877,7 @@ class Map(Interface):
                     color="green", weight=2, fill=True, fillColor="green", fillOpacity=0.2
                 ),
             )
+            
             if self.debug:
                 print(f"Added polygon {ind} with points {polygon}")
         pass

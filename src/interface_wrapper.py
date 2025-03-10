@@ -874,7 +874,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
         else:
             takeoff_all_UAVs = [
-                self.uav_takeoff_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
+                self.uav_takeoff_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
             ]
             await asyncio.gather(*takeoff_all_UAVs)
 
@@ -910,7 +910,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
         else:
             landing_all_UAVs = [
-                self.uav_land_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
+                self.uav_land_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
             ]
             await asyncio.gather(*landing_all_UAVs)
 
@@ -1031,7 +1031,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 for f in detection_log_files:
                     os.remove(f)
 
-                # start mission
+                # start new mission
                 self.update_terminal(f"[INFO] Sent MISSION command to UAV {uav_index}")
 
                 UAVs[uav_index]["status"]["on_mission"] = True
@@ -1044,7 +1044,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 self.uav_information_views[uav_index - 1].setText(
                     self.template_information(uav_index, **UAVs[uav_index]["status"])
                 )
-                # TODO: clear logs after mission
+                # TODO (thinking): clear logs after mission
                 if await UAVs[uav_index]["system"].mission.is_mission_finished():
                     await UAVs[uav_index]["system"].action.return_to_launch()
                     # remove rescue file and detected files
@@ -1071,7 +1071,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
         else:
             mission_all_UAVs = [
-                self.uav_mission_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
+                self.uav_mission_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
             ]
             await asyncio.gather(*mission_all_UAVs)
 
