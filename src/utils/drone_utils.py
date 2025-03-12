@@ -1,10 +1,10 @@
 import asyncio
 import json
 import math
+import os
 import time
 from pathlib import Path
 
-import cv2
 from geographiclib.geodesic import Geodesic
 from mavsdk.gimbal import ControlMode, GimbalMode
 from mavsdk.mission import MissionItem, MissionPlan
@@ -443,6 +443,8 @@ async def uav_fn_upload_mission(drone, mission_plan_file) -> None:
         return
     elif Path(mission_plan_file).suffix == ".plan":
         pass
+    elif os.path.exists(mission_plan_file) is False:
+        raise FileNotFoundError(f"Mission plan file {mission_plan_file} does not exist.")
     else:
         with open(mission_plan_file, "r") as f:
             mission_data = [list(map(float, line.strip().split(", "))) for line in f.readlines()]
