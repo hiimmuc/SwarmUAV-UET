@@ -494,6 +494,11 @@ async def uav_fn_do_mission(drone, mission_plan_file) -> None:
     #     await drone["system"].mission.clear_mission()
     #     print(f"Mission paused and cleared for UAV-{drone['ID']}. Resuming...")
     try:
+        # Health check before mission
+        async for health in drone["system"].telemetry.health():
+            if health.is_global_position_ok and health.is_home_position_ok:
+                break
+        
         # create tasks for monitoring mission progress and observing if the UAV is in the air
         print_mission_progress_task = asyncio.ensure_future(print_mission_progress(drone))
         running_tasks = [print_mission_progress_task]
@@ -505,7 +510,8 @@ async def uav_fn_do_mission(drone, mission_plan_file) -> None:
         await drone["system"].connect(drone["system_address"])
         await asyncio.sleep(1)
         await drone["system"].action.arm()
-        await asyncio.sleep(2)
+        await asyncio.sleep(2)        
+        #
         await drone["system"].action.takeoff()
         await asyncio.sleep(3)
         # await drone["system"].action.set_current_speed(2.0)
@@ -592,6 +598,21 @@ async def uav_suspend_missions(drones, suspend_time: int = 30):
 def select_mission_plan(mission_plan_files):
     # NOTE: you can implement your own logic here
     return mission_plan_files.pop(0)
+
+def clear_mission_logs(uav_index, save_dir) -> None:
+        # remove rescue file and detected files
+    if os.path.exists(
+        f"{save_dir}/logs/rescue_pos/rescue_pos_uav_{uav_index}.log"
+    ):
+        os.remove(
+            f"{save_dir}/logs/rescue_pos/rescue_pos_uav_{uav_index}.log"
+        )
+    if os.path.exists(
+        f"{save_dir}/logs/detected_pos/detection_pos_uav_{uav_index}.log"
+    ):
+        os.remove(
+            f"{save_dir}/logs/detected_pos/detection_pos_uav_{uav_index}.log"
+        )
 
 
 # -----------------------------------------------------

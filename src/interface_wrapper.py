@@ -34,7 +34,7 @@ from utils.serial_utils import *
 from utils.stream_utils import *
 
 # cspell: ignore UAVs mavsdk asyncqt figlet ndarray offboard pixmap qgroundcontrol rtcm imwrite dsize fourcc imread
-__version__ = "3.11.0"
+__version__ = "3.16.0"
 __current_time__ = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 __current_path__ = os.path.dirname(os.path.abspath(__file__))
 __system_info__ = get_system_information()
@@ -575,18 +575,25 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
     async def process_command(self, uav_index) -> None:
         """
-        Processes a command for a UAV based on the given index.
-
+        Processes a command for a specific UAV based on the given index.
         Args:
             uav_index (int): The index of the UAV to process the command for.
-
+        Returns:
+            None
         Raises:
-            Exception: If the input command is invalid.
-
-        This method retrieves the command text, parses it, and executes the corresponding
-        action for the UAV. Supported commands include 'forward', 'backward', 'left',
-        'right', 'up', and 'down'. Clears the input field after processing.
+            Exception: If an error occurs during command processing.
+        The function performs the following steps:
+        1. Checks if the UAV is connected and allowed to receive commands.
+        2. Retrieves the command text from the corresponding UAV update command input.
+        3. If the command is "hold", it instructs the UAV to hold its position.
+        4. If the command is a movement or gimbal control command, it parses the command and value,
+           and performs the corresponding action:
+           - Movement commands: "forward", "backward", "left", "right", "up", "down"
+           - Gimbal control commands: "pitch", "yaw"
+        5. Clears the input after processing the command.
+        6. Displays an error message if an invalid input is encountered.
         """
+
         try:
             if not (
                 UAVs[uav_index]["status"]["connection_status"]
@@ -636,14 +643,23 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
     # -----------------------< UAV buttons callback functions >-----------------------
     async def uav_connect_callback(self, uav_index) -> None:
         """
-        Asynchronously connects to a UAV or all UAVs.
-
+        Asynchronous callback function to handle UAV connection.
+        This function attempts to connect to a specified UAV by its index. It performs several steps:
+        1. Initializes the server for the UAV.
+        2. Connects to the UAV system.
+        3. Checks the connection status.
+        4. Updates the connection status display.
+        5. Overwrites and exports UAV parameters.
+        6. Continuously updates the UAV status.
+        If the UAV index is not within the valid range, it attempts to connect to all UAVs.
         Args:
-            uav_index (int): The index of the UAV to connect to. If 0, connects to all UAVs.
-
+            uav_index (int): The index of the UAV to connect.
+        Returns:
+            None
         Raises:
-            Exception: If there is an error during the connection process.
+            Exception: If there is an error during the connection process, it logs the error and displays a popup message.
         """
+
         global UAVs
 
         if uav_index in range(1, MAX_UAV_COUNT + 1):
@@ -718,24 +734,19 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
     async def uav_arm_callback(self, uav_index) -> None:
         """
-        Arms the UAV specified by the given index. If the index is 0, it will arm all UAVs.
-
+        Asynchronously handles the arming of a UAV specified by its index.
+        This method checks the connection status and permission for the UAV before attempting to arm it.
+        If the UAV is successfully armed, it updates the status and the corresponding UI element.
+        If an error occurs during the process, it logs the error and displays a popup message.
+        If the provided UAV index is out of range, it attempts to arm all UAVs within the valid range.
         Args:
-            uav_index (int): The index of the UAV to arm. If 0, all UAVs will be armed.
-
+            uav_index (int): The index of the UAV to be armed.
         Returns:
             None
-
-        Raises:
-            Exception: If there is an issue with connecting to or arming the UAV.
-
-        Notes:
-            - The function updates the terminal with the status of the arm command.
-            - It connects to the UAV system and sends the arm command.
-            - After arming, it waits for 3 seconds and then disarms the UAV.
-            - The connection status and arming status of the UAV are updated accordingly.
         """
+
         global UAVs
+        # check if the UAV index is within the valid range (all UAVs)
         if uav_index in range(1, MAX_UAV_COUNT + 1):
             if not (
                 UAVs[uav_index]["status"]["connection_status"]
@@ -764,8 +775,9 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 logger.log(f"Error: {repr(e)}", level="error")
                 self.popup_msg(f"Error: {repr(e)}", src_msg="uav_arm_callback", type_msg="Error")
         else:
+            # NOTE: uav_index = 0, arm only available UAVs (e.g. 1-5)
             arm_all_UAVs = [
-                self.uav_arm_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
+                self.uav_arm_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
             ]
             await asyncio.gather(*arm_all_UAVs)
 
@@ -784,6 +796,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             None
         """
         global UAVs
+        # check if the UAV index is within the valid range (all UAVs)
         if uav_index in range(1, MAX_UAV_COUNT + 1):
             if not (
                 UAVs[uav_index]["status"]["connection_status"]
@@ -805,6 +818,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     f"Error: {repr(e)}", src_msg="uav_disarm_callback", type_msg="Error"
                 )
         else:
+            # NOTE: uav_index = 0, disarm all available UAVs
             disarm_all_UAVs = [
                 self.uav_disarm_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
             ]
@@ -845,7 +859,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 await UAVs[uav_index]["system"].action.arm()
                 await UAVs[uav_index]["system"].action.takeoff()
 
-                # # update initial position of UAV
+                # update initial position of UAV
 
                 UAVs[uav_index]["init_params"]["latitude"] = float(
                     UAVs[uav_index]["status"]["position_status"][0]
@@ -873,7 +887,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 )
 
         else:
-            # NOTE: uav_index = 0, take off all available UAVs
+            # NOTE: uav_index = 0, take off all available UAVs (e.g. 1-5)
             takeoff_all_UAVs = [
                 self.uav_takeoff_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
             ]
@@ -912,7 +926,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         else:
             # NOTE: uav_index = 0, land all available UAVs
             landing_all_UAVs = [
-                self.uav_land_callback(uav_index) for uav_index in AVAIL_UAV_INDEXES
+                self.uav_land_callback(uav_index) for uav_index in range(1, MAX_UAV_COUNT + 1)
             ]
             await asyncio.gather(*landing_all_UAVs)
 
@@ -959,7 +973,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     self.uav_information_views[uav_index - 1].setText(
                         self.template_information(uav_index, **UAVs[uav_index]["status"])
                     )
-                else:  # return to initial position
+                else:  # return to initial position, not landing
                     self.update_terminal(
                         f"[INFO] Sent RETURN command to UAV {uav_index} to lat: {init_latitude} long: {init_longitude}"
                     )
@@ -974,16 +988,20 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     self.uav_information_views[uav_index - 1].setText(
                         self.template_information(uav_index, **UAVs[uav_index]["status"])
                     )
+                
+                # remove logs files from mission
+                clear_mission_logs(uav_index, save_dir=__current_path__)
             except Exception as e:
                 logger.log(f"Error: {repr(e)}", level="error")
                 self.popup_msg(
                     f"Error: {repr(e)}", src_msg="uav_return_callback", type_msg="Error"
                 )
         else:
-            # NOTE: uav_index = 0, return all UAVs
+            # NOTE: uav_index = 0, return all UAVs, can choose between RTL and non-RTL
+            # TODO(check): check if apply for all UAVs or only available UAVs
             return_all_UAVs = [
                 self.uav_return_callback(uav_index, rtl=rtl)
-                for uav_index in range(1, MAX_UAV_COUNT + 1)
+                for uav_index in AVAIL_UAV_INDEXES
             ]
             await asyncio.gather(*return_all_UAVs)
 
@@ -1010,6 +1028,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         7. If uav_index is 0, executes the mission for all UAVs concurrently.
         """
         global UAVs
+        # * If UAV is in the list of available UAVs (e.g. 1-5)
         if uav_index in AVAIL_UAV_INDEXES:
             if not (
                 UAVs[uav_index]["status"]["connection_status"]
@@ -1021,13 +1040,9 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 self.update_terminal(
                     "Waiting for drone to have a global position estimate...", uav_index=uav_index
                 )
-                async for health in UAVs[uav_index]["system"].telemetry.health():
-                    if health.is_global_position_ok and health.is_home_position_ok:
-                        logger.log(
-                            f"UAV-{uav_index} -- Global position for estimate OK", level="info"
-                        )
-                        break
-
+                logger.log(
+                    f"UAV-{uav_index} -- Global position for estimate OK", level="info"
+                )
                 # clear detection log files
                 detection_log_files = glob.glob(f"{__current_path__}/logs/rescue_pos/*.log")
                 for f in detection_log_files:
@@ -1050,24 +1065,14 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 if await UAVs[uav_index]["system"].mission.is_mission_finished():
                     await UAVs[uav_index]["system"].action.return_to_launch()
                     # remove rescue file and detected files
-                    if os.path.exists(
-                        f"{__current_path__}/logs/rescue_pos/rescue_pos_uav_{uav_index}.log"
-                    ):
-                        os.remove(
-                            f"{__current_path__}/logs/rescue_pos/rescue_pos_uav_{uav_index}.log"
-                        )
-                    if os.path.exists(
-                        f"{__current_path__}/logs/detected_pos/detection_pos_uav_{uav_index}.log"
-                    ):
-                        os.remove(
-                            f"{__current_path__}/logs/detected_pos/detection_pos_uav_{uav_index}.log"
-                        )
+                    clear_mission_logs(uav_index, save_dir=__current_path__)
 
             except Exception as e:
                 logger.log(f"Error: {repr(e)}", level="error")
                 self.popup_msg(
                     f"Error: {repr(e)}", src_msg="uav_mission_callback", type_msg="Error"
                 )
+        #* If UAV is the rescue UAV (e.g. 6)
         elif uav_index == RESCUE_UAV_INDEX:
             await self.uav_fn_rescue()
 
@@ -1348,7 +1353,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             )
 
     # --------------------------<UAVs get status functions>-----------------------------
-    async def uav_fn_get_position(self, uav_index) -> None:
+    async def uav_fn_get_position(self, uav_index, return_value=False) -> None:
         """
         Retrieves and updates the altitude and position of a specified UAV.
 
@@ -1379,10 +1384,14 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 latitude,
                 longitude,
             ]
+            
+            if return_value:
+                return longitude, latitude, alt_rel, alt_msl
 
             self.uav_information_views[uav_index - 1].setText(
                 self.template_information(uav_index, **UAVs[uav_index]["status"])
             )
+        return
 
     async def uav_fn_get_mode(self, uav_index) -> None:
         """
@@ -1634,7 +1643,9 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             current_fps // DEFAULT_STREAM_FPS if current_fps > DEFAULT_STREAM_FPS else 1
         )  # limit the frame rate
         if not (
-            (UAVs[uav_index]["connection_allow"] or UAVs[uav_index]["status"]["connection_status"])
+            (UAVs[uav_index]["connection_allow"] 
+             or UAVs[uav_index]["status"]["connection_status"]
+             )
             and UAVs[uav_index]["streaming_enable"]
         ):
             return
@@ -1656,28 +1667,36 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                     return
 
                 track_ids, objects = detected_results
+                
                 for track_id, obj in zip(track_ids, objects):
                     if obj["detected"] and obj["class"] == "person":
-                        # export frame
+                        # export frame to save the detected person
                         cv2.imwrite(
                             f"{__current_path__}/logs/images/UAV{uav_index}_locked_target_{track_id}.png",
                             annotated_frame,
                         )
+                        # export detected position to GPS log
                         detected_pos = (obj["x"], obj["y"])
                         frame_shape = annotated_frame.shape
-                        uav_lat, uav_long = UAVs[uav_index]["status"]["position_status"]
-                        uav_alt = UAVs[uav_index]["status"]["altitude_status"][0]
+                        # get the GPS coordinates of the UAV
+                        uav_lat, uav_long, uav_alt, _ = self.uav_fn_get_position(
+                            uav_index, return_value=True
+                        )
                         uav_gps = [uav_lat, uav_long, uav_alt]
+                        
+                        # Log to terminal of UAV, which detected the person
                         self.update_terminal(
                             f"UAV-{uav_index} at gps ({uav_gps[0]}, {uav_gps[1]}, {uav_gps[2]}) detect {obj['class']} at X: {detected_pos[0]} Y: {detected_pos[1]} with frame size: {frame_shape}",
                             0,
                         )
+                        # Export to GPS log file
                         export_points_to_gps_log(
                             uav_index=uav_index,
                             detected_pos=detected_pos,
                             frame_shape=frame_shape,
                             uav_gps=uav_gps,
                         )
+                        # Disable detection feature
                         UAVs[uav_index]["detection_enable"] = False
 
         except Exception as e:
@@ -1718,7 +1737,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         await UAVs[RESCUE_UAV_INDEX]["system"].connect(
             system_address=UAVs[RESCUE_UAV_INDEX]["system_address"]
         )
-        # check health
+        # check health 
+        # TODO: check battery level here
         async for health in UAVs[RESCUE_UAV_INDEX]["system"].telemetry.health():
             if health.is_global_position_ok and health.is_home_position_ok:
                 logger.log(
@@ -1741,7 +1761,11 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             break
 
         try:
-            # do the rescue mission
+            # do the rescue mission loop
+            # 1. check if the rescue position is available
+            # 2. get the detected UAVs
+            # 3. do the rescue mission
+
             while True:
                 # NOTE 1st time rescue mission or press mission btn 6
                 if not UAVs[RESCUE_UAV_INDEX]["rescue_first_time"] and not (
