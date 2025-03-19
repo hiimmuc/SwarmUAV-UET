@@ -231,7 +231,7 @@ async def uav_fn_goto_location(drone, latitude=None, longitude=None, altitude=No
     Returns:
         None
     """
-
+    # send the drone to the target location
     async for position in drone["system"].telemetry.position():
         lat = latitude if latitude is not None else position.latitude_deg
         lon = longitude if longitude is not None else position.longitude_deg
@@ -239,6 +239,14 @@ async def uav_fn_goto_location(drone, latitude=None, longitude=None, altitude=No
         # go to the new position
         await drone["system"].action.goto_location(lat, lon, alt, 0)
         break
+    
+    # wait until the drone reaches the target location
+    async for position in drone["system"].telemetry.position():
+        if abs(position.latitude_deg - lat) < 1e-6 and abs(
+            position.longitude_deg - lon
+        ) < 1e-6 and abs(position.absolute_altitude_m - alt) < 0.1:
+            # print(f"UAV-{drone['ID']} reached the target location.")
+            break
     return
 
 
@@ -487,18 +495,16 @@ async def uav_fn_do_mission(drone, mission_plan_file) -> None:
     Returns:
         None
     """
-    # # check if uav is on mission
-    # if drone["status"]["is_on_mission"]:
-    #     print(f"UAV-{drone['ID']} is already on a mission. Aborting...")
-    #     await drone["system"].mission.pause_mission()
-    #     await drone["system"].mission.clear_mission()
-    #     print(f"Mission paused and cleared for UAV-{drone['ID']}. Resuming...")
+        
     try:
         # Health check before mission
         async for health in drone["system"].telemetry.health():
             if health.is_global_position_ok and health.is_home_position_ok:
                 break
         
+        # set parameters for the mission
+        # await drone["system"].mission.set_return_to_launch_after_mission(enable=False)
+        await drone["system"].mission.clear_mission()
         # create tasks for monitoring mission progress and observing if the UAV is in the air
         print_mission_progress_task = asyncio.ensure_future(print_mission_progress(drone))
         running_tasks = [print_mission_progress_task]
@@ -509,6 +515,7 @@ async def uav_fn_do_mission(drone, mission_plan_file) -> None:
         #
         await drone["system"].connect(drone["system_address"])
         await asyncio.sleep(1)
+        #
         await drone["system"].action.arm()
         await asyncio.sleep(2)        
         #
@@ -518,7 +525,7 @@ async def uav_fn_do_mission(drone, mission_plan_file) -> None:
         #
         await drone["system"].mission.start_mission()
         #
-        await termination_task
+        # await termination_task
     except Exception as e:
         print(repr(e))
 
@@ -550,12 +557,37 @@ async def uav_rescue_process(drone, rescue_filepath):
     rescue_pos = list(map(float, rescue_pos))
     # print rescue position
     print(rescue_pos)
+    
+    # check if the drone is in the air, if not, connect to the drone
+    # and arm it
+    # and take off
+    # print("---> [RESCUE PROCESS] Connecting to drone.")
+    # await drone["system"].connect(drone["system_address"])
+    # await asyncio.sleep(1)
+    
+    # print("---> [RESCUE PROCESS] Arming drone.")
+    # await drone["system"].action.arm()
+    # await asyncio.sleep(1)
+    
+    # print("---> [RESCUE PROCESS] Taking off.")
+    # await drone["system"].action.takeoff()
+    # await asyncio.sleep(3)
+    
+    async for position in drone["system"].telemetry.position():
+        print("---> [RESCUE PROCESS] Current position: ", end="")
+        print(f"({position.latitude_deg}, {position.longitude_deg})")
+        drone["init_params"]["latitude"] = round(position.latitude_deg, 12)
+        drone["init_params"]["longitude"] = round(position.longitude_deg, 12)
+        break
+
+    # go to the rescue position
 
     await uav_fn_goto_location(
         drone=drone,
         latitude=rescue_pos[0],
         longitude=rescue_pos[1],
     )
+    # await uav_fn_do_mission(drone=drone, mission_plan_file=rescue_filepath)     
 
     print("---> [RESCUE PROCESS] Arrived at rescue location.")
 
@@ -586,8 +618,11 @@ async def uav_rescue_process(drone, rescue_filepath):
 async def uav_suspend_missions(drones, suspend_time: int = 30):
     async def uav_suspend_mission(drone, suspend_time: int = 30):
         drone["detection_enable"] = False
+        print(f"---> [RESCUE PROCESS] UAV-{drone['ID']} is going to suspend mission for {suspend_time} seconds.")
         await drone["system"].mission.pause_mission()
+        await drone["system"].action.hold()
         await asyncio.sleep(suspend_time)
+        print(f"---> [RESCUE PROCESS] UAV-{drone['ID']} is going to resume mission.")
         await drone["system"].mission.start_mission()
         drone["detection_enable"] = True
 
@@ -600,13 +635,14 @@ def select_mission_plan(mission_plan_files):
     return mission_plan_files.pop(0)
 
 def clear_mission_logs(uav_index, save_dir) -> None:
-        # remove rescue file and detected files
+    # remove rescue file and detected files
     if os.path.exists(
         f"{save_dir}/logs/rescue_pos/rescue_pos_uav_{uav_index}.log"
     ):
         os.remove(
             f"{save_dir}/logs/rescue_pos/rescue_pos_uav_{uav_index}.log"
         )
+    # remove detection log file
     if os.path.exists(
         f"{save_dir}/logs/detected_pos/detection_pos_uav_{uav_index}.log"
     ):
@@ -665,10 +701,13 @@ def export_points_to_gps_log(uav_index, detected_pos, frame_shape, uav_gps) -> l
     # rescue file for uav to go to
     rescue_filepath = f"{SRC_DIR}/logs/rescue_pos/rescue_pos_uav_{uav_index}.log"
     with open(rescue_filepath, "w") as f:
+        # f.write(
+        #     f"{gps_lat}, {gps_lon}\n"
+        # )  # change to uav_lat, uav_lon to go to the detected uav_position
         f.write(
-            f"{gps_lat}, {gps_lon}\n"
+            f"{uav_lat}, {uav_lon}\n"
         )  # change to uav_lat, uav_lon to go to the detected uav_position
-
+        
     # detection log file
     time_stamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     detection_filepath = f"{SRC_DIR}/logs/detected_pos/detection_pos_uav_{uav_index}.log"
@@ -764,4 +803,5 @@ def convert_pointsFile_to_missionPlan(pointsFile, default_height=10):
 
     with open("./mission/mission_plan.json", "w") as f:
         json.dump(plan_template, f, indent=4)
+    pass
     pass

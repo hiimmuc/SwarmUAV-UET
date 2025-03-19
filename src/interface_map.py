@@ -805,24 +805,24 @@ class Map(Interface):
                 lat, lon = map(float, file.readline().strip().split(","))
                 self.drone_position_list.append((lat, lon))
                 self.rescue_map.addMarker(
-                    key=f"uav_{i}",
+                    key=f"uav_{i + 1}",
                     latitude=lat,
                     longitude=lon,
                     **dict(
                         icon=drone_icon_path,
                         draggable=True,
-                        title=f"UAV {i}",
+                        title=f"UAV {i + 1}",
                         iconSize={"width": 21, "height": 21},
                     ),
                 )
                 self.ovv_map.addMarker(
-                    key=f"uav_{i}",
+                    key=f"uav_{i + 1}",
                     latitude=lat,
                     longitude=lon,
                     **dict(
                         icon=drone_icon_path,
                         draggable=True,
-                        title=f"UAV {i}",
+                        title=f"UAV {i + 1}",
                         iconSize={"width": 21, "height": 21},
                     ),
                 )
