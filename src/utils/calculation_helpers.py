@@ -143,7 +143,7 @@ def find_longest_edge(points):
             max_length = length
             longest_edge = (p1, p2)
 
-    return longest_edge
+    return max_length, longest_edge
 
 
 def find_segment_points(edge, N=2):

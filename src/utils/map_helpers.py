@@ -156,7 +156,7 @@ def split_polygon_into_areas_old(vertices, number_of_parts):
     #     print(coord)
 
     # Find the largest edge
-    _, longest_edge_point = find_longest_edge2(cartesian_coordinates)
+    _, longest_edge_point = find_longest_edge(cartesian_coordinates)
     # print(f"\nEdge: {longest}")
     # for coord in longest_edge_point:
     #     print(coord)

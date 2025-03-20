@@ -1,5 +1,5 @@
-import datetime
 import io
+from datetime import datetime
 from pathlib import Path
 
 import folium
@@ -11,7 +11,7 @@ from folium.plugins.draw import Draw
 from folium.raster_layers import TileLayer
 from jinja2 import Template
 
-NOW = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+NOW = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 _src_path = Path(__file__).resolve().parent.parent
 
 ICON_DIR = Path(__file__).parent.parent / "assets" / "icons"

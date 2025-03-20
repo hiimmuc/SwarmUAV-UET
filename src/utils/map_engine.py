@@ -1,9 +1,16 @@
-"""DOCS:
-# Sample code to add markers and lines to the map
+"""
+MapEngine - A PyQt wrapper for Leaflet maps
+
+This module provides a Python interface to Leaflet.js maps embedded in a PyQt WebEngineView.
+It allows for programmatic control of maps, including adding/removing markers, lines,
+and polygons, as well as handling map events.
+
+Example Usage:
+-------------
 # Add markers to the map
 map_engine.addMarker(
     key="1",
-    latitude=21.064862,
+    latitude=21.064862, 
     longitude=105.792958,
     **dict(icon="../assets/icons/drone.png", draggable=True, title="1"),
 )
@@ -12,8 +19,8 @@ map_engine.addMarker(
 map_engine.drawPolyLine(
     key="1",
     coordinates=[
-        [21.064862, 105.792958], # p1
-        [21.065862, 105.792958], # p2
+        [21.064862, 105.792958],  # p1
+        [21.065862, 105.792958],  # p2
     ],
     options=dict(color="red", weight=5),
 )
@@ -22,17 +29,17 @@ map_engine.drawPolyLine(
 map_engine.drawPolygon(
     key="1",
     coordinates=[
-        [21.064862, 105.792958], # p1
-        [21.065862, 105.792958], # p2
-        [21.065862, 105.793958], # p3
-        [21.064862, 105.793958], # p4
+        [21.064862, 105.792958],  # p1
+        [21.065862, 105.792958],  # p2
+        [21.065862, 105.793958],  # p3
+        [21.064862, 105.793958],  # p4
     ],
     options=dict(color="green", weight=2, fill=True, fillColor="green", fillOpacity=0.2),
 )
 """
 
 import json
-from typing import List, Optional, Sequence, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import decorator
 from PyQt5 import QtCore
@@ -42,16 +49,20 @@ from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
 from PyQt5.QtWidgets import QApplication
 
+# Suppress QtWebEngine logging
 QtCore.qInstallMessageHandler(lambda *args: None)
 
+# Debug flag for function tracing
 doTrace = False
 
 
 @decorator.decorator
 def trace(function, *args, **k):
-    """Decorates a function by tracing the beginning and
-    end of the function execution, if doTrace global is True"""
-
+    """
+    Trace decorator for debugging function calls.
+    
+    When doTrace is True, prints function entry and exit with arguments and return value.
+    """
     if doTrace:
         print("> " + function.__name__, args, k)
     result = function(*args, **k)
@@ -61,217 +72,71 @@ def trace(function, *args, **k):
 
 
 class _LoggedPage(QWebEnginePage):
+    """Custom WebEnginePage that logs JavaScript console messages."""
+    
     @trace
-    def javaScriptConsoleMessage(self, msg, line, source):
-        print("JS: %s line %d: %s" % (source, line, msg))
+    def javaScriptConsoleMessage(self, msg: str, line: int, source: str) -> None:
+        """Log JavaScript console messages with source and line information."""
+        print(f"JS: {source} line {line}: {msg}")
 
 
-def geojson_to_coordinates(geojson) -> str:
-    if type(geojson) is str:
+def geojson_to_coordinates(geojson: Union[str, Dict[str, Any]]) -> List:
+    """
+    Convert GeoJSON to coordinates array.
+    
+    Args:
+        geojson: GeoJSON data as string or dictionary
+        
+    Returns:
+        List containing [geometry_type, coordinates]
+    """
+    if isinstance(geojson, str):
         geojson = json.loads(geojson)
-    else:
-        geojson = geojson
-
+        
     geometry_type = geojson.get("geometry", {}).get("type", "")
     coordinates = geojson.get("geometry", {}).get("coordinates", [])
 
-    if len(coordinates) == 0:
+    if not coordinates:
         print("No coordinates found in GeoJSON")
         return []
 
     return [geometry_type, coordinates]
 
 
-class MapEngine(QWebEngineView):
-    # marker events
-    @pyqtSlot(str, float, float)
-    def markerMoved(self, key, latitude, longitude):
-        self.markerMovedCallback(key, latitude, longitude)
-
-    @pyqtSlot(str, float, float)
-    def markerRightClicked(self, key, latitude, longitude):
-        self.markerRightClickedCallback(key, latitude, longitude)
-
-    @pyqtSlot(str, float, float)
-    def markerClicked(self, key, latitude, longitude):
-        self.markerClickedCallback(key, latitude, longitude)
-
-    @pyqtSlot(str, float, float)
-    def markerDoubleClicked(self, key, latitude, longitude):
-        self.markerDoubleClickedCallback(key, latitude, longitude)
-
-    # map events
-    @pyqtSlot(float, float)
-    def mapMoved(self, latitude, longitude):
-        self.mapMovedCallback(latitude, longitude)
-
-    @pyqtSlot(float, float)
-    def mapRightClicked(self, latitude, longitude):
-        self.mapRightClickedCallback(latitude, longitude)
-
-    @pyqtSlot(float, float)
-    def mapLeftClicked(self, latitude, longitude):
-        self.mapClickedCallback(latitude, longitude)
-
-    @pyqtSlot(float, float)
-    def mapDoubleClicked(self, latitude, longitude):
-        self.mapDoubleClickedCallback(latitude, longitude)
-
-    # drawn events
-    @pyqtSlot(str)
-    def geoJsonHandle(self, geojson):
-        self.mapGeojsonCallback(geojson)
-
-    def __init__(
-        self,
-        name="",
-        widget=None,
-        url=None,
-    ):
-        QWebEngineView.__init__(self, parent=widget.parent())
-
-        cache = QNetworkDiskCache()
-        cache.setCacheDirectory("cache")
-
-        self.initialized = False
-
-        self.map_name = name
-        self.map_widget = widget
-
-        if url is not None:
-            self.map_widget.load(QUrl(url))
-
-        self.map_page = self.map_widget.page()
-        # self.map_widget.getSettings().setJavaScriptEnabled(true)
-        web_channel = QWebChannel(self.map_page)
-        self.map_page.setWebChannel(web_channel)
-        web_channel.registerObject("qtWidget", self)
-
-        self.map_widget.loadFinished.connect(self.onLoadFinished)
-
-        # set callback to transfer data from JS to Python
-        self.mapMovedCallback = None
-        self.mapClickedCallback = None
-        self.mapRightClickedCallback = None
-        self.mapDoubleClickedCallback = None
-
-        self.markerMovedCallback = None
-        self.markerClickedCallback = None
-        self.markerDoubleClickedCallback = None
-        self.markerRightClickedCallback = None
-
-        self.mapGeojsonCallback = None
-
-    def onLoadFinished(self, ok):
-        if self.initialized:
-            return
-
-        if not ok:
-            print("Error initializing Map")
-
-        self.initialized = True
-        print("Map engine initialized for:", self.map_name)
-
-    def waitUntilReady(self):
-        while not self.initialized:
-            QApplication.processEvents()
-
-    def runScript(self, script):
-        # print("Running script:", script)
-        return self.map_page.runJavaScript(script)
-
-    def centerAt(self, latitude, longitude):
-        self.runScript("setCenterJs({}, {});".format(latitude, longitude))
-
-    def setZoom(self, zoom):
-        self.runScript("setZoomJs({});".format(zoom))
-
-    def center(self):
-        center = self.runScript("getCenterJs();")
-        return center["lat"], center["lng"]
-
-    # ============= Marker functions =============
-    def addMarker(self, key, latitude, longitude, **options):
-        return self.runScript(
-            "addMarkerJs(key={!r},"
-            "latitude= {}, "
-            "longitude= {}, parameters={});".format(
-                key, round(latitude, 12), round(longitude, 12), json.dumps(options)
-            )
-        )
-
-    def deleteMarker(self, key):
-        return self.runScript("deleteMarkerJs(key={!r});".format(key))
-
-    def mapMoveMarker(self, key, latitude, longitude):
-        self.runScript(f"moveMarkerJs(key={key}, latitude={latitude}, longitude={longitude});")
-
-    def positionMarker(self, key):
-        return tuple(self.runScript("posMarkerJs(key={!r});".format(key)))
-
-    # ============= line functions =============
-    def drawPolyLine(self, key, coordinates, options={}):
-        if len(coordinates) < 2:
-            print("PolyLine requires at least 2 coordinates")
-            return
-
-        options = path_options(line=True, **options)
-        return self.runScript(
-            "drawPolyLineJs(key = {!r}, coords={}, options={});".format(
-                key, json.dumps(coordinates), json.dumps(options)
-            )
-        )
-
-    def deletePolyLine(self, key):
-        return self.runScript("deletePolyLineJs(key={!r});".format(key))
-
-    # ============= polygon functions =============
-    def drawPolygon(self, key, coordinates, options={}):
-        if len(coordinates) < 3:
-            print("Polygon requires at least 3 coordinates")
-            return
-
-        if coordinates[0] != coordinates[-1]:
-            print("Polygon requires the first and last coordinates to be the same")
-            return
-
-        options = path_options(line=True, radius=None, fillcolor="#3388ff", **options)
-        return self.runScript(
-            "drawPolygonJs(key = {!r}, coords={}, options={});".format(
-                key, json.dumps(coordinates), json.dumps(options)
-            )
-        )
-
-    def deletePolygon(self, key):
-        return self.runScript("deletePolygonJs(key={!r});".format(key))
-
-
-#
 def camelize(key: str) -> str:
-    """Convert a python_style_variable_name to lowerCamelCase.
-
-    Examples
-    --------
-    >>> camelize("variable_name")
-    'variableName'
-    >>> camelize("variableName")
-    'variableName'
+    """
+    Convert a python_style_variable_name to lowerCamelCase.
+    
+    Args:
+        key: Snake case string
+        
+    Returns:
+        Camel case string
+        
+    Examples:
+        >>> camelize("variable_name")
+        'variableName'
+        >>> camelize("variableName")
+        'variableName'
     """
     return "".join(x.capitalize() if i > 0 else x for i, x in enumerate(key.split("_")))
 
 
 def marker_options(**kwargs) -> dict:
     """
-    Contains options and constants shared between all markers.
-
-    Parameters
-    ----------
-    draggable: Bool, False
-        Whether the marker is draggable with mouse/touch or not.
-    title: str, ''
-        Text for the browser tooltip that appear on marker hover.
-    iconSize: Dict(width, height), None
-        The size of the icon image in pixels.
+    Create options dictionary for map markers.
+    
+    Args:
+        **kwargs: Marker options in either snake_case or camelCase
+            
+    Supported Options:
+        draggable (bool): Whether marker is draggable. Default: False
+        title (str): Tooltip text on hover. Default: ''
+        icon (str): Icon path or name. Default: 'not_listed_location'
+        icon_size (dict): Dictionary with width and height in pixels. Default: {width: 10, height: 10}
+    
+    Returns:
+        dict: Formatted marker options for JavaScript
     """
     kwargs = {camelize(key): value for key, value in kwargs.items()}
 
@@ -285,61 +150,38 @@ def marker_options(**kwargs) -> dict:
 
 def path_options(line: bool = False, radius: Optional[float] = None, **kwargs) -> dict:
     """
-    Contains options and constants shared between vector overlays
-    (Polygon, Polyline, Circle, CircleMarker, and Rectangle).
-
-    Parameters
-    ----------
-    stroke: Bool, True
-        Whether to draw stroke along the path.
-        Set it to false to disable borders on polygons or circles.
-    color: str, '#3388ff'
-        Stroke color.
-    weight: int, 3
-        Stroke width in pixels.
-    opacity: float, 1.0
-        Stroke opacity.
-    line_cap: str, 'round' (lineCap)
-        A string that defines shape to be used at the end of the stroke.
-        https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
-    line_join: str, 'round' (lineJoin)
-        A string that defines shape to be used at the corners of the stroke.
-        https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
-    dash_array: str, None (dashArray)
-        A string that defines the stroke dash pattern.
-        Doesn't work on Canvas-powered layers in some old browsers.
-        https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-    dash_offset:, str, None (dashOffset)
-        A string that defines the distance into the dash pattern to start the dash.
-        Doesn't work on Canvas-powered layers in some old browsers.
-        https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
-    fill: Bool, False
-        Whether to fill the path with color.
-        Set it to false to disable filling on polygons or circles.
-    fill_color: str, default to `color` (fillColor)
-        Fill color. Defaults to the value of the color option.
-    fill_opacity: float, 0.2 (fillOpacity)
-        Fill opacity.
-    fill_rule: str, 'evenodd' (fillRule)
-        A string that defines how the inside of a shape is determined.
-        https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
-    bubbling_mouse_events: Bool, True (bubblingMouseEvents)
-        When true a mouse event on this path will trigger the same event on the
-        map (unless L.DomEvent.stopPropagation is used).
-    gradient: bool, default None
-        When a gradient on the stroke and fill is available,
-        allows turning it on or off.
-
-    Note that the presence of `fill_color` will override `fill=False`.
-
-    This function accepts both snake_case and lowerCamelCase equivalents.
-
-    See https://leafletjs.com/reference.html#path
-
+    Create options dictionary for vector overlays.
+    
+    Args:
+        line (bool): Whether the path is a line. Default: False
+        radius (float, optional): Radius for circle overlays. Default: None
+        **kwargs: Path options in either snake_case or camelCase
+    
+    Supported Options:
+        stroke (bool): Whether to draw stroke along the path. Default: True
+        color (str): Stroke color. Default: '#3388ff'
+        weight (int): Stroke width in pixels. Default: 3
+        opacity (float): Stroke opacity. Default: 1.0
+        line_cap (str): Shape at end of stroke ('round', 'butt', 'square'). Default: 'round'
+        line_join (str): Shape at corners ('round', 'miter', 'bevel'). Default: 'round'
+        dash_array (str): Stroke dash pattern. Default: None
+        dash_offset (str): Distance into dash pattern to start. Default: None
+        fill (bool): Whether to fill the path with color. Default: False
+        fill_color (str): Fill color. Default: Same as stroke color
+        fill_opacity (float): Fill opacity. Default: 0.2
+        fill_rule (str): How inside of shape is determined ('evenodd', 'nonzero'). Default: 'evenodd'
+        gradient (bool): Apply gradient to stroke and fill. Default: None
+        
+    Returns:
+        dict: Formatted path options for JavaScript
+    
+    Note:
+        If fill_color is specified, fill will be set to True regardless of fill parameter.
     """
-
+    # Convert snake_case to camelCase
     kwargs = {camelize(key): value for key, value in kwargs.items()}
 
+    # Set overlay-specific options
     extra_options = {}
     if line:
         extra_options = {
@@ -349,14 +191,17 @@ def path_options(line: bool = False, radius: Optional[float] = None, **kwargs) -
     if radius:
         extra_options.update({"radius": radius})
 
+    # Handle color and fill options
     color = kwargs.pop("color", "#3388ff")
     fill_color = kwargs.pop("fillColor", False)
+    
     if fill_color:
         fill = True
     elif not fill_color:
         fill_color = color
-        fill = kwargs.pop("fill", False)  # type: ignore
+        fill = kwargs.pop("fill", False)
 
+    # Handle additional options
     gradient = kwargs.pop("gradient", None)
     if gradient is not None:
         extra_options.update({"gradient": gradient})
@@ -367,6 +212,7 @@ def path_options(line: bool = False, radius: Optional[float] = None, **kwargs) -
     if kwargs.get("className"):
         extra_options["className"] = kwargs.pop("className")
 
+    # Build final options dictionary
     default = {
         "stroke": kwargs.pop("stroke", True),
         "color": color,
@@ -384,3 +230,312 @@ def path_options(line: bool = False, radius: Optional[float] = None, **kwargs) -
     }
     default.update(extra_options)
     return default
+
+
+class MapEngine(QWebEngineView):
+    """
+    PyQt wrapper for a Leaflet.js map embedded in a QWebEngineView.
+    
+    Provides Python interface for map manipulation and event handling.
+    """
+    
+    def __init__(
+        self,
+        name: str = "",
+        widget: Optional[QWebEngineView] = None,
+        url: Optional[str] = None,
+    ):
+        """
+        Initialize the map engine.
+        
+        Args:
+            name: Identifier for the map
+            widget: QWebEngineView widget to use (will create one if None)
+            url: URL to load the map from
+        """
+        QWebEngineView.__init__(self, parent=widget.parent() if widget else None)
+
+        # Setup disk cache
+        cache = QNetworkDiskCache()
+        cache.setCacheDirectory("cache")
+
+        self.initialized = False
+        self.map_name = name
+        self.map_widget = widget or self
+
+        # Load URL if provided
+        if url is not None:
+            self.map_widget.load(QUrl(url))
+
+        # Setup web channel for JS-Python communication
+        self.map_page = self.map_widget.page()
+        web_channel = QWebChannel(self.map_page)
+        self.map_page.setWebChannel(web_channel)
+        web_channel.registerObject("qtWidget", self)
+
+        # Connect initialization signal
+        self.map_widget.loadFinished.connect(self.onLoadFinished)
+
+        # Initialize callback functions
+        self.mapMovedCallback = None
+        self.mapClickedCallback = None
+        self.mapRightClickedCallback = None
+        self.mapDoubleClickedCallback = None
+
+        self.markerMovedCallback = None
+        self.markerClickedCallback = None
+        self.markerDoubleClickedCallback = None
+        self.markerRightClickedCallback = None
+
+        self.mapGeojsonCallback = None
+
+    # ====================== Event Handlers ======================
+    
+    # Marker events
+    @pyqtSlot(str, float, float)
+    def markerMoved(self, key: str, latitude: float, longitude: float) -> None:
+        """Handle marker moved event from JavaScript."""
+        if self.markerMovedCallback:
+            self.markerMovedCallback(key, latitude, longitude)
+
+    @pyqtSlot(str, float, float)
+    def markerRightClicked(self, key: str, latitude: float, longitude: float) -> None:
+        """Handle marker right-click event from JavaScript."""
+        if self.markerRightClickedCallback:
+            self.markerRightClickedCallback(key, latitude, longitude)
+
+    @pyqtSlot(str, float, float)
+    def markerClicked(self, key: str, latitude: float, longitude: float) -> None:
+        """Handle marker click event from JavaScript."""
+        if self.markerClickedCallback:
+            self.markerClickedCallback(key, latitude, longitude)
+
+    @pyqtSlot(str, float, float)
+    def markerDoubleClicked(self, key: str, latitude: float, longitude: float) -> None:
+        """Handle marker double-click event from JavaScript."""
+        if self.markerDoubleClickedCallback:
+            self.markerDoubleClickedCallback(key, latitude, longitude)
+
+    # Map events
+    @pyqtSlot(float, float)
+    def mapMoved(self, latitude: float, longitude: float) -> None:
+        """Handle map moved event from JavaScript."""
+        if self.mapMovedCallback:
+            self.mapMovedCallback(latitude, longitude)
+
+    @pyqtSlot(float, float)
+    def mapRightClicked(self, latitude: float, longitude: float) -> None:
+        """Handle map right-click event from JavaScript."""
+        if self.mapRightClickedCallback:
+            self.mapRightClickedCallback(latitude, longitude)
+
+    @pyqtSlot(float, float)
+    def mapLeftClicked(self, latitude: float, longitude: float) -> None:
+        """Handle map left-click event from JavaScript."""
+        if self.mapClickedCallback:
+            self.mapClickedCallback(latitude, longitude)
+
+    @pyqtSlot(float, float)
+    def mapDoubleClicked(self, latitude: float, longitude: float) -> None:
+        """Handle map double-click event from JavaScript."""
+        if self.mapDoubleClickedCallback:
+            self.mapDoubleClickedCallback(latitude, longitude)
+
+    # GeoJSON events
+    @pyqtSlot(str)
+    def geoJsonHandle(self, geojson: str) -> None:
+        """Handle GeoJSON data from JavaScript."""
+        if self.mapGeojsonCallback:
+            self.mapGeojsonCallback(geojson)
+
+    # ====================== Initialization ======================
+    
+    def onLoadFinished(self, ok: bool) -> None:
+        """Handle map load completion."""
+        if self.initialized:
+            return
+
+        if not ok:
+            print("Error initializing Map")
+
+        self.initialized = True
+        print(f"Map engine initialized for: {self.map_name}")
+
+    def waitUntilReady(self) -> None:
+        """Block until map is initialized, processing events."""
+        while not self.initialized:
+            QApplication.processEvents()
+
+    def runScript(self, script: str) -> Any:
+        """
+        Run JavaScript in the map page.
+        
+        Args:
+            script: JavaScript code to execute
+            
+        Returns:
+            Result of JavaScript execution
+        """
+        return self.map_page.runJavaScript(script)
+
+    # ====================== Map Controls ======================
+    
+    def centerAt(self, latitude: float, longitude: float) -> None:
+        """
+        Center the map at specified coordinates.
+        
+        Args:
+            latitude: Latitude in degrees
+            longitude: Longitude in degrees
+        """
+        self.runScript(f"setCenterJs({latitude}, {longitude});")
+
+    def setZoom(self, zoom: int) -> None:
+        """
+        Set map zoom level.
+        
+        Args:
+            zoom: Zoom level (typically 1-18)
+        """
+        self.runScript(f"setZoomJs({zoom});")
+
+    def center(self) -> Tuple[float, float]:
+        """
+        Get current map center coordinates.
+        
+        Returns:
+            Tuple of (latitude, longitude)
+        """
+        center = self.runScript("getCenterJs();")
+        return center["lat"], center["lng"]
+
+    # ====================== Marker Functions ======================
+    
+    def addMarker(self, key: str, latitude: float, longitude: float, **options) -> Any:
+        """
+        Add a marker to the map.
+        
+        Args:
+            key: Unique identifier for the marker
+            latitude: Marker latitude
+            longitude: Marker longitude
+            **options: Additional marker options (see marker_options)
+            
+        Returns:
+            JavaScript response
+        """
+        return self.runScript(
+            f"addMarkerJs(key={json.dumps(key)},"
+            f"latitude={round(latitude, 12)}, "
+            f"longitude={round(longitude, 12)}, parameters={json.dumps(options)});"
+        )
+
+    def deleteMarker(self, key: str) -> Any:
+        """
+        Remove a marker from the map.
+        
+        Args:
+            key: Marker identifier
+            
+        Returns:
+            JavaScript response
+        """
+        return self.runScript(f"deleteMarkerJs(key={json.dumps(key)});")
+
+    def mapMoveMarker(self, key: str, latitude: float, longitude: float) -> None:
+        """
+        Move a marker to new coordinates.
+        
+        Args:
+            key: Marker identifier
+            latitude: New latitude
+            longitude: New longitude
+        """
+        self.runScript(f"moveMarkerJs(key={json.dumps(key)}, latitude={latitude}, longitude={longitude});")
+
+    def positionMarker(self, key: str) -> Tuple[float, float]:
+        """
+        Get current position of a marker.
+        
+        Args:
+            key: Marker identifier
+            
+        Returns:
+            Tuple of (latitude, longitude)
+        """
+        return tuple(self.runScript(f"posMarkerJs(key={json.dumps(key)});"))
+
+    # ====================== Line Functions ======================
+    
+    def drawPolyLine(self, key: str, coordinates: List[List[float]], options: dict = {}) -> Any:
+        """
+        Draw a polyline on the map.
+        
+        Args:
+            key: Unique identifier for the polyline
+            coordinates: List of [lat, lng] coordinate pairs
+            options: Line style options (see path_options)
+            
+        Returns:
+            JavaScript response
+        """
+        if len(coordinates) < 2:
+            print("PolyLine requires at least 2 coordinates")
+            return
+
+        options = path_options(line=True, **options)
+        return self.runScript(
+            f"drawPolyLineJs(key={json.dumps(key)}, coords={json.dumps(coordinates)}, options={json.dumps(options)});"
+        )
+
+    def deletePolyLine(self, key: str) -> Any:
+        """
+        Remove a polyline from the map.
+        
+        Args:
+            key: Polyline identifier
+            
+        Returns:
+            JavaScript response
+        """
+        return self.runScript(f"deletePolyLineJs(key={json.dumps(key)});")
+
+    # ====================== Polygon Functions ======================
+    
+    def drawPolygon(self, key: str, coordinates: List[List[float]], options: dict = {}) -> Any:
+        """
+        Draw a polygon on the map.
+        
+        Args:
+            key: Unique identifier for the polygon
+            coordinates: List of [lat, lng] coordinate pairs
+            options: Polygon style options (see path_options)
+            
+        Returns:
+            JavaScript response
+        """
+        if len(coordinates) < 3:
+            print("Polygon requires at least 3 coordinates")
+            return
+
+        # Ensure polygon is closed (first point = last point)
+        if coordinates[0] != coordinates[-1]:
+            print("Polygon requires the first and last coordinates to be the same")
+            return
+
+        options = path_options(line=True, radius=None, fillcolor="#3388ff", **options)
+        return self.runScript(
+            f"drawPolygonJs(key={json.dumps(key)}, coords={json.dumps(coordinates)}, options={json.dumps(options)});"
+        )
+
+    def deletePolygon(self, key: str) -> Any:
+        """
+        Remove a polygon from the map.
+        
+        Args:
+            key: Polygon identifier
+            
+        Returns:
+            JavaScript response
+        """
+        return self.runScript(f"deletePolygonJs(key={json.dumps(key)});")
