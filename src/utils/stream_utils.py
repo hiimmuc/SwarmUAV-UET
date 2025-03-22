@@ -19,8 +19,7 @@ import numpy as np
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
 
 from config.stream_config import DEVICE, SRC_DIR
-
-from .model_utils import draw_detected_frame, draw_tracking_frame
+from utils.model_utils import draw_detected_frame, draw_tracking_frame
 
 # Default configuration values
 DEFAULT_BUFFER_SIZE = 4

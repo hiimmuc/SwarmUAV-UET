@@ -381,6 +381,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             
     def _create_stream_config(self, uav_index):
         """Create stream configuration dictionary for a UAV"""
+        global UAVs
+        
         # Capture settings
         capture = {
             "index": uav_index,
@@ -737,6 +739,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         5. Clears the input after processing the command.
         6. Displays an error message if an invalid input is encountered.
         """
+        global UAVs
 
         try:
             if not (
@@ -855,6 +858,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
     async def _initialize_server(self, uav_index):
         """Initialize the MAVSDK server for a UAV."""
+        global UAVs
+        
         if UAVs[uav_index]["server"]["start"]:
             UAVs[uav_index]["server"]["shell"].stop()
             UAVs[uav_index]["server"]["start"] = False
@@ -866,6 +871,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
     async def _connect_to_system(self, uav_index):
         """Connect to the UAV system and verify connection state."""
+        global UAVs
+        
         logger.log(f"Waiting for UAV {uav_index} to connect...", level="info")
         
         # 1. Connect to the system
@@ -887,6 +894,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
     async def _configure_uav_parameters(self, uav_index):
         """Configure UAV parameters after connection."""
+        global UAVs
+        
         # Overwrite parameters from configuration
         await uav_fn_overwrite_params(
             UAVs[uav_index], parameters=OVERWRITE_PARAMS[uav_index]
@@ -1209,9 +1218,6 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         7. If uav_index is 0, executes the mission for all UAVs concurrently.
         """
         global UAVs
-        # * If UAV is in the list of available UAVs (e.g. 1-5)
-
-        global UAVs
         
         # Handle the case of missions for all UAVs
         if uav_index not in range(1, MAX_UAV_COUNT + 1):
@@ -1223,13 +1229,17 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         
         # Handle regular UAV mission
         if uav_index in AVAIL_UAV_INDEXES:
-            await self._execute_standard_mission(uav_index)
+            # await self._execute_standard_mission(uav_index)
+            await asyncio.gather(
+                self._execute_standard_mission(uav_index),
+                # self.uav_fn_get_position(uav_index),
+            )
         
         # Handle rescue UAV mission
         elif uav_index == RESCUE_UAV_INDEX:
             # Check if this is first time or if rescue tab is selected
             if not (UAVs[RESCUE_UAV_INDEX]["rescue_first_time"] or 
-                    (self.ui.tabWidget.currentIndex() == RESCUE_UAV_INDEX - 1)):
+                    (self.ui.tabWidget.currentIndex() == RESCUE_UAV_INDEX)):
                 return
             
             await self.uav_fn_rescue()
@@ -1304,10 +1314,10 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         
         # Handle the case of pushing missions to all available UAVs
         if uav_index not in range(1, MAX_UAV_COUNT + 1):
-            push_tasks = [
-                self.uav_push_mission_callback(i) for i in AVAIL_UAV_INDEXES
-            ]
-            await asyncio.gather(*push_tasks)
+            # push_tasks = [
+            #     self.uav_push_mission_callback(i) for i in AVAIL_UAV_INDEXES
+            # ]
+            # await asyncio.gather(*push_tasks)
             return
         
         # Skip if UAV is not connected or not allowed
@@ -1625,6 +1635,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
     def _get_coordinates_from_page(self, page, uav_index):
         """Get coordinates from the specified page with fallback to defaults."""
+        global UAVs
+        
         # Set default coordinates (offset by UAV index to avoid collisions)
         default_longitude = UAVs[uav_index]["init_params"]["longitude"] if uav_index > 0 else INIT_LON
         default_latitude = UAVs[uav_index]["init_params"]["latitude"] if uav_index > 0 else INIT_LAT
@@ -1660,6 +1672,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
     def _update_uav_info_display(self, uav_index):
         """Update the information display for a UAV."""
+        global UAVs
+        
         self.uav_information_views[uav_index - 1].setText(
             self.template_information(uav_index, **UAVs[uav_index]["status"])
         )
@@ -1675,6 +1689,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         Returns:
             None
         """
+        global UAVs
+        
         if uav_status["connection_status"]:
             self.uav_label_params[uav_index - 1].setStyleSheet("background-color: green")
         else:
@@ -1744,7 +1760,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 type_msg="error"
             )
         
-    async def uav_fn_get_position(self, uav_index) -> Optional[Tuple[float, float, float, float]]:
+    async def uav_fn_get_position(self, uav_index) -> None:
         """
         Retrieve and update position data for a UAV.
         
@@ -1785,16 +1801,22 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         except Exception as e:
             logger.log(f"Failed to get position for UAV {uav_index}: {e}", level="error")
                 
-        return None
+        return
     
     def _update_position_log(self, uav_index, latitude, longitude):
         """Update the current position log file for the UAV."""
+        global UAVs
         try:
-            position_file = f"{__current_path__}/logs/drone_current_pos/uav_{uav_index}.txt"
-            os.makedirs(os.path.dirname(position_file), exist_ok=True)
+            # position_file = f"{__current_path__}/logs/drone_current_pos/uav_{uav_index}.txt"
+            # os.makedirs(os.path.dirname(position_file), exist_ok=True)
+            position_file = drone_current_pos_files[uav_index - 1]
             
+            if not os.path.exists(position_file):
+                os.makedirs(os.path.dirname(position_file), exist_ok=True)
+                
             with open(position_file, "w") as f:
-                f.write(f"{latitude}, {longitude}")
+                f.write(f"{latitude},{longitude}")
+                
         except Exception as e:
             logger.log(f"Failed to update position log for UAV {uav_index}: {e}", level="warning")
 
@@ -2179,6 +2201,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
     def _process_detection_results(self, uav_index, annotated_frame, detected_results):
         """Process object detection results and handle detected targets."""
+        global UAVs
+        
         if len(detected_results) != 2:
             return
             
@@ -2194,8 +2218,11 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
             detected_pos = (obj["x"], obj["y"])
             
             # Get current GPS coordinates
-            uav_lat = UAVs[uav_index]["status"]["position_status"][0]
-            uav_long = UAVs[uav_index]["status"]["position_status"][1]
+            # with open(drone_current_pos_files[uav_index - 1], "r") as f:
+            #     gps_data = f.read()
+            #     uav_lat, uav_long = map(float, gps_data.split(","))
+                
+            uav_lat, uav_long = UAVs[uav_index]["status"]["position_status"]
             uav_alt = UAVs[uav_index]["status"]["altitude_status"][0]
             uav_gps = [uav_lat, uav_long, uav_alt]
             
@@ -2228,6 +2255,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
     def _log_detection(self, uav_index, class_name, detected_pos, frame_shape, uav_gps):
         """Log detection information to the terminal."""
+        global UAVs
+        
         detection_msg = (
             f"UAV-{uav_index} at GPS ({uav_gps[0]}, {uav_gps[1]}, {uav_gps[2]}m) "
             f"detected {class_name} at X: {detected_pos[0]:.1f} Y: {detected_pos[1]:.1f} "
@@ -2358,7 +2387,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
             logger.log(f"Rescue mission completed", level="info")
             # start rescue mission again
-            self.uav_fn_rescue()
+            await self.uav_fn_rescue()
         except Exception as e:
             logger.log(f"Error: {repr(e)}", level="error")
             self.popup_msg(f"Error: {repr(e)}", src_msg="uav_fn_rescue", type_msg="Error")

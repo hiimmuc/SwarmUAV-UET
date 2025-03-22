@@ -357,7 +357,7 @@ async def uav_fn_goto_location(drone, latitude=None, longitude=None, altitude=No
 
 
 async def _wait_for_location_reached(drone, target_lat, target_lon, target_alt, 
-                                    tolerance_deg=1e-7, tolerance_alt=0.1, timeout=60):
+                                    tolerance_deg=1e-5, tolerance_alt=0.1, timeout=10):
     """
     Wait for UAV to reach a target location within tolerance.
     
@@ -394,7 +394,6 @@ async def _wait_for_location_reached(drone, target_lat, target_lon, target_alt,
             break
             
     print(f"UAV-{drone['ID']} timeout reaching location")
-    # print("Timeout waiting for UAV to reach target location")
     return False
 
 
@@ -837,20 +836,20 @@ async def uav_rescue_process(drone, rescue_filepath):
     # check if the drone is in the air, if not, connect to the drone
     # and arm it
     # and take off    
-    print("---> [RESCUE PROCESS] Arming drone.")
-    await drone["system"].action.arm()
-    await asyncio.sleep(1)
+    # print("---> [RESCUE PROCESS] Arming drone.")
+    # await drone["system"].action.arm()
+    # await asyncio.sleep(1)
     
-    print("---> [RESCUE PROCESS] Taking off.")
-    await drone["system"].action.takeoff()
-    await asyncio.sleep(3)
+    # print("---> [RESCUE PROCESS] Taking off.")
+    # await drone["system"].action.takeoff()
+    # await asyncio.sleep(3)
     
-    async for position in drone["system"].telemetry.position():
-        print("---> [RESCUE PROCESS] Current position: ", end="")
-        print(f"({position.latitude_deg}, {position.longitude_deg})")
-        drone["init_params"]["latitude"] = round(position.latitude_deg, 12)
-        drone["init_params"]["longitude"] = round(position.longitude_deg, 12)
-        break
+    # async for position in drone["system"].telemetry.position():
+    #     print("---> [RESCUE PROCESS] Current position: ", end="")
+    #     print(f"({position.latitude_deg}, {position.longitude_deg})")
+    #     drone["init_params"]["latitude"] = round(position.latitude_deg, 12)
+    #     drone["init_params"]["longitude"] = round(position.longitude_deg, 12)
+    #     break
 
     # go to the rescue position
 
@@ -929,6 +928,7 @@ async def _suspend_single_mission(drone, suspend_time):
         
         # Pause mission execution
         await drone["system"].mission.pause_mission()
+        
         # Hold position
         await drone["system"].action.hold()
         
@@ -1092,6 +1092,7 @@ def export_points_to_gps_log(uav_index, detected_pos, frame_shape, uav_gps):
         with open(rescue_filepath, "w") as f:
             # Note: Currently using UAV position rather than calculated target position
             # This can be changed to f"{target_lat}, {target_lon}\n" to use calculated position
+            # f.write(f"{target_lat}, {target_lon}\n")
             f.write(f"{uav_lat}, {uav_lon}\n")
             
         # Log detection with timestamp
