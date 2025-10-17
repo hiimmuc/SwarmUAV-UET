@@ -10,7 +10,7 @@ Example Usage:
 # Add markers to the map
 map_engine.addMarker(
     key="1",
-    latitude=21.064862, 
+    latitude=21.064862,
     longitude=105.792958,
     **dict(icon="../assets/icons/drone.png", draggable=True, title="1"),
 )
@@ -39,7 +39,7 @@ map_engine.drawPolygon(
 """
 
 import json
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import decorator
 from PyQt5 import QtCore
@@ -60,7 +60,7 @@ doTrace = False
 def trace(function, *args, **k):
     """
     Trace decorator for debugging function calls.
-    
+
     When doTrace is True, prints function entry and exit with arguments and return value.
     """
     if doTrace:
@@ -73,7 +73,7 @@ def trace(function, *args, **k):
 
 class _LoggedPage(QWebEnginePage):
     """Custom WebEnginePage that logs JavaScript console messages."""
-    
+
     @trace
     def javaScriptConsoleMessage(self, msg: str, line: int, source: str) -> None:
         """Log JavaScript console messages with source and line information."""
@@ -83,16 +83,16 @@ class _LoggedPage(QWebEnginePage):
 def geojson_to_coordinates(geojson: Union[str, Dict[str, Any]]) -> List:
     """
     Convert GeoJSON to coordinates array.
-    
+
     Args:
         geojson: GeoJSON data as string or dictionary
-        
+
     Returns:
         List containing [geometry_type, coordinates]
     """
     if isinstance(geojson, str):
         geojson = json.loads(geojson)
-        
+
     geometry_type = geojson.get("geometry", {}).get("type", "")
     coordinates = geojson.get("geometry", {}).get("coordinates", [])
 
@@ -106,13 +106,13 @@ def geojson_to_coordinates(geojson: Union[str, Dict[str, Any]]) -> List:
 def camelize(key: str) -> str:
     """
     Convert a python_style_variable_name to lowerCamelCase.
-    
+
     Args:
         key: Snake case string
-        
+
     Returns:
         Camel case string
-        
+
     Examples:
         >>> camelize("variable_name")
         'variableName'
@@ -125,16 +125,16 @@ def camelize(key: str) -> str:
 def marker_options(**kwargs) -> dict:
     """
     Create options dictionary for map markers.
-    
+
     Args:
         **kwargs: Marker options in either snake_case or camelCase
-            
+
     Supported Options:
         draggable (bool): Whether marker is draggable. Default: False
         title (str): Tooltip text on hover. Default: ''
         icon (str): Icon path or name. Default: 'not_listed_location'
         icon_size (dict): Dictionary with width and height in pixels. Default: {width: 10, height: 10}
-    
+
     Returns:
         dict: Formatted marker options for JavaScript
     """
@@ -151,12 +151,12 @@ def marker_options(**kwargs) -> dict:
 def path_options(line: bool = False, radius: Optional[float] = None, **kwargs) -> dict:
     """
     Create options dictionary for vector overlays.
-    
+
     Args:
         line (bool): Whether the path is a line. Default: False
         radius (float, optional): Radius for circle overlays. Default: None
         **kwargs: Path options in either snake_case or camelCase
-    
+
     Supported Options:
         stroke (bool): Whether to draw stroke along the path. Default: True
         color (str): Stroke color. Default: '#3388ff'
@@ -171,10 +171,10 @@ def path_options(line: bool = False, radius: Optional[float] = None, **kwargs) -
         fill_opacity (float): Fill opacity. Default: 0.2
         fill_rule (str): How inside of shape is determined ('evenodd', 'nonzero'). Default: 'evenodd'
         gradient (bool): Apply gradient to stroke and fill. Default: None
-        
+
     Returns:
         dict: Formatted path options for JavaScript
-    
+
     Note:
         If fill_color is specified, fill will be set to True regardless of fill parameter.
     """
@@ -194,7 +194,7 @@ def path_options(line: bool = False, radius: Optional[float] = None, **kwargs) -
     # Handle color and fill options
     color = kwargs.pop("color", "#3388ff")
     fill_color = kwargs.pop("fillColor", False)
-    
+
     if fill_color:
         fill = True
     elif not fill_color:
@@ -235,10 +235,10 @@ def path_options(line: bool = False, radius: Optional[float] = None, **kwargs) -
 class MapEngine(QWebEngineView):
     """
     PyQt wrapper for a Leaflet.js map embedded in a QWebEngineView.
-    
+
     Provides Python interface for map manipulation and event handling.
     """
-    
+
     def __init__(
         self,
         name: str = "",
@@ -247,7 +247,7 @@ class MapEngine(QWebEngineView):
     ):
         """
         Initialize the map engine.
-        
+
         Args:
             name: Identifier for the map
             widget: QWebEngineView widget to use (will create one if None)
@@ -290,7 +290,7 @@ class MapEngine(QWebEngineView):
         self.mapGeojsonCallback = None
 
     # ====================== Event Handlers ======================
-    
+
     # Marker events
     @pyqtSlot(str, float, float)
     def markerMoved(self, key: str, latitude: float, longitude: float) -> None:
@@ -349,7 +349,7 @@ class MapEngine(QWebEngineView):
             self.mapGeojsonCallback(geojson)
 
     # ====================== Initialization ======================
-    
+
     def onLoadFinished(self, ok: bool) -> None:
         """Handle map load completion."""
         if self.initialized:
@@ -369,21 +369,21 @@ class MapEngine(QWebEngineView):
     def runScript(self, script: str) -> Any:
         """
         Run JavaScript in the map page.
-        
+
         Args:
             script: JavaScript code to execute
-            
+
         Returns:
             Result of JavaScript execution
         """
         return self.map_page.runJavaScript(script)
 
     # ====================== Map Controls ======================
-    
+
     def centerAt(self, latitude: float, longitude: float) -> None:
         """
         Center the map at specified coordinates.
-        
+
         Args:
             latitude: Latitude in degrees
             longitude: Longitude in degrees
@@ -393,7 +393,7 @@ class MapEngine(QWebEngineView):
     def setZoom(self, zoom: int) -> None:
         """
         Set map zoom level.
-        
+
         Args:
             zoom: Zoom level (typically 1-18)
         """
@@ -402,7 +402,7 @@ class MapEngine(QWebEngineView):
     def center(self) -> Tuple[float, float]:
         """
         Get current map center coordinates.
-        
+
         Returns:
             Tuple of (latitude, longitude)
         """
@@ -410,17 +410,17 @@ class MapEngine(QWebEngineView):
         return center["lat"], center["lng"]
 
     # ====================== Marker Functions ======================
-    
+
     def addMarker(self, key: str, latitude: float, longitude: float, **options) -> Any:
         """
         Add a marker to the map.
-        
+
         Args:
             key: Unique identifier for the marker
             latitude: Marker latitude
             longitude: Marker longitude
             **options: Additional marker options (see marker_options)
-            
+
         Returns:
             JavaScript response
         """
@@ -433,10 +433,10 @@ class MapEngine(QWebEngineView):
     def deleteMarker(self, key: str) -> Any:
         """
         Remove a marker from the map.
-        
+
         Args:
             key: Marker identifier
-            
+
         Returns:
             JavaScript response
         """
@@ -445,37 +445,39 @@ class MapEngine(QWebEngineView):
     def mapMoveMarker(self, key: str, latitude: float, longitude: float) -> None:
         """
         Move a marker to new coordinates.
-        
+
         Args:
             key: Marker identifier
             latitude: New latitude
             longitude: New longitude
         """
-        self.runScript(f"moveMarkerJs(key={json.dumps(key)}, latitude={latitude}, longitude={longitude});")
+        self.runScript(
+            f"moveMarkerJs(key={json.dumps(key)}, latitude={latitude}, longitude={longitude});"
+        )
 
     def positionMarker(self, key: str) -> Tuple[float, float]:
         """
         Get current position of a marker.
-        
+
         Args:
             key: Marker identifier
-            
+
         Returns:
             Tuple of (latitude, longitude)
         """
         return tuple(self.runScript(f"posMarkerJs(key={json.dumps(key)});"))
 
     # ====================== Line Functions ======================
-    
+
     def drawPolyLine(self, key: str, coordinates: List[List[float]], options: dict = {}) -> Any:
         """
         Draw a polyline on the map.
-        
+
         Args:
             key: Unique identifier for the polyline
             coordinates: List of [lat, lng] coordinate pairs
             options: Line style options (see path_options)
-            
+
         Returns:
             JavaScript response
         """
@@ -491,26 +493,26 @@ class MapEngine(QWebEngineView):
     def deletePolyLine(self, key: str) -> Any:
         """
         Remove a polyline from the map.
-        
+
         Args:
             key: Polyline identifier
-            
+
         Returns:
             JavaScript response
         """
         return self.runScript(f"deletePolyLineJs(key={json.dumps(key)});")
 
     # ====================== Polygon Functions ======================
-    
+
     def drawPolygon(self, key: str, coordinates: List[List[float]], options: dict = {}) -> Any:
         """
         Draw a polygon on the map.
-        
+
         Args:
             key: Unique identifier for the polygon
             coordinates: List of [lat, lng] coordinate pairs
             options: Polygon style options (see path_options)
-            
+
         Returns:
             JavaScript response
         """
@@ -531,10 +533,10 @@ class MapEngine(QWebEngineView):
     def deletePolygon(self, key: str) -> Any:
         """
         Remove a polygon from the map.
-        
+
         Args:
             key: Polygon identifier
-            
+
         Returns:
             JavaScript response
         """

@@ -37,46 +37,46 @@ INIT_ALT = [5, 6, 7, 8, 9, 10]  # Initial altitudes for each UAV (meters)
 # Overwrite parameters for each UAV
 OVERWRITE_PARAMS = {
     1: {
-        "MIS_TAKEOFF_ALT": 5,    # Take-off altitude (m)
-        "MPC_TKO_SPEED": 2,      # Takeoff climb rate (m/s)
-        "GND_SPEED_MAX": 2,      # Maximum ground speed (m/s)
-        "CURRENT_SPEED": 1,      # Current speed during mission (m/s)
-        "RTL_AFTER_MS": True,    # Return to launch after mission
+        "MIS_TAKEOFF_ALT": 5,  # Take-off altitude (m)
+        "MPC_TKO_SPEED": 2,  # Takeoff climb rate (m/s)
+        "GND_SPEED_MAX": 2,  # Maximum ground speed (m/s)
+        "CURRENT_SPEED": 1,  # Current speed during mission (m/s)
+        "RTL_AFTER_MS": True,  # Return to launch after mission
     },
     2: {
-        "MIS_TAKEOFF_ALT": 6,    # Take-off altitude (m)
-        "MPC_TKO_SPEED": 2,      # Takeoff climb rate (m/s)
-        "GND_SPEED_MAX": 2,      # Maximum ground speed (m/s)
-        "CURRENT_SPEED": 1,      # Current speed during mission (m/s)
-        "RTL_AFTER_MS": True,    # Return to launch after mission
+        "MIS_TAKEOFF_ALT": 6,  # Take-off altitude (m)
+        "MPC_TKO_SPEED": 2,  # Takeoff climb rate (m/s)
+        "GND_SPEED_MAX": 2,  # Maximum ground speed (m/s)
+        "CURRENT_SPEED": 1,  # Current speed during mission (m/s)
+        "RTL_AFTER_MS": True,  # Return to launch after mission
     },
     3: {
-        "MIS_TAKEOFF_ALT": 7,    # Take-off altitude (m)
-        "MPC_TKO_SPEED": 2,      # Takeoff climb rate (m/s)
-        "GND_SPEED_MAX": 2,      # Maximum ground speed (m/s)
-        "CURRENT_SPEED": 1,      # Current speed during mission (m/s)
-        "RTL_AFTER_MS": True,    # Return to launch after mission
+        "MIS_TAKEOFF_ALT": 7,  # Take-off altitude (m)
+        "MPC_TKO_SPEED": 2,  # Takeoff climb rate (m/s)
+        "GND_SPEED_MAX": 2,  # Maximum ground speed (m/s)
+        "CURRENT_SPEED": 1,  # Current speed during mission (m/s)
+        "RTL_AFTER_MS": True,  # Return to launch after mission
     },
     4: {
-        "MIS_TAKEOFF_ALT": 8,    # Take-off altitude (m)
-        "MPC_TKO_SPEED": 2,      # Takeoff climb rate (m/s)
-        "GND_SPEED_MAX": 2,      # Maximum ground speed (m/s)
-        "CURRENT_SPEED": 1,      # Current speed during mission (m/s)
-        "RTL_AFTER_MS": True,    # Return to launch after mission
+        "MIS_TAKEOFF_ALT": 8,  # Take-off altitude (m)
+        "MPC_TKO_SPEED": 2,  # Takeoff climb rate (m/s)
+        "GND_SPEED_MAX": 2,  # Maximum ground speed (m/s)
+        "CURRENT_SPEED": 1,  # Current speed during mission (m/s)
+        "RTL_AFTER_MS": True,  # Return to launch after mission
     },
     5: {
-        "MIS_TAKEOFF_ALT": 9,    # Take-off altitude (m)
-        "MPC_TKO_SPEED": 2,      # Takeoff climb rate (m/s)
-        "GND_SPEED_MAX": 2,      # Maximum ground speed (m/s)
-        "CURRENT_SPEED": 1,      # Current speed during mission (m/s)
-        "RTL_AFTER_MS": True,    # Return to launch after mission
+        "MIS_TAKEOFF_ALT": 9,  # Take-off altitude (m)
+        "MPC_TKO_SPEED": 2,  # Takeoff climb rate (m/s)
+        "GND_SPEED_MAX": 2,  # Maximum ground speed (m/s)
+        "CURRENT_SPEED": 1,  # Current speed during mission (m/s)
+        "RTL_AFTER_MS": True,  # Return to launch after mission
     },
     6: {
-        "MIS_TAKEOFF_ALT": 10,   # Take-off altitude (m)
-        "MPC_TKO_SPEED": 2,      # Takeoff climb rate (m/s)
-        "GND_SPEED_MAX": 5,      # Maximum ground speed (m/s)
-        "CURRENT_SPEED": 2,      # Current speed during mission (m/s)
-        "RTL_AFTER_MS": True,    # Return to launch after mission
+        "MIS_TAKEOFF_ALT": 10,  # Take-off altitude (m)
+        "MPC_TKO_SPEED": 2,  # Takeoff climb rate (m/s)
+        "GND_SPEED_MAX": 5,  # Maximum ground speed (m/s)
+        "CURRENT_SPEED": 2,  # Current speed during mission (m/s)
+        "RTL_AFTER_MS": True,  # Return to launch after mission
     },
 }
 
@@ -114,19 +114,19 @@ if MODE == "simulation":
     DEFAULT_SERVER_HOST = ""
     DEFAULT_SERVER_PORT = 14541
     DEFAULT_CLIENT_PORT = 50060
-    
+
     # Generate connection settings for all UAVs
     PROTOCOLS = [DEFAULT_PROTOCOL] * MAX_UAV_COUNT
     SERVER_HOSTS = [DEFAULT_SERVER_HOST] * MAX_UAV_COUNT
     SERVER_PORTS = [DEFAULT_SERVER_PORT + i for i in range(MAX_UAV_COUNT)]
     CLIENT_PORTS = [DEFAULT_CLIENT_PORT + i for i in range(MAX_UAV_COUNT)]
-    
+
 else:  # Real mode uses serial connections
     DEFAULT_PROTOCOL = "serial"
     DEFAULT_SERVER_HOST = "/dev/tty"
     DEFAULT_SERVER_PORT = 57600
     DEFAULT_CLIENT_PORT = 50060
-    
+
     # NOTE: Adjust these values to match actual hardware connections
     PROTOCOLS = [DEFAULT_PROTOCOL] * MAX_UAV_COUNT
     SERVER_HOSTS = [

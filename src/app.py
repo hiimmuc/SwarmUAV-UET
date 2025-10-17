@@ -1,9 +1,10 @@
 import asyncio
 import sys
 
+from asyncqt import QEventLoop
 from PyQt5 import QtWidgets
 
-from interface_wrapper import *
+from interface_wrapper import App
 
 
 class Runner:

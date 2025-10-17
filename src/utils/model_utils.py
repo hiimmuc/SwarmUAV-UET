@@ -7,10 +7,8 @@ This module provides utilities for working with YOLO object detection models,
 including visualization tools for detection and tracking results.
 """
 
-import math
 from collections import defaultdict
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Tuple
 
 import cv2
 import numpy as np

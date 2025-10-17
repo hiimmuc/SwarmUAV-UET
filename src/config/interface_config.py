@@ -4,7 +4,6 @@ Interface Configuration Module
 This module defines paths, screen sizes, and parameter lists for the UAV control interface.
 """
 
-import os
 from datetime import datetime
 from pathlib import Path
 
@@ -68,12 +67,12 @@ map_ovv_html_updated_path = f"file://{SRC_DIR}/data/map.html"
 displayed_parameter_list = [
     "MIS_TAKEOFF_ALT",  # Take-off altitude
     "COM_DISARM_LAND",  # Time-out for auto disarm after landing
-    "MPC_TKO_SPEED",    # Takeoff climb rate
-    "MPC_LAND_SPEED",   # Landing descend rate
-    "MPC_XY_P",         # Proportional gain for horizontal position error
-    "MPC_XY_VEL_P_ACC", # Proportional gain for horizontal velocity error
-    "MPC_XY_VEL_D_ACC", # Derivative gain for horizontal velocity error
-    "MC_PITCH_P",       # Pitch P gain
-    "MC_ROLL_P",        # Roll P gain
-    "MC_YAW_P",         # Yaw P gain
+    "MPC_TKO_SPEED",  # Takeoff climb rate
+    "MPC_LAND_SPEED",  # Landing descend rate
+    "MPC_XY_P",  # Proportional gain for horizontal position error
+    "MPC_XY_VEL_P_ACC",  # Proportional gain for horizontal velocity error
+    "MPC_XY_VEL_D_ACC",  # Derivative gain for horizontal velocity error
+    "MC_PITCH_P",  # Pitch P gain
+    "MC_ROLL_P",  # Roll P gain
+    "MC_YAW_P",  # Yaw P gain
 ]

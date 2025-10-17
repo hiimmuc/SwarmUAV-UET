@@ -4,7 +4,7 @@ from pathlib import Path
 
 import folium
 import folium.plugins
-from folium import CustomIcon, Map, Marker
+from folium import CustomIcon
 from folium.elements import MacroElement
 from folium.plugins import MarkerCluster
 from folium.plugins.draw import Draw
@@ -71,20 +71,21 @@ ICON = {
 
 
 class UpdateMarkerJs(MacroElement):
+    """JavaScript macro for updating drone markers dynamically."""
+    
     _template = Template(
         """
         <script>
-            // JavaScript code to update markers
             let droneMarkers = {};
 
-            function updateUAVMarkerovv(id, latitude, longitude) {
+            function updateUAVMarker(id, latitude, longitude) {
                 if (droneMarkers[id]) {
                     droneMarkers[id].setLatLng([latitude, longitude]);
                 } else {
                     droneMarkers[id] = L.marker([latitude, longitude], {
                         icon: L.icon({
-                            iconUrl: '/home/hansen/Documents/SwarmUAV-UET/assets/icons/drone.png',  // Update the icon path
-                            iconSize: [32, 32]  // Adjust as necessary
+                            iconUrl: '../assets/icons/drone.png',
+                            iconSize: [32, 32]
                         })
                     }).addTo(map);
                 }
@@ -124,8 +125,9 @@ class MapFolium:
         folium.LayerControl().add_to(self.m)
 
     def _init_plugins(self):
+        """Initialize map plugins based on configuration."""
         if "Draw" in self.plugins:
-            drawer = Draw(
+            Draw(
                 export=False,
                 filename=f"data_{NOW}.geojson",
                 position="topright",
@@ -157,29 +159,18 @@ class MapFolium:
                     "circle": False,
                     "circlemarker": False,
                 },
-                edit_options={"poly": {"allowIntersction": False}},
+                edit_options={"poly": {"allowIntersection": False}},
             ).add_to(self.m)
 
-            # with open(f"src/utils/template_draw.js", "r") as f:
-            #     template = f.read()
-
-            # drawer._template = Template(template)
-
-            # self.m.add_child(drawer)
-
-        # geo-coder plugin
         if "Geocoder" in self.plugins:
             folium.plugins.Geocoder().add_to(self.m)
 
-        # Measure control
         if "MeasureControl" in self.plugins:
             folium.plugins.MeasureControl().add_to(self.m)
 
-        # Minimap
         if "MiniMap" in self.plugins:
             folium.plugins.MiniMap(tile_layer=titles[1]).add_to(self.m)
 
-        # mouse position
         folium.plugins.MousePosition(
             position="bottomleft",
             separator="<br />",
@@ -189,75 +180,62 @@ class MapFolium:
         ).add_to(self.m)
 
     def _save_map(self, path: str) -> None:
+        """Save map to HTML file."""
         self.m.save(path, close_file=False)
 
     def center_to(self, latitude: float, longitude: float) -> None:
+        """Center map to specific coordinates."""
         self.m.location = [latitude, longitude]
-
         return self.render_map()
-
-    # def add_marker(
-    #     self, key: str, latitude: float, longitude: float, tooltip=None, icon=None
-    # ) -> None:
-    #     marker = folium.Marker(
-    #         location=[latitude, longitude],
-    #         popup=None,
-    #         tooltip=tooltip,
-    #         icon=folium.Icon(color=icon["color"], icon=icon["icon"], prefix="fa"),
-    #         draggable=False,
-    #     )
-    #     popup = "{}<br>lat:{}<br>lon:{}".format(key, latitude, longitude)
-    #     folium.Popup(popup, show=True).add_to(marker)
-
-    #     self.maker_cluster.add_child(marker)
-    #     self.maker_cluster.add_to(self.m)
-
-    #     return self.render_map()
 
     def add_marker(
         self, key: str, latitude: float, longitude: float, tooltip=None, icon=None
     ) -> None:
-        # print("Adding", key, latitude, longitude)
-        # print(type(longitude), type(latitude))
-
-        # Use a custom icon if a file path is provided
+        """
+        Add a marker to the map.
+        
+        Args:
+            key: Unique identifier for the marker
+            latitude: Marker latitude
+            longitude: Marker longitude
+            tooltip: Tooltip text (optional)
+            icon: Icon configuration with 'color', 'icon', or 'icon_path'
+        """
         if icon and "icon_path" in icon:
-            # Convert the icon path to a string to avoid PosixPath issues
-            icon_path = str(icon["icon_path"])  # Convert PosixPath to string
             custom_icon = CustomIcon(
-                icon_image=icon_path,  # Path to the custom icon image
-                icon_size=(32, 32),  # Adjust the size as needed
+                icon_image=str(icon["icon_path"]),
+                icon_size=(32, 32),
             )
             marker = folium.Marker(
                 location=[latitude, longitude],
-                popup=None,
                 tooltip=tooltip,
                 icon=custom_icon,
                 draggable=False,
             )
         else:
-            # Fallback to default Folium Icon if no custom icon path is specified
             marker = folium.Marker(
                 location=[latitude, longitude],
-                popup=None,
                 tooltip=tooltip,
                 icon=folium.Icon(color=icon["color"], icon=icon["icon"], prefix="fa"),
                 draggable=False,
             )
 
-        popup = "{}<br>lat:{}<br>lon:{}".format(key, latitude, longitude)
+        popup = f"{key}<br>lat:{latitude}<br>lon:{longitude}"
         folium.Popup(popup, show=True).add_to(marker)
 
         self.maker_cluster.add_child(marker)
         self.maker_cluster.add_to(self.m)
+        
         return self.render_map()
 
-    def add_line(
-        self,
-        key: str,
-        points: list,
-    ) -> None:
-
+    def add_line(self, key: str, points: list) -> None:
+        """
+        Add a polyline to the map.
+        
+        Args:
+            key: Unique identifier for the line
+            points: List of [latitude, longitude] pairs
+        """
         for point in points:
             folium.CircleMarker(
                 location=point,
@@ -269,24 +247,23 @@ class MapFolium:
                 opacity=1,
             ).add_to(self.m)
 
-        folium.PolyLine(
-            points,
-            color="#FF0000",
-            weight=3,
-        ).add_to(self.m)
-
+        folium.PolyLine(points, color="#FF0000", weight=3).add_to(self.m)
         return self.render_map()
 
     def add_polygon(self, key: str, points: list) -> None:
-        # draw edges
-
+        """
+        Add a polygon to the map.
+        
+        Args:
+            key: Unique identifier for the polygon
+            points: List of [latitude, longitude] pairs defining the polygon vertices
+        """
         for point in points:
             folium.Marker(
                 location=point,
-                color="green",
                 icon=folium.Icon(color="green", icon="map-pin", prefix="fa"),
             ).add_to(self.m)
-        # draw polygon
+
         folium.Polygon(
             locations=points,
             color="rgb(0% 98.576% 15.974%)",
@@ -299,6 +276,7 @@ class MapFolium:
         return self.render_map()
 
     def render_map(self) -> None:
+        """Render the map and return HTML data."""
         data = io.BytesIO()
         self.m.save(data, close_file=False)
         return data.getvalue().decode()

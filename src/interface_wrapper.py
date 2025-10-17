@@ -2,9 +2,13 @@ import asyncio
 import glob
 import os
 import sys
+import time
 from datetime import datetime
+from pathlib import Path
 
 import cv2
+import numpy as np
+import pandas as pd
 import pyfiglet
 from asyncqt import QEventLoop
 
@@ -13,26 +17,74 @@ from mavsdk import System
 
 # PyQt5
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtWidgets import QFileDialog
 
 # ultralytics
 from ultralytics import YOLO
 
 # user-defined configuration
-from config.interface_config import *
-from config.stream_config import *
-from config.uav_config import *
+from config.interface_config import MAX_UAV_COUNT, displayed_parameter_list
+from config.stream_config import (
+    DEFAULT_STREAM_FPS,
+    DEFAULT_STREAM_SCREEN,
+    DEFAULT_STREAM_SIZE,
+    DEFAULT_STREAM_VIDEO_LOG_PATHS,
+    DEFAULT_STREAM_VIDEO_PATHS,
+    DEVICE,
+    FOURCC,
+    model_uav_paths,
+)
+from config.uav_config import (
+    AVAIL_UAV_INDEXES,
+    CLIENT_PORTS,
+    INIT_ALT,
+    INIT_LAT,
+    INIT_LON,
+    OVERWRITE_PARAMS,
+    PROTOCOLS,
+    RESCUE_UAV_INDEX,
+    SERVER_HOSTS,
+    SERVER_PORTS,
+    SYSTEMS_ADDRESSES,
+    connection_allows,
+    detection_enables,
+    drone_current_pos_files,
+    drone_init_pos_files,
+    parameter_data_files,
+    plans_log_dir,
+    recording_enables,
+    streaming_enables,
+)
 
 # user-defined interface
-from interface_base import *
-from interface_map import *
+from interface_base import Interface
+from interface_map import Map
 
 # user-defined utils
-from utils.drone_utils import *
-from utils.mavsdk_server_utils import *
-from utils.qt_utils import *
-from utils.serial_utils import *
-from utils.stream_utils import *
+from utils.drone_utils import (
+    clear_mission_logs,
+    export_points_to_gps_log,
+    select_mission_plan,
+    uav_fn_control_gimbal,
+    uav_fn_do_mission,
+    uav_fn_export_params,
+    uav_fn_get_params,
+    uav_fn_goto_distance,
+    uav_fn_goto_location,
+    uav_fn_overwrite_params,
+    uav_fn_set_params,
+    uav_fn_upload_mission,
+    uav_rescue_process,
+    uav_suspend_missions,
+)
+from utils.logger import get_logger
+from utils.mavsdk_server_utils import MAVSDKServer
+from utils.qt_utils import draw_table, get_system_information, get_values_from_table
+from utils.stream_utils import StreamQtThread
+
+# Initialize logger
+logger = get_logger(name="UAVApp", console_level="info")
 
 # cspell: ignore UAVs mavsdk asyncqt figlet ndarray offboard pixmap qgroundcontrol rtcm imwrite dsize fourcc imread
 __version__ = "3.20.0"
@@ -93,7 +145,7 @@ except Exception as e:
     print(f"[Error]: {repr(e)}")
     sys.exit(1)
 
-logger.log(f"Application initializing...", level="info")
+logger.log("Application initializing...", level="info")
 
 
 class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
@@ -2266,6 +2318,39 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
         logger.log(detection_msg, level="info")
         
     # ------------------------------------< Rescue UAV 6 >-----------------------------
+    # Helper functions for rescue operations (to be implemented)
+    
+    async def uav_suspend_missions(self, drones: list, suspend_time: int = 30) -> None:
+        """
+        Suspend missions for the specified drones temporarily.
+        
+        Args:
+            drones: List of drone dictionaries to suspend
+            suspend_time: Time to suspend in seconds
+            
+        Note:
+            This is a placeholder function to be implemented.
+        """
+        logger.log(f"Suspending missions for {len(drones)} drones for {suspend_time}s", level="info")
+        await uav_suspend_missions(drones, suspend_time)
+        logger.log("Mission suspension completed", level="info")
+        
+    async def uav_rescue_process(self, drone: dict, rescue_filepath: str) -> None:
+        """
+        Execute the rescue mission for a specific drone.
+        
+        Args:
+            drone: Drone dictionary containing system and configuration
+            rescue_filepath: Path to the rescue mission file
+            
+        Note:
+            This is a placeholder function to be implemented.
+        """
+        logger.log(f"Starting rescue process using file: {rescue_filepath}", level="info")
+        # TODO: Implement actual rescue mission logic
+        await uav_rescue_process(drone, rescue_filepath)
+        logger.log("Rescue process completed", level="info")
+    
     # ? developing ...
     async def uav_fn_rescue(self) -> None:
         """
@@ -2326,7 +2411,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
 
                 if len(rescue_filepaths) == 0:
                     logger.log(
-                        f"No rescue position found, re-check rescue directory...", level="info"
+                        "No rescue position found, re-check rescue directory...", level="info"
                     )
                     await asyncio.sleep(1)
                     continue
@@ -2367,8 +2452,8 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 # 2 UAV Rescue do the rescue mission and the detected drones goes into suspend mode
                 UAVs[RESCUE_UAV_INDEX]["status"]["on_mission"] = True
                 await asyncio.gather(
-                    uav_suspend_missions(drones=detected_uav_list, suspend_time=30),
-                    uav_rescue_process(
+                    self.uav_suspend_missions(drones=detected_uav_list, suspend_time=30),
+                    self.uav_rescue_process(
                         drone=UAVs[RESCUE_UAV_INDEX], rescue_filepath=rescue_filepath
                     ),
                 )
@@ -2385,7 +2470,7 @@ class App(Map, StreamQtThread, Interface, QtWidgets.QWidget):
                 # self.detected_uav_list = []
                 break  # remove this line if you want to do the rescue mission continuously
 
-            logger.log(f"Rescue mission completed", level="info")
+            logger.log("Rescue mission completed", level="info")
             # start rescue mission again
             await self.uav_fn_rescue()
         except Exception as e:

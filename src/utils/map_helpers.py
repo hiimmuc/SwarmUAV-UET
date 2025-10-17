@@ -1,11 +1,8 @@
-import copy
 import math
-import sys
 from pathlib import Path
-from tkinter import filedialog
 
 import numpy as np
-from scipy.spatial import ConvexHull, Delaunay
+from scipy.spatial import ConvexHull
 
 from .calculation_helpers import *
 

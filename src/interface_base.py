@@ -10,26 +10,41 @@ for the UAV control interface.
 
 import asyncio
 import sys
-from typing import Any, Dict, List, Optional, Union
+from typing import List, Optional
 
 import cv2
 import numpy as np
 from asyncqt import QEventLoop
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
-from config.interface_config import *
-from config.stream_config import *
-from config.uav_config import *
+from config.interface_config import (
+    MAX_UAV_COUNT,
+    app_icon_path,
+    arm_icon_path,
+    connect_icon_path,
+    disarm_icon_path,
+    landing_icon_path,
+    logo1_path,
+    logo2_path,
+    mission_icon_path,
+    noSignal_img_paths,
+    open_close_icon_path,
+    pause_icon_path,
+    pause_img_paths,
+    push_mission_icon_path,
+    return_icon_path,
+    rtl_icon_path,
+    screen_sizes,
+    takeoff_icon_path,
+    toggle_icon_path,
+)
 from Qt.interface_uav import Ui_MainWindow
-from utils.logger import Logger, get_logger
+from utils.logger import get_logger
 from utils.qt_utils import convert_cv2qt
 
 # UI navigation constants
-STACKED_WIDGET_INDEXES = {
-    "main page": 0, 
-    "map page": 1
-}
+STACKED_WIDGET_INDEXES = {"main page": 0, "map page": 1}
 
 TAB_WIDGET_INDEXES = {
     "all": 0,
@@ -50,11 +65,11 @@ logger = get_logger(name="UAVInterface", console_level="info")
 class Interface(QMainWindow):
     """
     Main UAV control interface window.
-    
+
     This class implements the main window of the UAV control application,
     providing UI components and event handlers for interacting with UAVs.
     """
-    
+
     def __init__(self) -> None:
         """Initialize the interface window and set up UI components."""
         super().__init__()
@@ -69,14 +84,14 @@ class Interface(QMainWindow):
 
         # Initialize UI component references
         self._initialize_ui_component_lists()
-        
+
         # Set up the interface
         self._init_interface()
 
     def _initialize_ui_component_lists(self) -> None:
         """
         Initialize lists of UI components for easier access.
-        
+
         This groups related UI elements into lists for more efficient code.
         """
         # UAV-specific UI component lists
@@ -238,38 +253,34 @@ class Interface(QMainWindow):
     def _init_interface(self) -> None:
         """
         Initialize the application interface.
-        
+
         Sets up the UI components with their default values, configures images,
         initializes callbacks, and sets default view states.
         """
         try:
             # Set logos and images
             self._setup_images()
-            
+
             # Set default views
             self.ui.stackedWidget.setCurrentIndex(self.active_stack_index)
             self.ui.tabWidget.setCurrentIndex(self.active_tab_index)
-            
+
             # Set up event handlers
             self._setup_event_handlers()
-            
+
             logger.info("Interface initialization completed successfully")
         except Exception as e:
             logger.error(f"Interface initialization failed: {e}")
-            self.popup_msg(
-                msg=str(e),
-                src_msg="_init_interface",
-                type_msg="error"
-            )
+            self.popup_msg(msg=str(e), src_msg="_init_interface", type_msg="error")
 
     def _setup_images(self) -> None:
         """Configure all static images in the interface."""
         # Set up logos
         self._setup_logo_images()
-        
+
         # Set up icon images
         self._setup_icon_images()
-        
+
         # Set default screen images
         self._setup_default_screen_images()
 
@@ -280,13 +291,13 @@ class Interface(QMainWindow):
         self.ui.page_name.setScaledContents(True)
         self.ui.page_name_2.setPixmap(QtGui.QPixmap(logo1_path))
         self.ui.page_name_2.setScaledContents(True)
-        
+
         # Secondary logo images
         self.ui.logo2_2.setPixmap(QtGui.QPixmap(logo2_path))
         self.ui.logo2_2.setScaledContents(True)
         self.ui.logo2.setPixmap(QtGui.QPixmap(logo2_path))
         self.ui.logo2.setScaledContents(True)
-        
+
         # Set application icon
         self.setWindowIcon(QtGui.QIcon(QtGui.QPixmap(app_icon_path)))
 
@@ -305,9 +316,9 @@ class Interface(QMainWindow):
             self.ui.btn_return: return_icon_path,
             self.ui.btn_mission: mission_icon_path,
             self.ui.btn_push_mission: push_mission_icon_path,
-            self.ui.btn_toggle_camera: toggle_icon_path
+            self.ui.btn_toggle_camera: toggle_icon_path,
         }
-        
+
         for button, icon_path in icon_mappings.items():
             try:
                 button.setIcon(QtGui.QIcon(QtGui.QPixmap(icon_path)))
@@ -320,12 +331,12 @@ class Interface(QMainWindow):
         for screen in self.uav_general_screen_views:
             screen.setPixmap(QtGui.QPixmap(noSignal_img_paths["general_screen"]))
             screen.setScaledContents(False)
-            
+
         # Set default images for stream screens
         for screen in self.uav_stream_screen_views:
             screen.setPixmap(QtGui.QPixmap(noSignal_img_paths["stream_screen"]))
             screen.setScaledContents(False)
-            
+
         # Set default images for overview screens
         for screen in self.uav_ovv_screen_views:
             screen.setPixmap(QtGui.QPixmap(noSignal_img_paths["ovv_screen"]))
@@ -335,7 +346,7 @@ class Interface(QMainWindow):
         """Set up all event handlers for the interface."""
         # Set up menu bar event handlers
         self._setup_menu_bar_events()
-        
+
         # Set up tab clicked events
         self._setup_tab_events()
 
@@ -361,7 +372,7 @@ class Interface(QMainWindow):
             self.ui.actionUAV_6_view.triggered.connect(
                 lambda: self._switch_layout("main page", "uav6")
             )
-            
+
             # Overview and settings actions
             self.ui.actionOverview.triggered.connect(
                 lambda: self._switch_layout("main page", "all")
@@ -390,7 +401,7 @@ class Interface(QMainWindow):
     def _switch_tab(self, index: int) -> None:
         """
         Switch the active tab to the specified index.
-        
+
         Args:
             index: The index of the tab to switch to
         """
@@ -401,7 +412,7 @@ class Interface(QMainWindow):
     def _switch_layout(self, stack_name: str, tab_name: str) -> None:
         """
         Switch the layout to the specified stack and tab.
-        
+
         Args:
             stack_name: Name of the stack to switch to
             tab_name: Name of the tab to switch to
@@ -412,15 +423,15 @@ class Interface(QMainWindow):
                 raise ValueError(f"Invalid stack name: {stack_name}")
             if tab_name not in TAB_WIDGET_INDEXES:
                 raise ValueError(f"Invalid tab name: {tab_name}")
-                
+
             # Switch views
             self.ui.stackedWidget.setCurrentIndex(STACKED_WIDGET_INDEXES[stack_name])
             self.ui.tabWidget.setCurrentIndex(TAB_WIDGET_INDEXES[tab_name])
-            
+
             # Update tracking variables
             self.active_tab_index = self.ui.tabWidget.currentIndex()
             self.active_stack_index = self.ui.stackedWidget.currentIndex()
-            
+
             logger.debug(f"Switched layout to {stack_name}, {tab_name}")
         except Exception as e:
             logger.error(f"Failed to switch layout: {e}")
@@ -439,11 +450,11 @@ class Interface(QMainWindow):
         actuator_status: str = "No information",
         altitude_status: List[str] = None,
         position_status: List[str] = None,
-        **kwargs
+        **kwargs,
     ) -> str:
         """
         Generate a formatted information display template for a UAV.
-        
+
         Args:
             uav_index: Index of the UAV
             connection_status: Connection status string
@@ -455,7 +466,7 @@ class Interface(QMainWindow):
             altitude_status: List of [relative_altitude, MSL_altitude]
             position_status: List of [latitude, longitude]
             **kwargs: Additional parameters for future expansion
-            
+
         Returns:
             Formatted string containing UAV information
         """
@@ -464,32 +475,34 @@ class Interface(QMainWindow):
             altitude_status = ["No information", "No information"]
         if position_status is None:
             position_status = ["No information", "No information"]
-            
+
         # Format the information string
         _translate = QtCore.QCoreApplication.translate
-        msg = "\n".join([
-            f"\t**UAV {uav_index} Information**:".strip(),
-            f"{'- Connection:' : <20}{str(connection_status) : ^10}".strip(),
-            f"{'- Arming:': <20}{arming_status : ^10}".strip(),
-            f"{'- Battery:': <20}{battery_status : ^10}".strip(),
-            f"{'- GPS(FIXED):': <20}{gps_status: ^10}".strip(),
-            f"{'- Mode:': <20}{mode_status : ^10}".strip(),
-            f"{'- Actuator:': <20}{actuator_status : ^10}".strip(),
-            f"{'- Altitude:': <20}".strip(),
-            f"{'-----Rel:': <20}{altitude_status[0] : ^16}m".strip(),
-            f"{'-----MSL:': <20}{altitude_status[1] : ^16}m".strip(),
-            f"{'- Position:': <20}".strip(),
-            f"{'-----Latitude:': <20}{position_status[0] : ^16}".strip(),
-            f"{'-----Longitude:': <20}{position_status[1] : ^16}".strip(),
-            "================================",
-        ])
-        
+        msg = "\n".join(
+            [
+                f"\t**UAV {uav_index} Information**:".strip(),
+                f"{'- Connection:' : <20}{str(connection_status) : ^10}".strip(),
+                f"{'- Arming:': <20}{arming_status : ^10}".strip(),
+                f"{'- Battery:': <20}{battery_status : ^10}".strip(),
+                f"{'- GPS(FIXED):': <20}{gps_status: ^10}".strip(),
+                f"{'- Mode:': <20}{mode_status : ^10}".strip(),
+                f"{'- Actuator:': <20}{actuator_status : ^10}".strip(),
+                f"{'- Altitude:': <20}".strip(),
+                f"{'-----Rel:': <20}{altitude_status[0] : ^16}m".strip(),
+                f"{'-----MSL:': <20}{altitude_status[1] : ^16}m".strip(),
+                f"{'- Position:': <20}".strip(),
+                f"{'-----Latitude:': <20}{position_status[0] : ^16}".strip(),
+                f"{'-----Longitude:': <20}{position_status[1] : ^16}".strip(),
+                "================================",
+            ]
+        )
+
         return _translate("MainWindow", msg)
 
     def update_terminal(self, text: str, uav_index: int = 0) -> None:
         """
         Update the specified terminal with text.
-        
+
         Args:
             text: Text to append to the terminal
             uav_index: Index of the UAV terminal to update (0 for main terminal)
@@ -512,18 +525,15 @@ class Interface(QMainWindow):
             logger.error(f"Failed to update terminal: {e}")
 
     def update_uav_screen_view(
-        self, 
-        uav_index: int, 
-        frame: Optional[np.ndarray] = None, 
-        screen_name: str = "all"
+        self, uav_index: int, frame: Optional[np.ndarray] = None, screen_name: str = "all"
     ) -> None:
         """
         Update the screen view for a UAV with the specified frame.
-        
+
         Args:
             uav_index: Index of the UAV (1-based)
             frame: Video frame to display (None for pause image)
-            screen_name: Name of the screen to update ("general_screen", 
+            screen_name: Name of the screen to update ("general_screen",
                         "stream_screen", "ovv_screen", or "all")
         """
         try:
@@ -531,24 +541,24 @@ class Interface(QMainWindow):
             if not 1 <= uav_index <= MAX_UAV_COUNT:
                 logger.warning(f"Invalid UAV index: {uav_index}")
                 return
-                
+
             # Map of screen names to UI components
             screen_views = {
                 "general_screen": self.uav_general_screen_views[uav_index - 1],
                 "stream_screen": self.uav_stream_screen_views[uav_index - 1],
                 "ovv_screen": self.uav_ovv_screen_views[uav_index - 1],
             }
-            
+
             if screen_name != "all":
                 # Update a specific screen
                 if screen_name not in screen_views:
                     logger.warning(f"Invalid screen name: {screen_name}")
                     return
-                    
+
                 # Use pause image if no frame is provided
                 if frame is None:
                     frame = cv2.imread(pause_img_paths[screen_name])
-                
+
                 # Convert and display frame
                 width, height = screen_sizes[screen_name]
                 pixmap = convert_cv2qt(frame, size=(width, height))
@@ -557,14 +567,14 @@ class Interface(QMainWindow):
                 # Update all screens
                 for name in ["general_screen", "ovv_screen", "stream_screen"]:
                     self.update_uav_screen_view(uav_index, frame, screen_name=name)
-                    
+
         except Exception as e:
             logger.error(f"Failed to update UAV screen view: {e}")
 
     def popup_msg(self, msg: str, src_msg: str = "", type_msg: str = "error") -> None:
         """
         Display a popup message dialog.
-        
+
         Args:
             msg: Message to display
             src_msg: Source context of the message
@@ -573,10 +583,10 @@ class Interface(QMainWindow):
         try:
             # Log the message
             logger.log(f"From: {src_msg}\n[!] Details: {msg}", level=type_msg.lower())
-            
+
             # Create and configure message box
             popup = QMessageBox(self)
-            
+
             # Set icon based on message type
             if type_msg.lower() == "warning":
                 popup.setIcon(QMessageBox.Warning)
@@ -586,12 +596,12 @@ class Interface(QMainWindow):
                 popup.setIcon(QMessageBox.Information)
             else:
                 popup.setIcon(QMessageBox.Information)
-                
+
             # Set message and show dialog
             popup.setText(f"[{type_msg.upper()}] -> From: {src_msg}\nDetails: {msg}")
             popup.setStandardButtons(QMessageBox.Ok)
             popup.exec_()
-            
+
         except Exception as e:
             # Fallback for errors in the popup system itself
             print(f"Error displaying popup: {e}")
@@ -601,32 +611,32 @@ class Interface(QMainWindow):
 def run() -> None:
     """
     Run the main application.
-    
+
     Initializes the Qt application with asyncio integration and shows the main window.
     """
     try:
         # Create Qt application
         app = QtWidgets.QApplication(sys.argv)
         app.setStyle("Oxygen")  # ['Breeze', 'Oxygen', 'QtCurve', 'Windows', 'Fusion']
-        
+
         # Set up asyncio integration
         loop = QEventLoop(app)
         asyncio.set_event_loop(loop)
-        
+
         # Create and show main window
         main_window = Interface()
         main_window.show()
-        
+
         # Run event loop
         with loop:
             # Cancel any pending tasks
             pending = asyncio.all_tasks(loop=loop)
             for task in pending:
                 task.cancel()
-                
+
             # Exit with the event loop's result
             sys.exit(loop.run_forever())
-            
+
     except Exception as e:
         logger.critical(f"Application startup failed: {e}")
         print(f"Fatal error: {e}")

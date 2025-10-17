@@ -8,7 +8,7 @@ for handling image conversion, table management, and system information.
 """
 
 import platform
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import List, Tuple
 
 import cv2
 import numpy as np
@@ -20,20 +20,20 @@ from PyQt5.QtWidgets import QHeaderView, QTableWidget, QTableWidgetItem
 
 # Define color constants for better readability and consistency
 COLOR_GREEN = QColor(144, 238, 144)  # Light green
-COLOR_RED = QColor(255, 160, 122)    # Light red/salmon
+COLOR_RED = QColor(255, 160, 122)  # Light red/salmon
 
 
 def convert_cv2qt(cv_img: np.ndarray, size: Tuple[int, int] = (640, 360)) -> QPixmap:
     """
     Convert OpenCV image to PyQt QPixmap for display in GUI.
-    
+
     Args:
         cv_img: OpenCV image in BGR format
         size: Target image size as (width, height)
-        
+
     Returns:
         QPixmap object ready for display in Qt widgets
-        
+
     Note:
         This function handles resizing, color space conversion, and proper
         aspect ratio maintenance.
@@ -67,26 +67,24 @@ def convert_cv2qt(cv_img: np.ndarray, size: Tuple[int, int] = (640, 360)) -> QPi
     return QPixmap.fromImage(qt_image)
 
 
-def get_values_from_table(
-    table_widget: QTableWidget, headers: List[str] = None
-) -> pd.DataFrame:
+def get_values_from_table(table_widget: QTableWidget, headers: List[str] = None) -> pd.DataFrame:
     """
     Extract values from a QTableWidget and return them as a DataFrame.
-    
+
     Args:
         table_widget: The table widget to extract values from
         headers: Column headers for the DataFrame (optional)
-        
+
     Returns:
         DataFrame containing the table values
-        
+
     Note:
         If headers are not provided, default UAV-related headers will be used.
     """
     # Default headers if none provided
     if headers is None or not headers:
         headers = ["id", "connection_address", "streaming_address"]
-    
+
     # Extract data from table_widget
     data = []
     for row in range(table_widget.rowCount()):
@@ -98,31 +96,31 @@ def get_values_from_table(
             else:
                 row_data.append("")
         data.append(row_data)
-    
+
     # Create DataFrame with appropriate headers
-    return pd.DataFrame(data, columns=headers[:table_widget.columnCount()])
+    return pd.DataFrame(data, columns=headers[: table_widget.columnCount()])
 
 
 def draw_table(
-    table_widget: QTableWidget, 
-    data: pd.DataFrame = None, 
-    connection_allow_indexes: List[int] = None, 
-    streaming_enabled_indexes: List[int] = None, 
-    headers: List[str] = None
+    table_widget: QTableWidget,
+    data: pd.DataFrame = None,
+    connection_allow_indexes: List[int] = None,
+    streaming_enabled_indexes: List[int] = None,
+    headers: List[str] = None,
 ) -> None:
     """
     Draw and format a table with UAV data, highlighting rows based on status.
-    
+
     Args:
         table_widget: The table widget to populate
         data: DataFrame containing the data to display
         connection_allow_indexes: List of IDs with allowed connections (highlighted green)
         streaming_enabled_indexes: List of IDs with enabled streaming (highlighted green)
         headers: Column headers to use from the DataFrame
-        
+
     Returns:
         None
-        
+
     Note:
         This function populates the table and applies color coding based on
         connection and streaming status.
@@ -130,21 +128,21 @@ def draw_table(
     # Handle default parameters
     if data is None:
         return
-    
+
     if connection_allow_indexes is None:
         connection_allow_indexes = []
-        
+
     if streaming_enabled_indexes is None:
         streaming_enabled_indexes = []
-        
+
     if headers is None or not headers:
         headers = list(data.columns)
-    
+
     # Ensure table has enough rows
     row_count = len(data)
     if table_widget.rowCount() < row_count:
         table_widget.setRowCount(row_count)
-    
+
     # Populate table with data
     for i in range(row_count):
         for col_id, header in enumerate(headers):
@@ -152,22 +150,22 @@ def draw_table(
                 value = str(data[header].iloc[i])
                 item = QTableWidgetItem(value)
                 table_widget.setItem(i, col_id, item)
-        
+
         # Apply color coding based on status
-        if 'id' in data.columns:
-            row_id = int(data['id'].iloc[i])
-            
+        if "id" in data.columns:
+            row_id = int(data["id"].iloc[i])
+
             # Highlight connection status (columns 0 and 1)
             connection_color = COLOR_GREEN if row_id in connection_allow_indexes else COLOR_RED
             for col in range(min(2, table_widget.columnCount())):
                 if table_widget.item(i, col):
                     table_widget.item(i, col).setBackground(connection_color)
-            
+
             # Highlight streaming status (column 2)
             if table_widget.columnCount() > 2 and table_widget.item(i, 2):
                 streaming_color = COLOR_GREEN if row_id in streaming_enabled_indexes else COLOR_RED
                 table_widget.item(i, 2).setBackground(streaming_color)
-    
+
     # Apply table formatting
     refine_table(table_widget)
 
@@ -175,35 +173,35 @@ def draw_table(
 def refine_table(table_widget: QTableWidget) -> None:
     """
     Refine the appearance of a table_widget by adjusting column widths and styling.
-    
+
     Args:
         table_widget: The table widget to refine
-        
+
     Returns:
         None
-        
+
     Note:
         This sets the first column to fit content width and stretches other columns.
     """
     if table_widget is None:
         return
-        
+
     # Get table_widget header
     header = table_widget.horizontalHeader()
     if header is None:
         return
-    
+
     # Set column resize modes
     column_count = table_widget.columnCount()
-    
+
     if column_count > 0:
         # First column (ID) should resize to contents
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
-        
+
         # Other columns should stretch to fill available space
         for i in range(1, column_count):
             header.setSectionResizeMode(i, QHeaderView.ResizeMode.Stretch)
-    
+
     # Additional styling (optional)
     table_widget.setAlternatingRowColors(True)
     table_widget.setShowGrid(True)
@@ -213,10 +211,10 @@ def refine_table(table_widget: QTableWidget) -> None:
 def get_system_information() -> str:
     """
     Get formatted system information as a string.
-    
+
     Returns:
         Formatted string containing system information
-        
+
     Note:
         This includes OS, architecture, hostname, and processor details.
     """
@@ -229,7 +227,7 @@ def get_system_information() -> str:
         "Machine": platform.machine(),
         "Processor": platform.processor(),
     }
-    
+
     # Format as string with line breaks
     return "\n".join(f"{key}: {value}" for key, value in system_info.items())
 
@@ -237,11 +235,11 @@ def get_system_information() -> str:
 def create_status_indicator(status: bool = False, size: int = 15) -> QtWidgets.QLabel:
     """
     Create a colored status indicator label.
-    
+
     Args:
         status: True for active/on status (green), False for inactive/off (red)
         size: Size of the indicator in pixels
-        
+
     Returns:
         QLabel configured as a colored status indicator
     """
@@ -259,11 +257,11 @@ def create_status_indicator(status: bool = False, size: int = 15) -> QtWidgets.Q
 def set_widget_stylesheet(widget: QtWidgets.QWidget, style_type: str = "default") -> None:
     """
     Apply a predefined stylesheet to a widget.
-    
+
     Args:
         widget: The widget to style
         style_type: Type of style to apply ('default', 'dark', 'light', etc.)
-        
+
     Returns:
         None
     """
@@ -315,9 +313,9 @@ def set_widget_stylesheet(widget: QtWidgets.QWidget, style_type: str = "default"
                 gridline-color: #5d5d5d;
                 color: #f0f0f0;
             }
-        """
+        """,
     }
-    
+
     if style_type in styles:
         widget.setStyleSheet(styles[style_type])
 
@@ -325,46 +323,53 @@ def set_widget_stylesheet(widget: QtWidgets.QWidget, style_type: str = "default"
 # Example usage
 if __name__ == "__main__":
     import sys
-    
+
     app = QtWidgets.QApplication(sys.argv)
-    
+
     # Create a simple demo window
     window = QtWidgets.QWidget()
     window.setWindowTitle("PyQt Utilities Demo")
     window.resize(800, 600)
-    
+
     # Create layout
     layout = QtWidgets.QVBoxLayout(window)
-    
+
     # System info
     info_label = QtWidgets.QLabel(get_system_information())
     layout.addWidget(info_label)
-    
+
     # Table demo
     table = QtWidgets.QTableWidget(5, 3)
     table.setHorizontalHeaderLabels(["ID", "Connection", "Streaming"])
-    
+
     # Sample data
-    data = pd.DataFrame({
-        "id": [1, 2, 3, 4, 5],
-        "connection_address": ["udp://127.0.0.1:14540", "udp://127.0.0.1:14541", 
-                             "udp://127.0.0.1:14542", "udp://127.0.0.1:14543", 
-                             "udp://127.0.0.1:14544"],
-        "streaming_address": ["rtsp://127.0.0.1:8554/1", "rtsp://127.0.0.1:8554/2",
-                            "rtsp://127.0.0.1:8554/3", "rtsp://127.0.0.1:8554/4",
-                            "rtsp://127.0.0.1:8554/5"]
-    })
-    
+    data = pd.DataFrame(
+        {
+            "id": [1, 2, 3, 4, 5],
+            "connection_address": [
+                "udp://127.0.0.1:14540",
+                "udp://127.0.0.1:14541",
+                "udp://127.0.0.1:14542",
+                "udp://127.0.0.1:14543",
+                "udp://127.0.0.1:14544",
+            ],
+            "streaming_address": [
+                "rtsp://127.0.0.1:8554/1",
+                "rtsp://127.0.0.1:8554/2",
+                "rtsp://127.0.0.1:8554/3",
+                "rtsp://127.0.0.1:8554/4",
+                "rtsp://127.0.0.1:8554/5",
+            ],
+        }
+    )
+
     # Draw table with sample data
     draw_table(
-        table, 
-        data=data, 
-        connection_allow_indexes=[1, 3, 5], 
-        streaming_enabled_indexes=[1, 2]
+        table, data=data, connection_allow_indexes=[1, 3, 5], streaming_enabled_indexes=[1, 2]
     )
-    
+
     layout.addWidget(table)
-    
+
     # Status indicators
     status_layout = QtWidgets.QHBoxLayout()
     status_layout.addWidget(QtWidgets.QLabel("Connection Status:"))
@@ -372,12 +377,12 @@ if __name__ == "__main__":
     status_layout.addWidget(QtWidgets.QLabel("Streaming Status:"))
     status_layout.addWidget(create_status_indicator(False))
     status_layout.addStretch()
-    
+
     layout.addLayout(status_layout)
-    
+
     # Apply stylesheet
     set_widget_stylesheet(window, "default")
-    
+
     # Show window
     window.show()
     sys.exit(app.exec_())

@@ -1,6 +1,7 @@
 # !/usr/bin/env python3
-import copy
-import pprint
+import asyncio
+import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -8,24 +9,26 @@ from pathlib import Path
 # PyQt5
 import pytz
 from asyncqt import QEventLoop
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QFileDialog
 
 # user-defined modules
-from config.interface_config import *
-from config.stream_config import *
-from config.uav_config import *
-from interface_base import *
-from Qt.interface_uav import *
-from utils.calculation_helpers import *
+from config.interface_config import map_html_path, map_ovv_html_path
+from config.uav_config import INIT_LAT, INIT_LON
+from interface_base import Interface
+from utils.calculation_helpers import find_path
+from utils.logger import get_logger
+from utils.map_engine import MapEngine, geojson_to_coordinates
+from utils.map_helpers import (
+    area_of_polygon,
+    point_on_line,
+    remove_duplicate_pts,
+    split_grids,
+    split_polygon_into_areas_old,
+)
 
-#
-from utils.drone_utils import *
-from utils.map_engine import *
-from utils.map_folium import *
-from utils.map_helpers import *
-from utils.qt_utils import *
+# Initialize logger
+logger = get_logger(name="UAVMap", console_level="info")
 
 # Set timezone for Vietnam
 vietnam_tz = pytz.timezone("Asia/Ho_Chi_Minh")
@@ -214,8 +217,8 @@ class Map(Interface):
             # Group grid points by area
             area_grid_points = {}
             for key, value in self.drone_markers_dict.items():
+                # Extract area index from marker key (format: "A{area}P{point}")
                 area_index = int(key.split("A")[1].split("P")[0])
-                point_index = int(key.split("P")[1])
                 area_grid_points.setdefault(area_index, []).append(value)
 
             # Create paths for each area with a different color
@@ -584,8 +587,8 @@ class Map(Interface):
             # Group grid points by area
             area_grid_points = {}
             for key, value in self.drone_markers_dict.items():
+                # Extract area index from marker key (format: "A{area}P{point}")
                 area_index = int(key.split("A")[1].split("P")[0])
-                point_index = int(key.split("P")[1])
                 area_grid_points.setdefault(area_index, []).append(value)
 
             # Remove existing markers

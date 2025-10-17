@@ -1,8 +1,9 @@
 import math
 
 import numpy as np
-from shapely.geometry import LineString, Point, Polygon
-from sympy import Point, Polygon
+from scipy.spatial import ConvexHull
+from shapely.geometry import LineString
+from sympy import Polygon
 
 EARTH_RADIUS = 6378137  # meters
 
@@ -265,443 +266,6 @@ def heron_formula(a, b, c):
     return area
 
 
-# ==================================================================================================
-# Old code
-# Tu doan nay tro di la code cua mot thang ngu lol nao do code ngu vc, d biet sua the nao
-# ==================================================================================================
-def find_longest_edge2(cartesian_coords):
-    """
-    Find the vertices that form the longest edge in a polygon given its vertices in Cartesian coordinates.
-
-    :param cartesian_coords: A list of tuples (x, y) representing the Cartesian coordinates of the polygon vertices.
-    :return: A tuple containing:
-        - the length of the longest edge,
-        - the coordinates of the start vertex of the longest edge,
-        - the coordinates of the end vertex of the longest edge.
-    """
-    num_vertices = len(cartesian_coords)
-    longest_edge_length = 0
-    longest_edge_vertices = (None, None)
-
-    for i in range(num_vertices):
-        # Current vertex
-        x1, y1 = cartesian_coords[i]
-        # Next vertex, with wrap-around using modulo to close the polygon
-        x2, y2 = cartesian_coords[(i + 1) % num_vertices]
-
-        # Calculate the distance between the current vertex and the next vertex
-        distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-
-        # Check if this is the longest edge found so far
-        if distance > longest_edge_length:
-            longest_edge_length = distance
-            longest_edge_vertices = ((x1, y1), (x2, y2))
-
-    return longest_edge_length, longest_edge_vertices
-
-
-def find_midpoint(point1, point2):
-    # Extract coordinates from the points
-    x1, y1 = point1
-    x2, y2 = point2
-
-    # Calculate the midpoint coordinates
-    mid_x = (x1 + x2) / 2.0
-    mid_y = (y1 + y2) / 2.0
-
-    return (mid_x, mid_y)
-
-
-def line_equation_from_points(p1, p2):
-    x1, y1 = p1
-    x2, y2 = p2
-
-    # Check for vertical line
-    if x1 == x2:
-        # The line is vertical, slope is undefined, and the line equation is x = x1
-        return None, x1
-
-    # Check for horizontal line
-    elif y1 == y2:
-        # The line is horizontal, slope is 0, and the line equation is y = y1
-        return 0, y1
-
-    else:
-        # For non-vertical and non-horizontal lines, calculate slope and intercept
-        slope = (y2 - y1) / (x2 - x1)
-        intercept = y1 - slope * x1
-        return slope, intercept
-
-
-def angle_with_x_axis(slope):
-    if slope is None:  # Vertical line
-        angle_degrees = 90
-    else:
-        angle_radians = math.atan(slope)
-        angle_degrees = math.degrees(angle_radians)
-
-    return angle_degrees
-
-
-def perpendicular_line_equation(midpoint, slope, tolerance=1e-6):
-    """
-    Calculate the slope and y-intercept of the line perpendicular to the line with the given slope,
-    passing through the given midpoint.
-
-    :param midpoint: A tuple (x, y) representing the midpoint through which the perpendicular line passes.
-    :param slope: The slope of the original line. Can be a number, zero, or None for vertical lines.
-    :param tolerance: The tolerance range for slope comparisons to account for floating-point inaccuracies.
-    :return: A tuple (perpendicular slope, y-intercept) representing the perpendicular line.
-             Returns (None, y-coordinate of midpoint) for vertical lines and
-             (0, x-coordinate of midpoint) for horizontal lines.
-    """
-    mx, my = midpoint
-
-    # Check if the original slope is near zero (horizontal line)
-    if slope is not None:
-        if -tolerance < slope < tolerance:
-            # The perpendicular line would be vertical
-            return None, my
-
-    # Check if the original slope is undefined (vertical line)
-    elif slope is None:
-        # The perpendicular line would be horizontal
-        return 0, my
-
-    # Otherwise, calculate the perpendicular slope and intercept
-    perp_slope = -1 / slope
-    perp_intercept = my - perp_slope * mx
-    return perp_slope, perp_intercept
-
-
-def calculate_new_lat_lon(origin_lat, origin_lon, distance_north, distance_east):
-    """Calculate new latitude and longitude from origin given distances north and east."""
-    R = 6378000  # Radius of Earth in meters
-    delta_lat = distance_north / R  # Change in latitude in radians
-    new_lat = origin_lat + math.degrees(delta_lat)  # New latitude in degrees
-
-    # Adjust for change in longitude, which depends on latitude
-    r = R * math.cos(math.radians(new_lat))  # Effective radius at new latitude
-    delta_lon = distance_east / r  # Change in longitude in radians
-    new_lon = origin_lon + math.degrees(delta_lon)  # New longitude in degrees
-
-    return (new_lat, new_lon)
-
-
-def divide_line_into_segments(x1, y1, x2, y2, n):
-    points = []
-    # We skip 0 and n because they correspond to the endpoints.
-    for i in range(1, n):
-        t = i / n
-        xt = (1 - t) * x1 + t * x2
-        yt = (1 - t) * y1 + t * y2
-        points.append((xt, yt))
-
-    return points
-
-
-def perpendicular_line_intersect_polygon(slope, intercept, vertices):
-    across_points = []
-    for i in range(len(vertices)):
-        x1, y1 = vertices[i]
-        x2, y2 = vertices[(i + 1) % len(vertices)]
-
-        # Check if the edge is vertical
-        if x1 == x2:
-            if slope is None:
-                # Both the line and edge are vertical, so check if they are the same line
-                if x1 == intercept:  # Using intercept as x since the line is vertical
-                    # Overlapping vertical lines intersect at any point along their span
-                    overlap_range = [max(min(y1, y2), intercept), min(max(y1, y2), intercept)]
-                    if overlap_range[0] != overlap_range[1]:
-                        # Return a representative point from the overlapping segment
-                        point = (x1, sum(overlap_range) / 2)
-                        across_points.append(point)
-            else:
-                # The edge is vertical while the line is not, calculate y using line's equation
-                intersect_y = slope * x1 + intercept
-                if min(y1, y2) <= intersect_y <= max(y1, y2):
-                    point = (x1, intersect_y)
-                    across_points.append(point)
-
-        # Check if the edge is non-vertical
-        elif x2 != x1:
-            m_e = (y2 - y1) / (x2 - x1)
-            b_e = y1 - m_e * x1
-            if slope is None:
-                # The line is vertical, calculate x using edge's equation
-                intersect_x = intercept  # Using intercept as x since the line is vertical
-                intersect_y = m_e * intercept + b_e
-                if min(x1, x2) <= intersect_x <= max(x1, x2):
-                    point = (intersect_x, intersect_y)
-                    across_points.append(point)
-            elif slope != m_e:
-                # Ensure the lines are not parallel and calculate the intersection
-                intersect_x = (b_e - intercept) / (slope - m_e)
-                intersect_y = slope * intersect_x + intercept
-                if min(x1, x2) <= intersect_x <= max(x1, x2) and min(y1, y2) <= intersect_y <= max(
-                    y1, y2
-                ):
-                    point = (intersect_x, intersect_y)
-                    across_points.append(point)
-
-    return across_points
-
-
-def divide_points(per_points, polygon, slope1, edge_slope):
-    each_point = []
-    for point in per_points:
-        perp_slope, perp_intercept = perpendicular_line_equation(point, slope1)
-        per_dot = perpendicular_line_intersect_polygon(perp_slope, perp_intercept, polygon)
-
-        each_point.extend(per_dot)
-
-    return each_point
-
-
-def rotate_and_shift_point(
-    x, y, angle, pivot_x, pivot_y, shift_x=0, shift_y=0, units="DEGREES", clockwise=False
-):
-    """
-    Rotates a point around a pivot point either clockwise or counterclockwise and then applies a shift.
-
-    :param x: The x-coordinate of the point to be rotated.
-    :param y: The y-coordinate of the point to be rotated.
-    :param angle: The angle of rotation. Positive angles will result in counterclockwise rotation,
-                  and negative angles will result in clockwise rotation if `clockwise` is set to True.
-    :param pivot_x: The x-coordinate of the pivot point.
-    :param pivot_y: The y-coordinate of the pivot point.
-    :param shift_x: The distance to shift along the x-axis after rotation.
-    :param shift_y: The distance to shift along the y-axis after rotation.
-    :param units: The units of the angle: 'DEGREES' (default) or 'RADIANS'.
-    :param clockwise: If True, the rotation will be clockwise, otherwise counterclockwise.
-    :return: A tuple containing the rotated and shifted x and y coordinates.
-    """
-
-    # Convert angle from degrees to radians if specified in degrees
-    if units.upper() == "DEGREES":
-        angle = math.radians(angle)
-
-    # If clockwise rotation is desired, negate the angle
-    if clockwise:
-        angle = -angle
-
-    # Translate point to pivot
-    x -= pivot_x
-    y -= pivot_y
-
-    # Apply rotation
-    cos_theta = math.cos(angle)
-    sin_theta = math.sin(angle)
-    x_rotated = (x * cos_theta) - (y * sin_theta)
-    y_rotated = (x * sin_theta) + (y * cos_theta)
-
-    # Translate point back from pivot and apply additional shift
-    x_final = x_rotated + pivot_x + shift_x
-    y_final = y_rotated + pivot_y + shift_y
-
-    return x_final, y_final
-
-
-def revert_rotate_and_shift_point(
-    x, y, angle, pivot_x, pivot_y, shift_x=0, shift_y=0, units="DEGREES", clockwise=False
-):
-    """
-    Reverts the rotation and shift applied to a point. First subtracts the shift, then rotates the point back.
-
-    :param x: The x-coordinate of the point that was rotated and shifted.
-    :param y: The y-coordinate of the point that was rotated and shifted.
-    :param angle: The original angle of rotation used to rotate the point.
-    :param pivot_x: The x-coordinate of the pivot point used in the original rotation.
-    :param pivot_y: The y-coordinate of the pivot point used in the original rotation.
-    :param shift_x: The x-distance of the shift to revert.
-    :param shift_y: The y-distance of the shift to revert.
-    :param units: The units of the angle: 'DEGREES' (default) or 'RADIANS'.
-    :param clockwise: If the original rotation was clockwise, set True; otherwise, set False.
-    :return: A tuple containing the x and y coordinates of the point after reverting the rotation and shift.
-    """
-
-    # Subtract the shift
-    x -= shift_x
-    y -= shift_y
-
-    # Convert angle from degrees to radians if specified in degrees
-    if units.upper() == "DEGREES":
-        angle = math.radians(angle)
-
-    # Reverse the angle direction for the rotation back
-    if not clockwise:
-        angle = -angle
-
-    # Translate point to pivot
-    x -= pivot_x
-    y -= pivot_y
-
-    # Apply rotation in the opposite direction
-    cos_theta = math.cos(angle)
-    sin_theta = math.sin(angle)
-    x_reverted = (x * cos_theta) + (y * sin_theta)
-    y_reverted = (-x * sin_theta) + (y * cos_theta)
-
-    # Translate point back from pivot
-    x_final = x_reverted + pivot_x
-    y_final = y_reverted + pivot_y
-
-    return x_final, y_final
-
-
-def does_line_intersect_polygon(mid, slope, intercept, vertices, tolerance=1e-6):
-    for i in range(len(vertices)):
-        x1, y1 = vertices[i]
-        x2, y2 = vertices[(i + 1) % len(vertices)]
-
-        # Check for vertical edge (x1 == x2)
-        if x1 == x2:
-            if slope is None:  # The line is also vertical, check if they are the same line
-                if abs(x1 - mid[0]) <= tolerance:  # The line coincides with the edge
-                    continue
-                else:  # Parallel lines, no intersection
-                    return None
-            else:
-                intersect_x = x1
-                intersect_y = slope * intersect_x + intercept
-                if (
-                    min(y1, y2) <= intersect_y <= max(y1, y2)
-                    and abs(intersect_x - mid[0]) > tolerance
-                    and abs(intersect_y - mid[1]) > tolerance
-                ):
-                    return intersect_x, intersect_y
-
-        else:  # Non-vertical edge
-            edge_slope = (y2 - y1) / (x2 - x1)
-            edge_intercept = y1 - edge_slope * x1
-
-            # The line is vertical, use its x-intercept (which is actually the x coordinate)
-            if slope is None:
-                intersect_x = intercept
-                intersect_y = edge_slope * intersect_x + edge_intercept
-                if (
-                    min(x1, x2) <= intersect_x <= max(x1, x2)
-                    and abs(intersect_y - mid[1]) > tolerance
-                ):
-                    return intersect_x, intersect_y
-
-            elif slope != edge_slope:  # The line is not vertical and not parallel to the edge
-                intersect_x = (edge_intercept - intercept) / (slope - edge_slope)
-                intersect_y = slope * intersect_x + intercept
-
-                if (
-                    min(x1, x2) <= intersect_x <= max(x1, x2)
-                    and min(y1, y2) <= intersect_y <= max(y1, y2)
-                    and (
-                        abs(intersect_x - mid[0]) > tolerance
-                        or abs(intersect_y - mid[1]) > tolerance
-                    )
-                ):
-                    return intersect_x, intersect_y
-    return None
-
-
-def split_area(area, perp, tolerance=1e-6):
-    area_list = []
-
-    # Helper function to check if y is approximately less than or equal to perp_y
-    def y_leq_with_tolerance(y, perp_y):
-        return abs(y) <= abs(perp_y) + tolerance
-
-    # Helper function to check if y is approximately greater than or equal to perp_y
-    def y_geq_with_tolerance(y, perp_y):
-        return abs(y) >= abs(perp_y) - tolerance
-
-    # Case when only one perpendicular point is provided
-    if len(perp) == 1:
-        below_or_equal, above_or_equal = [], []
-        perp_y = perp[0][1]
-
-        for point in area:
-            if y_leq_with_tolerance(point[1], perp_y):
-                below_or_equal.append(point)
-            if y_geq_with_tolerance(point[1], perp_y):
-                above_or_equal.append(point)
-
-        area_list.append(below_or_equal)
-        area_list.append(above_or_equal)
-
-    # Case when more than one perpendicular point is provided
-    else:
-        for i, perp_point in enumerate(perp):
-            one_area = []
-            perp_y = perp_point[1]
-
-            if i == 0:
-                for point in area:
-                    if y_leq_with_tolerance(point[1], perp_y):
-                        one_area.append(point)
-
-            elif i == len(perp) - 1:
-                previous_perp_y = perp[i - 1][1]
-                for point in area:
-                    if y_geq_with_tolerance(point[1], previous_perp_y) and y_leq_with_tolerance(
-                        point[1], perp_y
-                    ):
-                        one_area.append(point)
-                area_list.append(one_area)
-                one_area = []
-                for point in area:
-                    if y_geq_with_tolerance(point[1], perp_y):
-                        one_area.append(point)
-
-            else:
-                previous_perp_y = perp[i - 1][1]
-                for point in area:
-                    if y_geq_with_tolerance(point[1], previous_perp_y) and y_leq_with_tolerance(
-                        point[1], perp_y
-                    ):
-                        one_area.append(point)
-
-            area_list.append(one_area)
-
-    return area_list
-
-
-def ray_casting_point_in_polygon(point, polygon):
-    """
-    Determine if a point is inside a polygon using the Ray Casting method in a Cartesian coordinate system.
-
-    :param point: A tuple (x, y) representing the point to check.
-    :param polygon: A list of tuples [(x, y), ...] representing the polygon vertices.
-    :return: True if the point is inside the polygon; False otherwise.
-    """
-    x, y = point
-    inside = False
-
-    n = len(polygon)
-    p1x, p1y = polygon[0]
-    for i in range(1, n + 1):
-        p2x, p2y = polygon[i % n]
-        if y > min(p1y, p2y):
-            if y <= max(p1y, p2y):
-                if x <= max(p1x, p2x):
-                    if p1y != p2y:
-                        xints = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
-                    if p1x == p2x or x <= xints:
-                        inside = not inside
-        p1x, p1y = p2x, p2y
-
-    return inside
-
-
-import math
-
-import numpy as np
-
-# from calculation_helpers import *
-from scipy.spatial import ConvexHull, Delaunay
-
-x_coords = []
-y_coords = []
-
-
 def read_points_from_file(filename):
     try:
         with open(filename, "r") as file:
@@ -851,46 +415,57 @@ def find_shortest_path(start_position, points_list):
 
 
 def sort_polygon_vertices(vertices):
+    """Sort polygon vertices by angle from centroid (counter-clockwise)."""
     # Calculate centroid of the polygon
     centroid_x = sum(x for x, y in vertices) / len(vertices)
     centroid_y = sum(y for x, y in vertices) / len(vertices)
-    centroid = (centroid_x, centroid_y)
 
     # Define a function to calculate the angle between centroid and vertex
     def angle_from_centroid(vertex):
         return math.atan2(vertex[1] - centroid_y, vertex[0] - centroid_x)
 
     # Sort vertices by the angle from centroid
-    sorted_vertices = sorted(vertices, key=angle_from_centroid, reverse=True)
-
-    return sorted_vertices
+    return sorted(vertices, key=angle_from_centroid, reverse=True)
 
 
 def find_path(points, point_A):
-    # TÌM CẠNH CỦA ĐA GIÁC (BƯỚC NÀY TÌM ĐƯỢC GÓC CỦA ĐA GIÁC)
-    List1, List2 = find_polygon_edges(points)
+    """
+    Find an optimized path through the given points starting from point_A.
+    
+    This function creates a path that:
+    1. Finds polygon edges using convex hull
+    2. Identifies points on the edges
+    3. Sorts edge points starting from nearest to point_A
+    4. Splits into two parts at the farthest point
+    5. Creates a zig-zag path for interior points
+    
+    Args:
+        points: List of coordinate tuples
+        point_A: Starting point coordinates
+        
+    Returns:
+        Optimized path as list of coordinates
+    """
+    # Find polygon edges using convex hull
+    list_edges, list_interior = find_polygon_edges(points)
 
-    # for i, point in enumerate(List1):
-    #     print(f"{point}")
+    # Identify points lying on polygon edges
+    list_edges, list_interior = check_and_move_points(list_edges, list_interior)
 
-    # TÌM CẠNH CỦA ĐA GIÁC (BƯỚC NÀY TÌM ĐƯỢC CÁC ĐIỂM NẰM TRÊN CẠNH ĐA GIÁC)
-    list_A, list_B = check_and_move_points(List1, List2)
+    # Sort edge points in order around the polygon
+    list_edges = sort_polygon_vertices(list_edges)
 
-    # Sắp xếp các điểm trên cạnh của đa giác theo thứ tự
-    list_A = sort_polygon_vertices(list_A)
+    # Reorder starting from point nearest to point_A
+    list_edges = reorder_list(point_A, list_edges)
 
-    # Sắp xếp các điểm trên cạnh của đa giác bắt đầu từ điểm gần drone nhất
-    list_A = reorder_list(point_A, list_A)
+    # Split path at farthest point from point_A
+    list_edges, list_interior = split_at_farthest_point(point_A, list_edges, list_interior)
 
-    # Tách đường đi của Drone thành 2 phần, phần 1 đi từ điểm gần drone nhất đến điểm xã drone nhất theo cạnh của đa giác
-    list_A, list_B = split_at_farthest_point(point_A, list_A, list_B)
-    # phần 2 đi đường zig-zag từ điểm xa drone nhất về điểm gần drone thứ 2
+    # Find shortest zig-zag path through interior points
+    path_interior = find_shortest_path(point_A, list_interior.copy())
 
-    # Assuming list_2 and point_A are defined
-    # tìm đường zig-zag ngắn nhất cho phần đường đi thứ 2
-    path_list_2 = find_shortest_path(point_A, list_B.copy())
+    # Combine edge path and interior path
+    list_edges.pop()  # Remove duplicate point
+    list_edges.extend(path_interior)
 
-    list_A.pop()  # bỏ đi điểm cuối cùng của phần thứ nhất vì trùng với điểm đầu phần thứ 2
-    list_A.extend(path_list_2)  # nối 2 phần
-
-    return list_A
+    return list_edges

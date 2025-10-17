@@ -11,7 +11,6 @@ from mavsdk.mission import MissionItem, MissionPlan
 from mavsdk.offboard import (
     ActuatorControl,
     ActuatorControlGroup,
-    Offboard,
     OffboardError,
 )
 
