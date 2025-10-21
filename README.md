@@ -48,6 +48,12 @@ And check the results by:
     dependencies/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_multiple_run.sh -n 6 -m iris
 ```
 
+**NOTE:** From now, use:
+
+```bash
+    conda activate uav
+```
+
 ### 4. [MavSDK Python](https://github.com/mavlink/MAVSDK-Python.git)
 
 ```shell
