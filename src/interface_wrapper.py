@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+"""
+UAV Control Interface Wrapper Module
+"""
+
 import asyncio
 import glob
 import os
