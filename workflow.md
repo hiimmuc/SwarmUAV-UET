@@ -2,13 +2,251 @@
 
 ## Table of Contents
 
-1. [System Overview](#system-overview)
-2. [Architecture](#architecture)
-3. [Core Components](#core-components)
-4. [Workflow Diagrams](#workflow-diagrams)
-5. [Operational Workflows](#operational-workflows)
-6. [Component Details](#component-details)
-7. [Data Flow](#data-flow)
+1. [Introduction](#introduction)
+2. [Technology Stack](#technology-stack)
+3. [System Overview](#system-overview)
+4. [Architecture](#architecture)
+5. [Core Components](#core-components)
+6. [Workflow Diagrams](#workflow-diagrams)
+7. [Operational Workflows](#operational-workflows)
+8. [Component Details](#component-details)
+9. [Data Flow](#data-flow)
+10. [Advanced Features](#advanced-features)
+11. [Troubleshooting Guide](#troubleshooting-guide)
+
+---
+
+## Introduction
+
+### Purpose
+
+SwarmUAV-UET is an advanced **autonomous multi-UAV coordination platform** developed for search and rescue (SAR) operations in emergency scenarios. The system addresses critical challenges in disaster response by:
+
+- **Rapid Area Coverage**: Coordinating multiple UAVs to efficiently search large areas
+- **Real-time Situational Awareness**: Providing live video feeds with AI-powered object detection
+- **Mission Automation**: Automating flight path planning and execution to minimize human intervention
+- **Flexible Deployment**: Supporting both simulated testing and real-world hardware operations
+
+### Project Overview
+
+This project emerged from the need for efficient UAV swarm coordination in time-critical rescue missions. Traditional single-UAV operations are limited by coverage area and endurance, while manual multi-UAV control is complex and error-prone.
+
+**Key Capabilities**:
+
+- **Intelligent Mission Planning**: Interactive map interface with automatic area splitting and waypoint optimization
+- **Swarm Coordination**: Simultaneous control of up to 6 UAVs with collision avoidance through altitude separation
+- **AI-Enhanced Detection**: Computer vision-based person and vehicle detection for rescue target identification
+- **Comprehensive Monitoring**: Real-time telemetry, battery status, GPS tracking, and video streaming
+
+**Target Applications**:
+
+- Disaster response (earthquakes, floods, wildfires)
+- Missing person search operations
+- Surveillance and reconnaissance missions
+- Agricultural monitoring and inspection tasks
+
+---
+
+## Technology Stack
+
+### Core Libraries and Frameworks
+
+#### 1. **UAV Communication & Control**
+
+**MAVSDK (Python)**
+
+- **Version**: Latest stable
+- **Purpose**: Primary interface for PX4 autopilot communication
+- **Protocol**: MAVLink 2.0 over UDP/TCP/Serial
+- **Key Features**:
+    - Async/await pattern for non-blocking operations
+    - Action, Mission, Telemetry, and Param plugins
+    - Cross-platform support (Linux, Windows, macOS)
+- **Documentation**: [mavsdk-python.readthedocs.io](https://mavsdk-python.readthedocs.io)
+
+**PX4 Autopilot**
+
+- **Version**: v1.13+ recommended
+- **Purpose**: Flight controller firmware
+- **Features**:
+    - MAVLink protocol support
+    - Mission planning and execution
+    - Multiple vehicle types (multicopter, VTOL, fixed-wing)
+- **Reference**: [docs.px4.io](https://docs.px4.io)
+
+#### 2. **User Interface**
+
+**PyQt5**
+
+- **Version**: 5.15+
+- **Purpose**: Cross-platform GUI framework
+- **Components Used**:
+    - `QtWidgets`: Main UI components (buttons, tabs, tables)
+    - `QtWebEngineWidgets`: Embedded map rendering
+    - `QtCore`: Signal-slot mechanism, threading, asyncio integration
+    - `QtGui`: Image processing and display
+- **Async Integration**: `qasync` library for asyncio event loop
+
+**Leaflet.js**
+
+- **Version**: 1.9+
+- **Purpose**: Interactive web-based mapping
+- **Plugins**:
+    - Leaflet.draw: Polygon drawing tools
+    - Leaflet.geojson: GeoJSON data visualization
+- **Communication**: Qt WebChannel for JavaScript-Python bridge
+
+#### 3. **Computer Vision & AI**
+
+**YOLOv8 (Ultralytics)**
+
+- **Version**: ultralytics==8.0+
+- **Purpose**: Real-time object detection
+- **Model**: YOLOv8n (nano) for efficiency
+- **Classes**: Person, vehicle, animal detection
+- **Performance**: ~50-100 FPS on GPU, ~10-20 FPS on CPU
+- **Reference**: [docs.ultralytics.com](https://docs.ultralytics.com)
+
+**OpenCV (cv2)**
+
+- **Version**: opencv-python 4.8+
+- **Purpose**: Video capture, processing, and recording
+- **Functions Used**:
+    - VideoCapture: Multi-source video input
+    - VideoWriter: Recording with H.264/MP4V codecs
+    - Image processing: Resize, color conversion, annotation
+
+**PyTorch**
+
+- **Version**: 2.0+
+- **Purpose**: Deep learning backend for YOLO
+- **CUDA Support**: Optional GPU acceleration
+
+#### 4. **Geospatial Processing**
+
+**Shapely**
+
+- **Version**: 2.0+
+- **Purpose**: Geometric operations on polygons and lines
+- **Functions Used**:
+    - Polygon splitting and area calculation
+    - Point-in-polygon tests
+    - Geometric transformations
+
+**geographiclib**
+
+- **Purpose**: Accurate geodesic calculations
+- **Functions**: Distance, bearing, area on WGS84 ellipsoid
+- **Use Case**: Mission planning with real-world coordinates
+
+**geopy**
+
+- **Purpose**: Geocoding and distance calculations
+- **Use Case**: GPS coordinate conversions
+
+#### 5. **Simulation Environment**
+
+**Gazebo Classic**
+
+- **Version**: 11.x
+- **Purpose**: Physics-based 3D simulator
+- **Features**:
+    - Realistic flight dynamics
+    - Sensor simulation (GPS, IMU, camera)
+    - Multi-vehicle support
+- **Integration**: PX4 SITL (Software-In-The-Loop)
+
+**PX4 SITL**
+
+- **Purpose**: Flight controller simulation
+- **Launch**: Custom multi-UAV spawn script
+- **Configuration**: Configurable home positions, altitudes
+
+### Algorithms and Methodologies
+
+#### 1. **Area Splitting Algorithm**
+
+**Method**: Geometric Polygon Subdivision
+
+- **Input**: User-drawn search area polygon
+- **Output**: N equal-area sub-polygons (one per UAV)
+- **Approach**:
+    - Voronoi diagram-based splitting
+    - Equal-area optimization using iterative refinement
+- **Reference**: Computational Geometry algorithms (O'Rourke, 1998)
+
+#### 2. **Grid Generation Algorithm**
+
+**Method**: Boustrophedon Path Planning
+
+- **Input**: Sub-area polygon, grid cell size
+- **Output**: Ordered waypoint sequence
+- **Approach**:
+    - Create regular grid within polygon boundaries
+    - "Lawn mower" pattern for complete coverage
+    - Row-by-row traversal with minimal turns
+- **Optimization**: Waypoint reduction removes collinear points
+- **Reference**: Coverage path planning (Choset, 2001)
+
+#### 3. **Path Optimization**
+
+**Method**: Nearest Neighbor Heuristic
+
+- **Problem**: Traveling Salesman Problem (TSP) variant
+- **Input**: Unordered waypoint set, start position
+- **Output**: Optimized waypoint sequence
+- **Complexity**: O(n²) greedy approximation
+- **Trade-off**: Fast computation vs. optimal solution
+- **Future**: Could use Lin-Kernighan or Genetic Algorithms for improvement
+
+#### 4. **Collision Avoidance**
+
+**Method**: Altitude Separation
+
+- **Approach**: Static altitude assignment (5-10m increments)
+- **Assumption**: Missions in separate horizontal zones
+- **Limitation**: No dynamic obstacle avoidance
+- **Future Enhancement**: ORCA (Optimal Reciprocal Collision Avoidance)
+
+#### 5. **Object Detection Pipeline**
+
+**Method**: Single Shot Detection (YOLO)
+
+- **Architecture**: YOLOv8 Convolutional Neural Network
+- **Input**: 640×480 video frames
+- **Processing**:
+  1. Resize and normalize image
+  2. CNN feature extraction
+  3. Bounding box regression
+  4. Non-maximum suppression (NMS)
+- **Output**: Detected objects with confidence scores
+- **GPS Tagging**: Combine detections with UAV telemetry
+- **Reference**: Ultralytics YOLOv8 paper (2023)
+
+### Development Tools
+
+- **Python**: 3.8+ (asyncio support required)
+- **Git**: Version control
+- **VS Code**: Primary IDE
+- **QGroundControl**: Mission verification and manual control
+- **Pytest**: Unit testing framework (optional)
+
+### System Requirements
+
+**Minimum**:
+
+- CPU: Intel Core i5 or equivalent
+- RAM: 8GB
+- GPU: Not required (CPU inference)
+- OS: Ubuntu 20.04+ or Windows 10+
+
+**Recommended**:
+
+- CPU: Intel Core i7 or AMD Ryzen 7
+- RAM: 16GB
+- GPU: NVIDIA GTX 1660+ with CUDA 11.8+
+- OS: Ubuntu 22.04 LTS
+- Storage: 50GB free space
 
 ---
 

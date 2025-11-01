@@ -4,7 +4,7 @@
 
 Ubuntu 20.04 with minimum 16GB RAM and 60GB available ROM, and external GPU (optional)
 
-ROS-Noetic / ROS-Foxy
+ROS-Noetic (Recommended) / ROS-Foxy
 
 ## Setups
 
@@ -22,7 +22,7 @@ ROS-Noetic / ROS-Foxy
 
 ### 2. Gazebo ROS
 
-Follow this instruction to install ROS: [Install ROS Noetic](https://wiki.ros.org/noetic/Installation/Ubuntu). [Install ROS Foxy](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)</br>
+Follow this instruction to install ROS: [Install ROS Noetic](https://wiki.ros.org/noetic/Installation/Ubuntu)/ [Install ROS Foxy](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)</br>
 
 Then, to install [Gazebo 9](https://classic.gazebosim.org/tutorials?cat=install&tut=install_ubuntu&ver=9.0)
 
