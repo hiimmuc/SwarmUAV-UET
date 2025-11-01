@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
-# filepath: workspace/src/interface_base.py
 """
 UAV Control Interface Base Module
-
-This module provides the main application window for UAV control and monitoring,
-implementing the UI components and their event handlers. It serves as the foundation
-for the UAV control interface.
 """
 
 import asyncio

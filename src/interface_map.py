@@ -1082,21 +1082,27 @@ class Map(Interface):
 
 # ------------------------------------< Map Application Class >-----------------------------
 def run():
-    app = QtWidgets.QApplication(sys.argv)
-    app.setStyle("Oxygen")  # ['Breeze', 'Oxygen', 'QtCurve', 'Windows', 'Fusion']
-    loop = QEventLoop(app)
-    asyncio.set_event_loop(loop)
-    MainWindow = Map()
-    MainWindow.show()
+    try:
+        app = QtWidgets.QApplication(sys.argv)
+        app.setStyle("Oxygen")  # ['Breeze', 'Oxygen', 'QtCurve', 'Windows', 'Fusion']
+        loop = QEventLoop(app)
+        asyncio.set_event_loop(loop)
+        MainWindow = Map()
+        MainWindow.show()  # Commented out to not show UI
 
-    with loop:
-        pending = asyncio.all_tasks(loop=loop)
-        for task in pending:
-            task.cancel()
+        with loop:
+            pending = asyncio.all_tasks(loop=loop)
+            for task in pending:
+                task.cancel()
 
-        sys.exit(loop.run_forever())
+            sys.exit(loop.run_forever())
+    except Exception as e:
+        logger.critical(f"Application startup failed: {e}")
+        print(f"Fatal error: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
     run()
+
 
